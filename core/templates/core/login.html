@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block login_content %}
+<div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-md">
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white">📊 KoreBase</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">ERP System</p>
+    </div>
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        <div>
+            <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Usuario
+            </label>
+            <input type="text" name="username" id="username" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                placeholder="Ingresa tu usuario">
+        </div>
+
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Contraseña
+            </label>
+            <input type="password" name="password" id="password" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                placeholder="Ingresa tu contraseña">
+        </div>
+
+        <button type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+            Iniciar Sesión
+        </button>
+    </form>
+
+    <p class="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
+        Universidad Politécnica de Yucatán
+    </p>
+</div>
+{% endblock %}

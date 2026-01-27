@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Financiero - KoreBase{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">💰 Financiero & Contabilidad</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">Gestión contable y financiera</p>
+        <p class="text-sm text-yellow-600 dark:text-yellow-400 mt-1">⚠️ Núcleo Sagrado: Activo = Pasivo + Patrimonio</p>
+    </header>
+
+    <!-- Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Cuentas Contables</p>
+            <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ total_accounts }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Asientos Contables</p>
+            <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ total_journal_entries }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Facturas Pendientes</p>
+            <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ pending_invoices }}</p>
+        </div>
+    </div>
+
+    <!-- Security Rules Info -->
+    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 p-4 rounded-lg mb-8">
+        <h3 class="text-lg font-bold text-yellow-800 dark:text-yellow-300 mb-2">🔒 Reglas de Seguridad Financiera</h3>
+        <ul class="text-sm text-yellow-700 dark:text-yellow-400 space-y-1">
+            <li>✓ Ecuación contable: Activo = Pasivo + Patrimonio</li>
+            <li>✓ Tipo Decimal para dinero (nunca Float)</li>
+            <li>✓ Asientos contables INMUTABLES (usar contra-asientos)</li>
+            <li>✓ transaction.atomic para operaciones multi-tabla</li>
+        </ul>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Acciones Rápidas</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+                class="p-4 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                📋 Nuevo Asiento Contable
+            </button>
+            <button
+                class="p-4 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                🧾 Nueva Factura
+            </button>
+            <button
+                class="p-4 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                📊 Reportes Financieros
+            </button>
+            <button
+                class="p-4 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                💳 Gestionar Plan de Cuentas
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

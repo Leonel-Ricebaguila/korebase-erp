@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - KoreBase{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">Bienvenido al sistema ERP KoreBase</p>
+    </header>
+
+    <!-- Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Usuarios</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_users }}</p>
+                </div>
+                <span class="text-4xl">👥</span>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Inventario</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+                </div>
+                <span class="text-4xl">📦</span>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Órdenes de Trabajo</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+                </div>
+                <span class="text-4xl">🏭</span>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Facturas Pendientes</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+                </div>
+                <span class="text-4xl">💰</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Acciones Rápidas</h2>
+            <div class="space-y-3">
+                <a href="{% url 'logistica:index' %}"
+                    class="block p-3 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    📦 Gestionar Inventario
+                </a>
+                <a href="{% url 'produccion:index' %}"
+                    class="block p-3 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    🏭 Nueva Orden de Trabajo
+                </a>
+                <a href="{% url 'financiero:index' %}"
+                    class="block p-3 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    💰 Crear Factura
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Sistema</h2>
+            <div class="space-y-2">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    <span class="font-medium">Estado:</span>
+                    <span class="text-green-600 dark:text-green-400">● En línea</span>
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    <span class="font-medium">Versión:</span> Django 6.0
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    <span class="font-medium">Base de Datos:</span> PostgreSQL
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

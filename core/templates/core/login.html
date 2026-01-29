@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block login_content %}
+<div style="max-width: 420px; width: 100%;">
+    <!-- Login Card -->
+    <div style="background: white; border-radius: 8px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); overflow: hidden;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #714B67 0%, #5a3b52 100%); padding: 40px 32px; text-align: center;">
+            <div style="width: 80px; height: 80px; background: white; border-radius: 12px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+                <i class="fas fa-cubes" style="font-size: 40px; color: #714B67;"></i>
+            </div>
+            <h1 style="color: white; font-size: 28px; font-weight: 700; margin: 0 0 8px;">KoreBase</h1>
+            <p style="color: rgba(255, 255, 255, 0.9); font-size: 14px; margin: 0;">Enterprise Resource Planning</p>
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" style="padding: 40px 32px;">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 20px;">
+                <label for="username" style="display: block; font-weight: 500; font-size: 14px; color: #374151; margin-bottom: 8px;">
+                    Usuario
+                </label>
+                <div style="position: relative;">
+                    <i class="fas fa-user" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
+                    <input type="text" name="username" id="username" required
+                        style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; color: #1f2937; transition: all 0.2s ease;"
+                        placeholder="Ingresa tu usuario"
+                        onfocus="this.style.borderColor='#714B67'; this.style.boxShadow='0 0 0 3px rgba(113, 75, 103, 0.1)';"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label for="password" style="display: block; font-weight: 500; font-size: 14px; color: #374151; margin-bottom: 8px;">
+                    Contraseña
+                </label>
+                <div style="position: relative;">
+                    <i class="fas fa-lock" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
+                    <input type="password" name="password" id="password" required
+                        style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; color: #1f2937; transition: all 0.2s ease;"
+                        placeholder="Ingresa tu contraseña"
+                        onfocus="this.style.borderColor='#714B67'; this.style.boxShadow='0 0 0 3px rgba(113, 75, 103, 0.1)';"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
+                </div>
+            </div>
+
+            <button type="submit"
+                style="width: 100%; background: linear-gradient(135deg, #714B67 0%, #5a3b52 100%); color: white; font-weight: 600; font-size: 14px; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(113, 75, 103, 0.4)';"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(113, 75, 103, 0.3)';">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <!-- Footer -->
+        <div style="padding: 24px 32px; background: #f9fafb; border-top: 1px solid #e5e7eb; text-align: center;">
+            <p style="color: #6b7280; font-size: 13px; margin: 0 0 4px;">
+                <i class="fas fa-university"></i> Universidad Politécnica de Yucatán
+            </p>
+            <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+                Sistema de Gestión Empresarial v1.0
+            </p>
+        </div>
+    </div>
+
+    <!-- Security Notice -->
+    <div style="margin-top: 24px; background: rgba(255, 255, 255, 0.95); border-radius: 8px; padding: 16px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.3);">
+        <p style="color: #374151; font-size: 13px; margin: 0;">
+            <i class="fas fa-shield-alt" style="color: #714B67; margin-right: 8px;"></i>
+            Sistema protegido con autenticación segura
+        </p>
+    </div>
+</div>
+{% endblock %}

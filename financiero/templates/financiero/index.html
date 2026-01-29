@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Financiero - KoreBase{% endblock %}
+{% block page_title %}Módulo Financiero{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="erp-breadcrumb">
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <span class="erp-breadcrumb-link">Financiero</span>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <div>
+            <h2 class="erp-card-title">Gestión Financiera y Contable</h2>
+            <p style="color: var(--erp-gray-600); font-size: 14px; margin-top: 4px;">Control contable, facturación y reportes financieros</p>
+        </div>
+        <button class="erp-btn erp-btn-primary">
+            <i class="fas fa-plus"></i> Nueva Transacción
+        </button>
+    </div>
+</div>
+
+<!-- Security Alert -->
+<div class="erp-alert erp-alert-warning">
+    <span class="erp-alert-icon"><i class="fas fa-shield-alt"></i></span>
+    <div>
+        <strong>Reglas de Seguridad Financiera:</strong>
+        <ul style="margin: 8px 0 0 20px; font-size: 13px;">
+            <li>Ecuación contable: Activo = Pasivo + Patrimonio</li>
+            <li>Tipo Decimal para dinero (nunca Float)</li>
+            <li>Asientos contables INMUTABLES (usar contra-asientos)</li>
+            <li>transaction.atomic para operaciones multi-tabla</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Metrics Grid -->
+<div class="erp-metrics-grid">
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Cuentas Contables</span>
+            <span class="erp-metric-icon"><i class="fas fa-book"></i></span>
+        </div>
+        <div class="erp-metric-value">{{ total_accounts }}</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-primary">Plan de cuentas</span>
+        </div>
+    </div>
+
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Asientos Contables</span>
+            <span class="erp-metric-icon"><i class="fas fa-file-invoice"></i></span>
+        </div>
+        <div class="erp-metric-value">{{ total_journal_entries }}</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-success">Registrados</span>
+        </div>
+    </div>
+
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Facturas Pendientes</span>
+            <span class="erp-metric-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+        </div>
+        <div class="erp-metric-value">{{ pending_invoices }}</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-warning">Por procesar</span>
+        </div>
+    </div>
+
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Balance Total</span>
+            <span class="erp-metric-icon"><i class="fas fa-balance-scale"></i></span>
+        </div>
+        <div class="erp-metric-value">$0.00</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-info">MXN</span>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Acciones Rápidas</h2>
+    </div>
+    <div class="erp-card-body">
+        <div class="erp-action-grid">
+            <button class="erp-action-card">
+                <span class="erp-action-icon"><i class="fas fa-file-invoice"></i></span>
+                <span class="erp-action-text">Nuevo Asiento Contable</span>
+            </button>
+            <button class="erp-action-card">
+                <span class="erp-action-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                <span class="erp-action-text">Nueva Factura</span>
+            </button>
+            <button class="erp-action-card">
+                <span class="erp-action-icon"><i class="fas fa-chart-pie"></i></span>
+                <span class="erp-action-text">Reportes Financieros</span>
+            </button>
+            <button class="erp-action-card">
+                <span class="erp-action-icon"><i class="fas fa-list-alt"></i></span>
+                <span class="erp-action-text">Gestionar Plan de Cuentas</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Journal Entries -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Últimos Asientos Contables</h2>
+        <button class="erp-btn erp-btn-secondary erp-btn-sm">
+            <i class="fas fa-eye"></i> Ver Todos
+        </button>
+    </div>
+    <div class="erp-card-body">
+        <div class="erp-table-container">
+            <table class="erp-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Número</th>
+                        <th>Descripción</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p>No hay asientos contables registrados</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Invoices -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Facturas Pendientes</h2>
+        <button class="erp-btn erp-btn-secondary erp-btn-sm">
+            <i class="fas fa-filter"></i> Filtrar
+        </button>
+    </div>
+    <div class="erp-card-body">
+        <div class="erp-table-container">
+            <table class="erp-table">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Vencimiento</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
+                            <i class="fas fa-file-invoice-dollar" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p>No hay facturas pendientes</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

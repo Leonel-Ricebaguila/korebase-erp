@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}KoreBase ERP{% endblock %}</title>
+
+    <!-- ERP Style Sheet -->
+    <link rel="stylesheet" href="{% static 'css/erp-style.css' %}">
+
+    <!-- HTMX -->
+    <script src="{% static 'js/htmx.min.js' %}"></script>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Additional custom styles */
+        .erp-sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--erp-gray-600);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .erp-sidebar-toggle {
+                display: block;
+            }
+        }
+
+        .erp-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        @media (max-width: 1024px) {
+            .erp-overlay.active {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    {% if user.is_authenticated %}
+    <!-- Main ERP Layout -->
+    <div class="erp-flex">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="erp-overlay" id="erpOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- Professional Sidebar -->
+        <aside class="erp-sidebar" id="erpSidebar">
+            <!-- Logo Section -->
+            <div class="erp-sidebar-header">
+                <div class="erp-sidebar-logo">
+                    <div class="erp-sidebar-logo-icon">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <div>
+                        <div class="erp-sidebar-logo-text">KoreBase</div>
+                        <div class="erp-sidebar-logo-subtitle">Enterprise ERP</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="erp-sidebar-user">
+                <div class="erp-sidebar-user-info">
+                    <div class="erp-sidebar-user-avatar">
+                        {{ user.first_name.0|default:"A" }}
+                    </div>
+                    <div>
+                        <div class="erp-sidebar-user-name">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="erp-sidebar-user-role">{{ user.employee_id|default:"Empleado" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="erp-sidebar-nav">
+                <a href="{% url 'core:dashboard' %}" class="erp-sidebar-nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Dashboard</span>
+                </a>
+                <a href="{% url 'logistica:index' %}" class="erp-sidebar-nav-item {% if 'logistica' in request.path %}active{% endif %}">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Logística</span>
+                </a>
+                <a href="{% url 'produccion:index' %}" class="erp-sidebar-nav-item {% if 'produccion' in request.path %}active{% endif %}">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Producción</span>
+                </a>
+                <a href="{% url 'financiero:index' %}" class="erp-sidebar-nav-item {% if 'financiero' in request.path %}active{% endif %}">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Financiero</span>
+                </a>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="erp-sidebar-footer">
+                <a href="{% url 'core:logout' %}" class="erp-sidebar-logout">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Cerrar Sesión</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="erp-main">
+            <!-- Header -->
+            <header class="erp-header">
+                <div class="erp-flex erp-items-center erp-gap-4">
+                    <button class="erp-sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="erp-header-title">{% block page_title %}KoreBase ERP{% endblock %}</h1>
+                </div>
+                <div class="erp-header-actions">
+                    <div class="erp-search-bar">
+                        <i class="fas fa-search erp-search-icon"></i>
+                        <input type="text" placeholder="Buscar...">
+                    </div>
+                    <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Messages -->
+            {% if messages %}
+            <div class="erp-content" style="padding-top: 0;">
+                {% for message in messages %}
+                <div class="erp-alert erp-alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+                    <span class="erp-alert-icon">
+                        {% if message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>{% elif message.tags == 'success' %}<i class="fas fa-check-circle"></i>{% else %}<i class="fas fa-info-circle"></i>{% endif %}
+                    </span>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Page Content -->
+            <div class="erp-content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('erpSidebar');
+            const overlay = document.getElementById('erpOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('erpSidebar');
+            const overlay = document.getElementById('erpOverlay');
+            const toggle = document.querySelector('.erp-sidebar-toggle');
+            
+            if (window.innerWidth <= 1024) {
+                if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+                    toggleSidebar();
+                }
+            }
+        });
+    </script>
+    {% else %}
+    <!-- Login Page -->
+    <div class="min-h-screen" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 20px;">
+        {% block login_content %}{% endblock %}
+    </div>
+    {% endif %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

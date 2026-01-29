@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - KoreBase{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="erp-breadcrumb">
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'logistica:index' %}" class="erp-breadcrumb-link">Logística</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <span class="erp-breadcrumb-link">{{ title }}</span>
+    </div>
+</nav>
+
+<!-- Form Card -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">{{ title }}</h2>
+        <a href="{% url 'logistica:index' %}" class="erp-btn erp-btn-secondary erp-btn-sm">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+    <div class="erp-card-body">
+        <form method="post" style="max-width: 600px;">
+            {% csrf_token %}
+            
+            <div class="erp-form-group">
+                <label for="{{ form.code.id_for_label }}" class="erp-form-label">{{ form.code.label }}</label>
+                {{ form.code }}
+                {% if form.code.errors %}
+                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
+                    {{ form.code.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="erp-form-group">
+                <label for="{{ form.name.id_for_label }}" class="erp-form-label">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
+                    {{ form.name.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="erp-form-group">
+                <label for="{{ form.address.id_for_label }}" class="erp-form-label">{{ form.address.label }}</label>
+                {{ form.address }}
+                {% if form.address.errors %}
+                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
+                    {{ form.address.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="erp-form-group">
+                <label for="{{ form.active.id_for_label }}" class="erp-form-label" style="display: flex; align-items: center; gap: 8px;">
+                    {{ form.active }}
+                    {{ form.active.label }}
+                </label>
+                {% if form.active.errors %}
+                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
+                    {{ form.active.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="margin-top: 24px; display: flex; gap: 12px;">
+                <button type="submit" class="erp-btn erp-btn-primary">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+                <a href="{% url 'logistica:index' %}" class="erp-btn erp-btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if form.non_field_errors %}
+<div class="erp-alert erp-alert-danger">
+    <span class="erp-alert-icon"><i class="fas fa-exclamation-circle"></i></span>
+    <div>
+        {{ form.non_field_errors }}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

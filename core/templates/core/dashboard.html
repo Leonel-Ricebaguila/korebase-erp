@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - KoreBase{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="erp-breadcrumb">
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <span class="erp-breadcrumb-link">Dashboard</span>
+    </div>
+</nav>
+
+<!-- Welcome Section -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Bienvenido al Sistema ERP KoreBase</h2>
+    </div>
+    <div class="erp-card-body">
+        <p style="color: var(--erp-gray-600);">Panel de control general para la gestión empresarial. Acceda a todos los módulos del sistema desde este panel central.</p>
+    </div>
+</div>
+
+<!-- Metrics Grid -->
+<div class="erp-metrics-grid">
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Usuarios</span>
+            <span class="erp-metric-icon"><i class="fas fa-users"></i></span>
+        </div>
+        <div class="erp-metric-value">{{ total_users }}</div>
+        <div class="erp-metric-trend positive">
+            <i class="fas fa-arrow-up"></i> Total activos
+        </div>
+    </div>
+
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Inventario</span>
+            <span class="erp-metric-icon"><i class="fas fa-boxes"></i></span>
+        </div>
+        <div class="erp-metric-value">0</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-info">Sin datos</span>
+        </div>
+    </div>
+
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Órdenes de Trabajo</span>
+            <span class="erp-metric-icon"><i class="fas fa-industry"></i></span>
+        </div>
+        <div class="erp-metric-value">0</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-info">Sin datos</span>
+        </div>
+    </div>
+
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Facturas Pendientes</span>
+            <span class="erp-metric-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+        </div>
+        <div class="erp-metric-value">0</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-info">Sin datos</span>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="erp-flex erp-gap-4" style="flex-wrap: wrap;">
+    <div class="erp-card" style="flex: 1; min-width: 300px;">
+        <div class="erp-card-header">
+            <h2 class="erp-card-title">Acciones Rápidas</h2>
+        </div>
+        <div class="erp-card-body">
+            <div class="erp-action-grid">
+                <a href="{% url 'logistica:index' %}" class="erp-action-card">
+                    <span class="erp-action-icon"><i class="fas fa-boxes"></i></span>
+                    <span class="erp-action-text">Gestionar Inventario</span>
+                </a>
+                <a href="{% url 'produccion:index' %}" class="erp-action-card">
+                    <span class="erp-action-icon"><i class="fas fa-industry"></i></span>
+                    <span class="erp-action-text">Nueva Orden de Trabajo</span>
+                </a>
+                <a href="{% url 'financiero:index' %}" class="erp-action-card">
+                    <span class="erp-action-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                    <span class="erp-action-text">Crear Factura</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="erp-card" style="flex: 1; min-width: 300px;">
+        <div class="erp-card-header">
+            <h2 class="erp-card-title">Información del Sistema</h2>
+        </div>
+        <div class="erp-card-body">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--erp-gray-600); font-weight: 500;">Estado:</span>
+                    <span class="erp-badge erp-badge-success">
+                        <i class="fas fa-circle" style="font-size: 8px; margin-right: 4px;"></i>
+                        En línea
+                    </span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--erp-gray-600); font-weight: 500;">Versión:</span>
+                    <span style="color: var(--erp-gray-800);">Django 6.0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--erp-gray-600); font-weight: 500;">Base de Datos:</span>
+                    <span style="color: var(--erp-gray-800);">PostgreSQL</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--erp-gray-600); font-weight: 500;">Último Acceso:</span>
+                    <span style="color: var(--erp-gray-800);">{{ user.last_login|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Actividad Reciente</h2>
+        <button class="erp-btn erp-btn-secondary erp-btn-sm">
+            <i class="fas fa-history"></i> Ver Todo
+        </button>
+    </div>
+    <div class="erp-card-body">
+        <div class="erp-table-container">
+            <table class="erp-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Usuario</th>
+                        <th>Acción</th>
+                        <th>Módulo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ user.last_login|date:"d/m/Y H:i" }}</td>
+                        <td>{{ user.get_full_name|default:user.username }}</td>
+                        <td>Inicio de sesión</td>
+                        <td>Core</td>
+                        <td><span class="erp-badge erp-badge-success">Completado</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

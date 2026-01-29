@@ -1,111 +1,202 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load static %}
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}KoreBase ERP{% endblock %}</title>
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ERP Style Sheet -->
+    <link rel="stylesheet" href="{% static 'css/erp-style.css' %}">
 
     <!-- HTMX -->
     <script src="{% static 'js/htmx.min.js' %}"></script>
 
-    {% load static %}
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* Custom Tailwind config */
-        tailwind.config= {
-            theme: {
-                extend: {
-                    colors: {
-                        'korebase-primary': '#3b82f6',
-                            'korebase-dark': '#1e293b',
-                    }
-                }
+        /* Additional custom styles */
+        .erp-sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--erp-gray-600);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .erp-sidebar-toggle {
+                display: block;
+            }
+        }
+
+        .erp-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        @media (max-width: 1024px) {
+            .erp-overlay.active {
+                display: block;
             }
         }
     </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900">
+<body>
 
     {% if user.is_authenticated %}
-    <!-- Navigation Sidebar -->
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-korebase-dark text-white flex flex-col">
-            <!-- Logo -->
-            <div class="p-4 border-b border-gray-700">
-                <h1 class="text-2xl font-bold">📊 KoreBase</h1>
-                <p class="text-sm text-gray-400">ERP System</p>
+    <!-- Main ERP Layout -->
+    <div class="erp-flex">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="erp-overlay" id="erpOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- Professional Sidebar -->
+        <aside class="erp-sidebar" id="erpSidebar">
+            <!-- Logo Section -->
+            <div class="erp-sidebar-header">
+                <div class="erp-sidebar-logo">
+                    <div class="erp-sidebar-logo-icon">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <div>
+                        <div class="erp-sidebar-logo-text">KoreBase</div>
+                        <div class="erp-sidebar-logo-subtitle">Enterprise ERP</div>
+                    </div>
+                </div>
             </div>
 
             <!-- User Info -->
-            <div class="p-4 border-b border-gray-700">
-                <p class="text-sm font-medium">{{ user.get_full_name }}</p>
-                <p class="text-xs text-gray-400">{{ user.employee_id }}</p>
-                <p class="text-xs text-gray-400">{{ user.department }}</p>
+            <div class="erp-sidebar-user">
+                <div class="erp-sidebar-user-info">
+                    <div class="erp-sidebar-user-avatar">
+                        {{ user.first_name.0|default:"A" }}
+                    </div>
+                    <div>
+                        <div class="erp-sidebar-user-name">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="erp-sidebar-user-role">{{ user.employee_id|default:"Empleado" }}</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Navigation Menu -->
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="{% url 'core:dashboard' %}"
-                    class="flex items-center gap-3 px-4 py-2 rounded hover:bg-gray-700 transition">
-                    <span>📊</span>
-                    <span>Dashboard</span>
+            <nav class="erp-sidebar-nav">
+                <a href="{% url 'core:dashboard' %}" class="erp-sidebar-nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Dashboard</span>
                 </a>
-                <a href="{% url 'logistica:index' %}"
-                    class="flex items-center gap-3 px-4 py-2 rounded hover:bg-gray-700 transition">
-                    <span>📦</span>
-                    <span>Logística</span>
+                <a href="{% url 'logistica:index' %}" class="erp-sidebar-nav-item {% if 'logistica' in request.path %}active{% endif %}">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Logística</span>
                 </a>
-                <a href="{% url 'produccion:index' %}"
-                    class="flex items-center gap-3 px-4 py-2 rounded hover:bg-gray-700 transition">
-                    <span>🏭</span>
-                    <span>Producción</span>
+                <a href="{% url 'produccion:index' %}" class="erp-sidebar-nav-item {% if 'produccion' in request.path %}active{% endif %}">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Producción</span>
                 </a>
-                <a href="{% url 'financiero:index' %}"
-                    class="flex items-center gap-3 px-4 py-2 rounded hover:bg-gray-700 transition">
-                    <span>💰</span>
-                    <span>Financiero</span>
+                <a href="{% url 'financiero:index' %}" class="erp-sidebar-nav-item {% if 'financiero' in request.path %}active{% endif %}">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Financiero</span>
                 </a>
             </nav>
 
-            <!-- Logout -->
-            <div class="p-4 border-t border-gray-700">
-                <a href="{% url 'core:logout' %}"
-                    class="flex items-center gap-3 px-4 py-2 rounded hover:bg-red-600 transition">
-                    <span>🚪</span>
-                    <span>Cerrar Sesión</span>
+            <!-- Sidebar Footer -->
+            <div class="erp-sidebar-footer">
+                <a href="{% url 'core:logout' %}" class="erp-sidebar-logout">
+                    <div class="erp-sidebar-nav-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    <span class="erp-sidebar-nav-text">Cerrar Sesión</span>
                 </a>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 overflow-auto">
+        <!-- Main Content Area -->
+        <main class="erp-main">
+            <!-- Header -->
+            <header class="erp-header">
+                <div class="erp-flex erp-items-center erp-gap-4">
+                    <button class="erp-sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="erp-header-title">{% block page_title %}KoreBase ERP{% endblock %}</h1>
+                </div>
+                <div class="erp-header-actions">
+                    <div class="erp-search-bar">
+                        <i class="fas fa-search erp-search-icon"></i>
+                        <input type="text" placeholder="Buscar...">
+                    </div>
+                    <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </header>
+
             <!-- Messages -->
             {% if messages %}
-            <div class="p-4">
+            <div class="erp-content" style="padding-top: 0;">
                 {% for message in messages %}
-                <div
-                    class="mb-2 p-4 rounded {% if message.tags == 'error' %}bg-red-100 text-red-800{% elif message.tags == 'success' %}bg-green-100 text-green-800{% else %}bg-blue-100 text-blue-800{% endif %}">
-                    {{ message }}
+                <div class="erp-alert erp-alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+                    <span class="erp-alert-icon">
+                        {% if message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>{% elif message.tags == 'success' %}<i class="fas fa-check-circle"></i>{% else %}<i class="fas fa-info-circle"></i>{% endif %}
+                    </span>
+                    <span>{{ message }}</span>
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
 
             <!-- Page Content -->
-            <div class="p-6">
+            <div class="erp-content">
                 {% block content %}{% endblock %}
             </div>
         </main>
     </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('erpSidebar');
+            const overlay = document.getElementById('erpOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('erpSidebar');
+            const overlay = document.getElementById('erpOverlay');
+            const toggle = document.querySelector('.erp-sidebar-toggle');
+            
+            if (window.innerWidth <= 1024) {
+                if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+                    toggleSidebar();
+                }
+            }
+        });
+    </script>
     {% else %}
-    <!-- Login Page Content -->
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+    <!-- Login Page -->
+    <div class="min-h-screen" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 20px;">
         {% block login_content %}{% endblock %}
     </div>
     {% endif %}

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventario - KoreBase{% endblock %}
+{% block page_title %}Inventario de Productos{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="erp-breadcrumb">
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'logistica:index' %}" class="erp-breadcrumb-link">Logística</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <span class="erp-breadcrumb-link">Inventario</span>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <div>
+            <h2 class="erp-card-title">Inventario de Productos</h2>
+            <p style="color: var(--erp-gray-600); font-size: 14px; margin-top: 4px;">Gestión completa del catálogo de productos</p>
+        </div>
+        <div class="erp-flex erp-gap-2">
+            <a href="{% url 'logistica:index' %}" class="erp-btn erp-btn-secondary erp-btn-sm">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <a href="{% url 'logistica:product_create' %}" class="erp-btn erp-btn-primary erp-btn-sm">
+                <i class="fas fa-plus"></i> Nuevo Producto
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Table -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Listado de Productos</h2>
+        <div class="erp-flex erp-gap-2">
+            <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                <i class="fas fa-download"></i> Exportar
+            </button>
+            <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+        </div>
+    </div>
+    <div class="erp-card-body">
+        <div class="erp-table-container">
+            <table class="erp-table">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Costo Unitario</th>
+                        <th>Estado</th>
+                        <th>Creado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if products %}
+                        {% for product in products %}
+                        <tr>
+                            <td><strong>{{ product.sku }}</strong></td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category }}</td>
+                            <td>${{ product.unit_cost }}</td>
+                            <td>
+                                {% if product.active %}
+                                <span class="erp-badge erp-badge-success">Activo</span>
+                                {% else %}
+                                <span class="erp-badge erp-badge-danger">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ product.created_at|date:"d/m/Y" }}</td>
+                            <td>
+                                <div class="erp-flex erp-gap-2">
+                                    <a href="{% url 'logistica:product_edit' product.pk %}" class="erp-btn erp-btn-secondary erp-btn-sm" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'logistica:product_delete' product.pk %}" class="erp-btn erp-btn-danger erp-btn-sm" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
+                            <i class="fas fa-boxes" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p>No hay productos en el inventario</p>
+                            <a href="{% url 'logistica:product_create' %}" class="erp-btn erp-btn-primary erp-btn-sm" style="margin-top: 16px;">
+                                <i class="fas fa-plus"></i> Crear Primer Producto
+                            </a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Summary -->
+{% if products %}
+<div class="erp-flex erp-gap-4" style="flex-wrap: wrap;">
+    <div class="erp-card" style="flex: 1; min-width: 300px;">
+        <div class="erp-card-header">
+            <h2 class="erp-card-title">Resumen</h2>
+        </div>
+        <div class="erp-card-body">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--erp-gray-600); font-weight: 500;">Total Productos:</span>
+                    <span style="color: var(--erp-gray-800); font-weight: 700;">{{ products|length }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--erp-gray-600); font-weight: 500;">Productos Activos:</span>
+                    <span style="color: var(--erp-success); font-weight: 700;">{{ products|length }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

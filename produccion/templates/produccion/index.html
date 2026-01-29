@@ -1,41 +1,232 @@
 {% extends 'base.html' %}
 
 {% block title %}Producción - KoreBase{% endblock %}
+{% block page_title %}Módulo de Producción{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto">
-    <header class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Producción & MRP</h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-2">Gestión de manufactura y órdenes de trabajo</p>
-    </header>
+<!-- Breadcrumb -->
+<nav class="erp-breadcrumb">
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <span class="erp-breadcrumb-link">Producción</span>
+    </div>
+</nav>
 
-    <!-- Metrics -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <p class="text-sm text-gray-600 dark:text-gray-400">Órdenes Totales</p>
-            <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ total_work_orders }}</p>
+<!-- Page Header -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <div>
+            <h2 class="erp-card-title">Gestión de Producción y MRP</h2>
+            <p style="color: var(--erp-gray-600); font-size: 14px; margin-top: 4px;">Control de manufactura, órdenes de trabajo y BOMs</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <p class="text-sm text-gray-600 dark:text-gray-400">En Proceso</p>
-            <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ active_work_orders }}</p>
+        <button class="erp-btn erp-btn-primary">
+            <i class="fas fa-plus"></i> Nueva Orden
+        </button>
+    </div>
+</div>
+
+<!-- Metrics Grid -->
+<div class="erp-metrics-grid">
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Órdenes Totales</span>
+            <span class="erp-metric-icon"><i class="fas fa-clipboard-list"></i></span>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <p class="text-sm text-gray-600 dark:text-gray-400">BOMs Activos</p>
-            <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ total_boms }}</p>
+        <div class="erp-metric-value">{{ total_work_orders }}</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-primary">Registradas</span>
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Acciones Rápidas</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button
-                class="p-4 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                ➕ Nueva Orden de Trabajo
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">En Proceso</span>
+            <span class="erp-metric-icon"><i class="fas fa-cogs"></i></span>
+        </div>
+        <div class="erp-metric-value">{{ active_work_orders }}</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-warning">Activas</span>
+        </div>
+    </div>
+
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">BOMs Activos</span>
+            <span class="erp-metric-icon"><i class="fas fa-sitemap"></i></span>
+        </div>
+        <div class="erp-metric-value">{{ total_boms }}</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-success">Configurados</span>
+        </div>
+    </div>
+
+    <div class="erp-metric-card">
+        <div class="erp-metric-header">
+            <span class="erp-metric-label">Eficiencia</span>
+            <span class="erp-metric-icon"><i class="fas fa-chart-line"></i></span>
+        </div>
+        <div class="erp-metric-value">0%</div>
+        <div class="erp-metric-trend">
+            <span class="erp-badge erp-badge-info">Sin datos</span>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Acciones Rápidas</h2>
+    </div>
+    <div class="erp-card-body">
+        <div class="erp-action-grid">
+            <button class="erp-action-card">
+                <span class="erp-action-icon"><i class="fas fa-plus-circle"></i></span>
+                <span class="erp-action-text">Nueva Orden de Trabajo</span>
             </button>
-            <button
-                class="p-4 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                📋 Gestionar BOMs
+            <button class="erp-action-card">
+                <span class="erp-action-icon"><i class="fas fa-sitemap"></i></span>
+                <span class="erp-action-text">Gestionar BOMs</span>
+            </button>
+            <button class="erp-action-card">
+                <span class="erp-action-icon"><i class="fas fa-industry"></i></span>
+                <span class="erp-action-text">Centros de Trabajo</span>
+            </button>
+            <button class="erp-action-card">
+                <span class="erp-action-icon"><i class="fas fa-tasks"></i></span>
+                <span class="erp-action-text">Planificación</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Work Orders Table -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Órdenes de Trabajo</h2>
+        <div class="erp-flex erp-gap-2">
+            <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+            <button class="erp-btn erp-btn-primary erp-btn-sm">
+                <i class="fas fa-plus"></i> Crear
+            </button>
+        </div>
+    </div>
+    <div class="erp-card-body">
+        <div class="erp-table-container">
+            <table class="erp-table">
+                <thead>
+                    <tr>
+                        <th>Orden #</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Fin</th>
+                        <th>Progreso</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
+                            <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p>No hay órdenes de trabajo registradas</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- BOMs Overview -->
+<div class="erp-flex erp-gap-4" style="flex-wrap: wrap;">
+    <div class="erp-card" style="flex: 1; min-width: 300px;">
+        <div class="erp-card-header">
+            <h2 class="erp-card-title">Listas de Materiales (BOMs)</h2>
+            <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                <i class="fas fa-plus"></i> Nuevo
+            </button>
+        </div>
+        <div class="erp-card-body">
+            <div class="erp-table-container">
+                <table class="erp-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Componentes</th>
+                            <th>Versión</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
+                                <i class="fas fa-sitemap" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                                <p>No hay BOMs configurados</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="erp-card" style="flex: 1; min-width: 300px;">
+        <div class="erp-card-header">
+            <h2 class="erp-card-title">Centros de Trabajo</h2>
+            <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                <i class="fas fa-plus"></i> Nuevo
+            </button>
+        </div>
+        <div class="erp-card-body">
+            <div class="erp-table-container">
+                <table class="erp-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Capacidad</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
+                                <i class="fas fa-industry" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+                                <p>No hay centros de trabajo configurados</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Production Schedule -->
+<div class="erp-card">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Programa de Producción</h2>
+        <div class="erp-flex erp-gap-2">
+            <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                <i class="fas fa-calendar"></i> Semana
+            </button>
+            <button class="erp-btn erp-btn-secondary erp-btn-sm">
+                <i class="fas fa-calendar"></i> Mes
+            </button>
+        </div>
+    </div>
+    <div class="erp-card-body">
+        <div style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
+            <i class="fas fa-calendar-alt" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+            <p>No hay producción programada</p>
+            <button class="erp-btn erp-btn-primary erp-btn-sm" style="margin-top: 16px;">
+                <i class="fas fa-plus"></i> Programar Producción
             </button>
         </div>
     </div>

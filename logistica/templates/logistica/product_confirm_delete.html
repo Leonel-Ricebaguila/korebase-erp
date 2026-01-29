@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Producto - KoreBase{% endblock %}
+{% block page_title %}Eliminar Producto{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="erp-breadcrumb">
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'logistica:index' %}" class="erp-breadcrumb-link">Logística</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <a href="{% url 'logistica:inventory_list' %}" class="erp-breadcrumb-link">Inventario</a>
+    </div>
+    <div class="erp-breadcrumb-item">
+        <span class="erp-breadcrumb-link">Eliminar</span>
+    </div>
+</nav>
+
+<!-- Confirmation Card -->
+<div class="erp-card" style="max-width: 600px; margin: 0 auto;">
+    <div class="erp-card-header">
+        <h2 class="erp-card-title">Confirmar Eliminación</h2>
+    </div>
+    <div class="erp-card-body">
+        <div class="erp-alert erp-alert-warning">
+            <span class="erp-alert-icon"><i class="fas fa-exclamation-triangle"></i></span>
+            <div>
+                <strong>¿Está seguro que desea eliminar este producto?</strong>
+                <p style="margin: 8px 0 0 0;">Esta acción marcará el producto como inactivo. No se eliminarán los datos históricos.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 24px; padding: 20px; background: var(--erp-gray-50); border-radius: 8px; border: 1px solid var(--erp-gray-200);">
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--erp-gray-800); margin-bottom: 12px;">Información del Producto</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--erp-gray-600);">SKU:</span>
+                    <span style="font-weight: 600;">{{ product.sku }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--erp-gray-600);">Nombre:</span>
+                    <span style="font-weight: 600;">{{ product.name }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--erp-gray-600);">Categoría:</span>
+                    <span style="font-weight: 600;">{{ product.category }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--erp-gray-600);">Costo Unitario:</span>
+                    <span style="font-weight: 600;">${{ product.unit_cost }}</span>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" style="margin-top: 24px; display: flex; gap: 12px;">
+            {% csrf_token %}
+            <button type="submit" class="erp-btn erp-btn-danger">
+                <i class="fas fa-trash"></i> Eliminar Producto
+            </button>
+            <a href="{% url 'logistica:inventory_list' %}" class="erp-btn erp-btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

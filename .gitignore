@@ -34,8 +34,8 @@ db.sqlite3
 db.sqlite3-journal
 /media
 /staticfiles
-/static
-/static/
+# Allow static source files, ignore collected staticfiles
+!static/
 /media/
 *.pot
 

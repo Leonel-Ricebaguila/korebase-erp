@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block login_content %}
+<div
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--kore-navy-900) 0%, #0f172a 100%); padding: 1rem; z-index: 9999;">
+    <div style="max-width: 440px; width: 100%;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <i class="fas fa-envelope-open-text" style="font-size: 3rem; color: white; margin-bottom: 1rem;"></i>
+            <h2 style="color: white; font-weight: 300;">Verificación de Seguridad</h2>
+            <p style="color: rgba(255,255,255,0.7);">Ingresa el código OTP enviado a tu correo</p>
+        </div>
+
+        <div class="kore-card"
+            style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+            <form method="post">
+                {% csrf_token %}
+
+                {% if messages %}
+                {% for message in messages %}
+                <div
+                    style="padding: 0.75rem; margin-bottom: 1rem; border-radius: 6px; font-size: 0.9rem;
+                        {% if message.tags == 'error' %}background: #fee2e2; color: #991b1b;{% else %}background: #dcfce7; color: #166534;{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label
+                        style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--kore-navy-900);">Código
+                        de 6 dígitos</label>
+                    <input type="text" name="otp_code" maxlength="6" pattern="\d{6}" required
+                        style="width: 100%; padding: 1rem; border: 2px solid var(--kore-gray-200); border-radius: 8px; font-size: 1.5rem; text-align: center; letter-spacing: 0.5em; font-weight: bold; color: var(--kore-navy-900);"
+                        placeholder="000000" autofocus
+                        onfocus="this.style.borderColor='var(--kore-teal-500)'; this.style.outline='none';"
+                        onblur="this.style.borderColor='var(--kore-gray-200)';">
+                </div>
+
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; height: 3.5rem; font-size: 1.1rem; font-weight: 600;">Validar Código</button>
+            </form>
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p style="font-size: 0.85rem; color: var(--kore-gray-500);">
+                    ¿No recibiste el correo? <a href="#" style="color: var(--kore-teal-600); font-weight: 600;">Reenviar
+                        código</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

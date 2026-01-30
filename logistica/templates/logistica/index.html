@@ -8,6 +8,7 @@
 {% block header_icon %}<i class="fas fa-truck-ramp-box" style="color: var(--kore-teal-500);"></i>{% endblock %}
 
 {% block content %}
+<!-- DEBUG INFO: Dashboard Template Loaded Freshly -->
 
 <!-- KPI CARDS (Resumen rápido) -->
 <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
@@ -20,8 +21,7 @@
         </div>
         <div>
             <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Productos</div>
-            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_products|default:"0"
-                }}</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_products }}</div>
         </div>
     </div>
 
@@ -33,8 +33,7 @@
         </div>
         <div>
             <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Almacenes</div>
-            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{
-                total_warehouses|default:"0" }}</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_warehouses }}</div>
         </div>
     </div>
 
@@ -46,8 +45,7 @@
         </div>
         <div>
             <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Proveedores</div>
-            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{
-                total_suppliers|default:"0" }}</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_suppliers }}</div>
         </div>
     </div>
 
@@ -58,26 +56,30 @@
             <i class="fas fa-dollar-sign"></i>
         </div>
         <div>
-            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Valor Total</div>
-            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">$0.00</div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Valor Inventario</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">${{ total_value|floatformat:2
+                }}</div>
         </div>
     </div>
 
 </div>
 
 <!-- ACCIONES PRINCIPALES Y TABLA -->
-<div class="kore-card">
+<div class="kore-card" style="background: white; border-radius: 12px; padding: 0;">
     <div class="kore-card-header"
-        style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900);">Inventario Maestro</h3>
+        style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900); margin: 0;">Inventario Reciente
+        </h3>
 
         <div style="display: flex; gap: 0.75rem;">
-            <a href="{% url 'logistica:product_create' %}" class="btn btn-action">
-                <i class="fas fa-plus"></i> Nuevo Producto
+            <a href="{% url 'logistica:product_create' %}" class="btn btn-action"
+                style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">
+                <i class="fas fa-plus"></i> Nuevo
             </a>
-            <button class="btn btn-outline">
-                <i class="fas fa-filter"></i> Filtrar
-            </button>
+            <a href="{% url 'logistica:inventory_list' %}" class="btn btn-outline"
+                style="border: 1px solid var(--kore-gray-300); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; color: var(--kore-navy-700);">
+                <i class="fas fa-list"></i> Ver Todo
+            </a>
         </div>
     </div>
 
@@ -85,34 +87,73 @@
     <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead
-                style="background: var(--kore-gray-100); color: var(--kore-gray-500); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                style="background: var(--kore-gray-50); color: var(--kore-gray-500); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
                 <tr>
-                    <th style="padding: 1rem 1.5rem; font-weight: 600;">SKU / Código</th>
-                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Producto</th>
-                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Categoría</th>
-                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Stock Actual</th>
-                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Costo Unit.</th>
-                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Ubicación</th>
-                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Estado</th>
-                    <th style="padding: 1rem 1.5rem; font-weight: 600;"></th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        SKU</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Producto</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Categoría</th>
+                    <th
+                        style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: right;">
+                        Stock</th>
+                    <th
+                        style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: right;">
+                        Costo</th>
+                    <th
+                        style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: center;">
+                        Estado</th>
                 </tr>
             </thead>
             <tbody style="font-size: 0.9rem; color: var(--kore-gray-800);">
-                <!-- Empty State -->
+                {% for product in recent_products %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100); transition: background 0.1s;"
+                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td
+                        style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace; color: var(--kore-navy-800);">
+                        {{ product.sku }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 600;">{{ product.name }}</td>
+                    <td style="padding: 1rem 1.5rem;">
+                        <span
+                            style="background: var(--kore-gray-100); padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem;">
+                            {{ product.category }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: right;">
+                        <span
+                            style="font-weight: 700; color: {% if product.total_stock <= 0 %}#ef4444{% else %}#10b981{% endif %};">
+                            {{ product.total_stock|floatformat:0 }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: right;">${{ product.unit_cost|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        {% if product.active %}
+                        <i class="fas fa-check-circle" style="color: var(--status-success);"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle" style="color: var(--kore-gray-400);"></i>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
                 <tr>
-                    <td colspan="8" style="padding: 4rem; text-align: center;">
+                    <td colspan="6" style="padding: 4rem; text-align: center;">
                         <div style="color: var(--kore-gray-200); font-size: 3rem; margin-bottom: 1rem;">
                             <i class="fas fa-box-open"></i>
                         </div>
                         <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay
-                            inventario registrado</h4>
+                            inventario reciente</h4>
                         <p style="color: var(--kore-gray-500); margin-bottom: 1.5rem;">Comience creando nuevas materias
-                            primas o productos terminados.</p>
-                        <a href="{% url 'logistica:product_create' %}" class="btn btn-primary">
-                            Crear Primer Producto
+                            primas.</p>
+                        <a href="{% url 'logistica:product_create' %}" class="btn btn-action"
+                            style="background: var(--kore-navy-800); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;">
+                            <i class="fas fa-plus"></i> Crear Primer Producto
                         </a>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

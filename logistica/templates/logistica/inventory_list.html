@@ -1,104 +1,156 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 
-{% block title %}Inventario - KoreBase{% endblock %}
-{% block page_title %}Inventario de Productos{% endblock %}
+{% block title %}Inventario | KoreBase ERP{% endblock %}
+{% block page_title %}Inventario Maestro{% endblock %}
+{% block breadcrumb_parent %}Logística{% endblock %}
+
+{% block header_icon %}<i class="fas fa-boxes" style="color: var(--kore-teal-500);"></i>{% endblock %}
 
 {% block content %}
-
-<!-- Actions Toolbar -->
 <div class="kore-card"
-    style="margin-bottom: 2rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-    <div>
-        <h2 style="margin: 0; font-size: 1.25rem; color: var(--kore-navy-900);">Gestión de Catálogo</h2>
-        <p style="margin: 0.25rem 0 0; color: var(--kore-gray-500); font-size: 0.9rem;">Administra todos los productos y
-            servicios.</p>
-    </div>
-    <div style="display: flex; gap: 1rem;">
-        <a href="{% url 'logistica:product_create' %}" class="btn btn-action">
-            <i class="fas fa-plus"></i> Nuevo Producto
-        </a>
-        <button class="btn btn-outline">
-            <i class="fas fa-filter"></i> Filtrar
-        </button>
-        <button class="btn btn-outline">
-            <i class="fas fa-download"></i> Exportar
-        </button>
-    </div>
-</div>
+    style="padding: 1.5rem; background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
 
-<!-- Inventory Table -->
-<div class="kore-card">
+    <!-- Header with Actions -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.25rem; color: var(--kore-navy-900); font-weight: 600; margin: 0;"></h2>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{% url 'logistica:export_inventory_csv' %}?{{ request.GET.urlencode }}" class="btn btn-outline"
+                style="color: var(--kore-navy-700); border: 1px solid var(--kore-gray-300);">
+                <i class="fas fa-file-csv"></i> Exportar CSV
+            </a>
+            <a href="{% url 'logistica:product_create' %}" class="btn btn-action">
+                <i class="fas fa-plus"></i> Nuevo Producto
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Filter Form -->
+    <div
+        style="margin-bottom: 2rem; padding: 1.5rem; background: var(--kore-gray-50); border-radius: 8px; border: 1px solid var(--kore-gray-200);">
+        <form method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+            <div style="flex: 1; min-width: 250px;">
+                <label
+                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--kore-gray-700); margin-bottom: 0.5rem;">Búsqueda</label>
+                <div style="position: relative;">
+                    <i class="fas fa-search"
+                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--kore-gray-400);"></i>
+                    <input type="text" name="q" value="{{ search_query }}"
+                        placeholder="Buscar por SKU, Nombre o Descripción..."
+                        style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--kore-gray-300); border-radius: 6px;">
+                </div>
+            </div>
+
+            <div style="width: 250px;">
+                <label
+                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--kore-gray-700); margin-bottom: 0.5rem;">Categoría</label>
+                <select name="category"
+                    style="width: 100%; padding: 0.75rem; border: 1px solid var(--kore-gray-300); border-radius: 6px; background-color: white;">
+                    <option value="">Todas las Categorías</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if current_category==cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary"
+                    style="background: var(--kore-navy-800); border: none; padding: 0.75rem 1.5rem; border-radius: 6px;">
+                    <i class="fas fa-filter"></i> Filtrar
+                </button>
+
+                {% if search_query or current_category %}
+                <a href="{% url 'logistica:inventory_list' %}" class="btn btn-outline"
+                    style="padding: 0.75rem 1rem; border: 1px solid var(--kore-gray-300); color: var(--kore-gray-600); text-decoration: none;">
+                    <i class="fas fa-times"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Inventory Table -->
     <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.9rem;">
             <thead>
-                <tr
-                    style="background-color: var(--kore-gray-50); border-bottom: 2px solid var(--kore-gray-100); text-align: left;">
+                <tr style="background-color: var(--kore-gray-50);">
                     <th
-                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        style="padding: 1rem; color: var(--kore-gray-600); font-weight: 600; text-align: left; border-bottom: 2px solid var(--kore-gray-200);">
                         SKU</th>
                     <th
-                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        style="padding: 1rem; color: var(--kore-gray-600); font-weight: 600; text-align: left; border-bottom: 2px solid var(--kore-gray-200);">
                         Producto</th>
                     <th
-                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        style="padding: 1rem; color: var(--kore-gray-600); font-weight: 600; text-align: left; border-bottom: 2px solid var(--kore-gray-200);">
                         Categoría</th>
                     <th
-                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        style="padding: 1rem; color: var(--kore-gray-600); font-weight: 600; text-align: right; border-bottom: 2px solid var(--kore-gray-200);">
                         Costo Unit.</th>
                     <th
-                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        style="padding: 1rem; color: var(--kore-gray-600); font-weight: 600; text-align: center; border-bottom: 2px solid var(--kore-gray-200);">
+                        Stock Total</th>
+                    <th
+                        style="padding: 1rem; color: var(--kore-gray-600); font-weight: 600; text-align: center; border-bottom: 2px solid var(--kore-gray-200);">
                         Estado</th>
                     <th
-                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        style="padding: 1rem; color: var(--kore-gray-600); font-weight: 600; text-align: right; border-bottom: 2px solid var(--kore-gray-200);">
                         Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% if products %}
                 {% for product in products %}
-                <tr style="border-bottom: 1px solid var(--kore-gray-100); transition: background 0.2s;"
-                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                <tr style="transition: background 0.2s;" onmouseover="this.style.background='var(--kore-gray-50)'"
                     onmouseout="this.style.background='transparent'">
-                    <td style="padding: 1rem; font-family: monospace; font-weight: 600; color: var(--kore-navy-800);">{{
-                        product.sku }}</td>
-                    <td style="padding: 1rem; font-weight: 500;">
-                        <div>{{ product.name }}</div>
+                    <td
+                        style="padding: 1rem; font-family: monospace; font-weight: 600; color: var(--kore-navy-800); border-bottom: 1px solid var(--kore-gray-100);">
+                        {{ product.sku }}
+                    </td>
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--kore-gray-100);">
+                        <div style="font-weight: 600; color: var(--kore-navy-900);">{{ product.name }}</div>
                         {% if product.description %}
-                        <div style="font-size: 0.8rem; color: var(--kore-gray-500);">{{
-                            product.description|truncatechars:30 }}</div>
+                        <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">{{
+                            product.description|truncatechars:40 }}</div>
                         {% endif %}
                     </td>
-                    <td style="padding: 1rem;">
+                    <td style="padding: 1rem; border-bottom: 1px solid var(--kore-gray-100);">
                         <span
-                            style="background: var(--kore-gray-100); padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.8rem; color: var(--kore-gray-600);">
-                            {{ product.category|default:"General" }}
+                            style="background: var(--kore-gray-100); padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; color: var(--kore-navy-700); font-weight: 600;">
+                            {{ product.category|default:"Sin categoría" }}
                         </span>
                     </td>
-                    <td style="padding: 1rem; font-weight: 600;">${{ product.unit_cost|floatformat:2 }}</td>
-                    <td style="padding: 1rem;">
+                    <td
+                        style="padding: 1rem; text-align: right; font-family: monospace; border-bottom: 1px solid var(--kore-gray-100);">
+                        ${{ product.unit_cost }}
+                    </td>
+                    <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--kore-gray-100);">
+                        <span
+                            style="font-weight: 700; color: {% if product.total_stock <= 0 %}#dc2626{% else %}#059669{% endif %}; background: {% if product.total_stock <= 0 %}#fef2f2{% else %}#ecfdf5{% endif %}; padding: 0.25rem 0.75rem; border-radius: 6px;">
+                            {{ product.total_stock|floatformat:0 }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--kore-gray-100);">
                         {% if product.active %}
-                        <span
-                            style="color: var(--status-success); display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.85rem;">
-                            <i class="fas fa-check-circle"></i> Activo
-                        </span>
+                        <i class="fas fa-check-circle" style="color: var(--status-success);" title="Activo"></i>
                         {% else %}
-                        <span
-                            style="color: var(--kore-gray-400); display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.85rem;">
-                            <i class="fas fa-times-circle"></i> Inactivo
-                        </span>
+                        <i class="fas fa-times-circle" style="color: var(--kore-gray-400);" title="Inactivo"></i>
                         {% endif %}
                     </td>
-                    <td style="padding: 1rem;">
-                        <div style="display: flex; gap: 0.5rem;">
-                            <a href="{% url 'logistica:product_edit' product.pk %}" class="icon-btn"
-                                style="width: 32px; height: 32px; font-size: 1rem;" title="Editar">
-                                <i class="fas fa-edit"></i>
+                    <td style="padding: 1rem; text-align: right; border-bottom: 1px solid var(--kore-gray-100);">
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <a href="{% url 'logistica:stock_adjustment' product.pk %}" class="btn btn-sm"
+                                title="Ajuste Stock"
+                                style="background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-dolly"></i>
                             </a>
-                            <a href="{% url 'logistica:product_delete' product.pk %}" class="icon-btn"
-                                style="width: 32px; height: 32px; font-size: 1rem; color: var(--status-danger);"
-                                title="Eliminar">
-                                <i class="fas fa-trash"></i>
+                            <a href="{% url 'logistica:product_history' product.pk %}" class="btn btn-sm"
+                                title="Historial"
+                                style="background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-history"></i>
+                            </a>
+                            <a href="{% url 'logistica:product_edit' product.pk %}" class="btn btn-sm" title="Editar"
+                                style="background-color: #f8fafc; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-edit"></i>
                             </a>
                         </div>
                     </td>
@@ -106,17 +158,17 @@
                 {% endfor %}
                 {% else %}
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 4rem 2rem;">
-                        <div
-                            style="width: 64px; height: 64px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--kore-gray-400); font-size: 1.5rem;">
+                    <td colspan="7" style="padding: 4rem; text-align: center;">
+                        <div style="color: var(--kore-gray-200); font-size: 3rem; margin-bottom: 1rem;">
                             <i class="fas fa-box-open"></i>
                         </div>
-                        <h3 style="color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay productos registrados
-                        </h3>
-                        <p style="color: var(--kore-gray-500); margin-bottom: 1.5rem;">Comienza añadiendo el primer ítem
-                            a tu inventario maestro.</p>
-                        <a href="{% url 'logistica:product_create' %}" class="btn btn-action">
-                            <i class="fas fa-plus"></i> Crear Primer Producto
+                        <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">No se
+                            encontraron productos</h4>
+                        <p style="color: var(--kore-gray-500); margin-bottom: 1.5rem;">Intente ajustar los filtros de
+                            búsqueda.</p>
+                        <a href="{% url 'logistica:product_create' %}" class="btn btn-action"
+                            style="background: var(--kore-navy-800); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;">
+                            <i class="fas fa-plus"></i> Crear Nuevo Producto
                         </a>
                     </td>
                 </tr>

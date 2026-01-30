@@ -2,75 +2,115 @@
 {% load static %}
 
 {% block login_content %}
-<div style="max-width: 420px; width: 100%;">
-    <!-- Login Card -->
-    <div style="background: white; border-radius: 8px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); overflow: hidden;">
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #714B67 0%, #5a3b52 100%); padding: 40px 32px; text-align: center;">
-            <div style="width: 80px; height: 80px; background: white; border-radius: 12px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-                <i class="fas fa-cubes" style="font-size: 40px; color: #714B67;"></i>
-            </div>
-            <h1 style="color: white; font-size: 28px; font-weight: 700; margin: 0 0 8px;">KoreBase</h1>
-            <p style="color: rgba(255, 255, 255, 0.9); font-size: 14px; margin: 0;">Enterprise Resource Planning</p>
+<div
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--kore-navy-900) 0%, #0f172a 100%); padding: 1rem; z-index: 9999;">
+    <div style="max-width: 440px; width: 100%;">
+        <!-- Brand Header -->
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <img src="{% static 'images/logo_no background.png' %}" alt="KoreBase"
+                style="height: 80px; margin-bottom: 1rem; object-fit: contain;">
+            <h2 style="color: white; font-weight: 300; font-size: 1.75rem; margin: 0; letter-spacing: -0.5px;">
+                Bienvenido de
+                nuevo</h2>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; margin-top: 0.5rem;">Accede a tu panel de
+                control
+                empresarial</p>
         </div>
 
-        <!-- Login Form -->
-        <form method="post" style="padding: 40px 32px;">
-            {% csrf_token %}
+        <!-- Login Card -->
+        <div class="kore-card"
+            style="background: white; border-radius: 16px; padding: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+            <form method="post">
+                {% csrf_token %}
 
-            <div style="margin-bottom: 20px;">
-                <label for="username" style="display: block; font-weight: 500; font-size: 14px; color: #374151; margin-bottom: 8px;">
-                    Usuario
-                </label>
-                <div style="position: relative;">
-                    <i class="fas fa-user" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
-                    <input type="text" name="username" id="username" required
-                        style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; color: #1f2937; transition: all 0.2s ease;"
-                        placeholder="Ingresa tu usuario"
-                        onfocus="this.style.borderColor='#714B67'; this.style.boxShadow='0 0 0 3px rgba(113, 75, 103, 0.1)';"
-                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
+                {% if messages %}
+                {% for message in messages %}
+                <div
+                    style="background: {% if message.tags == 'error' %}#fee2e2{% else %}#d1fae5{% endif %}; border: 1px solid {% if message.tags == 'error' %}#fca5a5{% else %}#6ee7b7{% endif %}; color: {% if message.tags == 'error' %}#991b1b{% else %}#065f46{% endif %}; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                    {{ message }}
                 </div>
-            </div>
+                {% endfor %}
+                {% endif %}
 
-            <div style="margin-bottom: 24px;">
-                <label for="password" style="display: block; font-weight: 500; font-size: 14px; color: #374151; margin-bottom: 8px;">
-                    Contraseña
-                </label>
-                <div style="position: relative;">
-                    <i class="fas fa-lock" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
-                    <input type="password" name="password" id="password" required
-                        style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; color: #1f2937; transition: all 0.2s ease;"
-                        placeholder="Ingresa tu contraseña"
-                        onfocus="this.style.borderColor='#714B67'; this.style.boxShadow='0 0 0 3px rgba(113, 75, 103, 0.1)';"
-                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
+                <!-- Usuario -->
+                <div style="margin-bottom: 1.5rem;">
+                    <label for="username"
+                        style="display: block; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem; font-size: 0.9rem;">Usuario</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-user"
+                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--kore-gray-400);"></i>
+                        <input type="text" name="username" id="username" required class="form-control"
+                            placeholder="Ingrese su usuario"
+                            style="padding-left: 2.75rem; height: 3rem; border: 1px solid var(--kore-gray-200); background: var(--kore-gray-50);">
+                    </div>
                 </div>
+
+                <!-- Contraseña -->
+                <div style="margin-bottom: 0.75rem;">
+                    <label for="password"
+                        style="display: block; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem; font-size: 0.9rem;">Contraseña</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-lock"
+                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--kore-gray-400);"></i>
+                        <input type="password" name="password" id="password" required class="form-control"
+                            placeholder="••••••••"
+                            style="padding-left: 2.75rem; height: 3rem; border: 1px solid var(--kore-gray-200); background: var(--kore-gray-50);">
+                    </div>
+                </div>
+
+                <!-- Forgot Password -->
+                <div style="text-align: right; margin-bottom: 1.75rem;">
+                    <a href="#"
+                        style="color: var(--kore-teal-600); font-size: 0.85rem; text-decoration: none; font-weight: 500; transition: color 0.2s;">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; height: 3rem; font-size: 1rem; justify-content: center; margin-bottom: 1.5rem; background: var(--kore-teal-500); border: none; font-weight: 600; letter-spacing: 0.02em;">
+                    Iniciar Sesión
+                </button>
+
+                <!-- Social Login Divider -->
+                <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                    <div style="flex: 1; height: 1px; background: var(--kore-gray-200);"></div>
+                    <span
+                        style="padding: 0 1rem; color: var(--kore-gray-400); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">O
+                        continúa con</span>
+                    <div style="flex: 1; height: 1px; background: var(--kore-gray-200);"></div>
+                </div>
+
+                <!-- Google Button -->
+                <button type="button" class="btn btn-outline"
+                    style="width: 100%; height: 3rem; justify-content: center; color: var(--kore-navy-800); border-color: var(--kore-gray-300); background: white; font-weight: 500;">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
+                        style="width: 18px; margin-right: 0.75rem;">
+                    Google
+                </button>
+            </form>
+
+            <!-- Footer / Create Account -->
+            <div
+                style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--kore-gray-100);">
+                <p style="color: var(--kore-gray-600); margin: 0; font-size: 0.9rem;">
+                    ¿Aún no tienes cuenta?
+                    <a href="{% url 'core:register' %}"
+                        style="color: var(--kore-teal-600); font-weight: 700; text-decoration: none;">Crear
+                        cuenta</a>
+                </p>
             </div>
-
-            <button type="submit"
-                style="width: 100%; background: linear-gradient(135deg, #714B67 0%, #5a3b52 100%); color: white; font-weight: 600; font-size: 14px; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);"
-                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(113, 75, 103, 0.4)';"
-                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(113, 75, 103, 0.3)';">
-                Iniciar Sesión
-            </button>
-        </form>
-
-        <!-- Footer -->
-        <div style="padding: 24px 32px; background: #f9fafb; border-top: 1px solid #e5e7eb; text-align: center;">
-            <p style="color: #6b7280; font-size: 13px; margin: 0 0 4px;">
-                <i class="fas fa-university"></i> Universidad Politécnica de Yucatán
-            </p>
-            <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-                Sistema de Gestión Empresarial v1.0
-            </p>
         </div>
-    </div>
 
-    <!-- Security Notice -->
-    <div style="margin-top: 24px; background: rgba(255, 255, 255, 0.95); border-radius: 8px; padding: 16px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.3);">
-        <p style="color: #374151; font-size: 13px; margin: 0;">
-            <i class="fas fa-shield-alt" style="color: #714B67; margin-right: 8px;"></i>
-            Sistema protegido con autenticación segura
-        </p>
+        <!-- Legal Links (Optional) -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="#"
+                style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin: 0 10px; text-decoration: none;">Términos</a>
+            <a href="#"
+                style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin: 0 10px; text-decoration: none;">Privacidad</a>
+            <a href="#"
+                style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin: 0 10px; text-decoration: none;">Ayuda</a>
+        </div>
     </div>
 </div>
 {% endblock %}

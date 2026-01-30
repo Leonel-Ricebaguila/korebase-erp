@@ -11,7 +11,10 @@ urlpatterns = [
     path('inventory/', views.inventory_list, name='inventory_list'),
     path('product/create/', views.product_create, name='product_create'),
     path('product/<int:pk>/edit/', views.product_edit, name='product_edit'),
+    path('product/<int:pk>/adjust/', views.stock_adjustment, name='stock_adjustment'),
     path('product/<int:pk>/delete/', views.product_delete, name='product_delete'),
+    path('product/<int:pk>/history/', views.product_history, name='product_history'),
+    path('inventory/export/csv/', views.export_inventory_csv, name='export_inventory_csv'),
     
     # Warehouses
     path('warehouse/create/', views.warehouse_create, name='warehouse_create'),

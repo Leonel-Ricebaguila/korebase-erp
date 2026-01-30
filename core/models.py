@@ -84,3 +84,20 @@ class Role(models.Model):
     
     def __str__(self):
         return self.name
+
+
+class OTPToken(models.Model):
+    """
+    One-Time Password token for email verification
+    """
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='otp_tokens')
+    otp_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    
+    def is_valid(self):
+        from django.utils import timezone
+        return self.expires_at > timezone.now()
+
+    def __str__(self):
+        return f"OTP for {self.user.username}"

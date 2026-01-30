@@ -130,3 +130,38 @@ class SupplierForm(forms.ModelForm):
         self.fields['phone'].label = 'Teléfono'
         self.fields['address'].label = 'Dirección'
         self.fields['active'].label = 'Activo'
+
+
+class StockMovementForm(forms.Form):
+    """Form for manual stock adjustments"""
+    warehouse = forms.ModelChoiceField(
+        queryset=Warehouse.objects.filter(active=True),
+        label="Almacén",
+        widget=forms.Select(attrs={'class': 'erp-form-input'})
+    )
+    movement_type = forms.ChoiceField(
+        choices=[
+            ('in', 'Entrada (Compra / Devolución)'),
+            ('out', 'Salida (Venta / Merma)'),
+            ('adjustment', 'Ajuste de Inventario (Corrección)'),
+        ],
+        label="Tipo de Movimiento",
+        widget=forms.Select(attrs={'class': 'erp-form-input'})
+    )
+    quantity = forms.DecimalField(
+        min_value=0.001,
+        max_digits=15, 
+        decimal_places=3,
+        label="Cantidad",
+        widget=forms.NumberInput(attrs={'class': 'erp-form-input', 'placeholder': '0.00'})
+    )
+    reference = forms.CharField(
+        required=False,
+        label="Referencia / Documento",
+        widget=forms.TextInput(attrs={'class': 'erp-form-input', 'placeholder': 'Ej: Factura 123'})
+    )
+    notes = forms.CharField(
+        required=False,
+        label="Notas / Justificación",
+        widget=forms.Textarea(attrs={'class': 'erp-form-textarea', 'rows': 2, 'placeholder': 'Detalles del movimiento...'})
+    )

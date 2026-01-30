@@ -1,0 +1,223 @@
+{#
+Componente: Topbar (Barra Superior)
+Uso: Barra superior con título, búsqueda y acciones
+
+Parámetros opcionales:
+- page_title: str - Título de la página actual
+- show_search: bool - Mostrar barra de búsqueda (default: True)
+- show_notifications: bool - Mostrar botón de notificaciones (default: True)
+#}
+
+{% load static %}
+
+<header class="topbar">
+    <div class="topbar__left">
+        {# Mobile menu toggle #}
+        <button class="topbar__menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        {# Page Title #}
+        <h1 class="topbar__title">
+            {% block page_title %}{{ page_title|default:"Dashboard" }}{% endblock %}
+        </h1>
+    </div>
+
+    <div class="topbar__right">
+        {# Search Bar #}
+        {% if show_search|default:True %}
+        <div class="topbar__search">
+            <i class="fas fa-search topbar__search-icon"></i>
+            <input type="text" class="topbar__search-input" placeholder="Buscar..." aria-label="Buscar">
+        </div>
+        {% endif %}
+
+        {# Notifications #}
+        {% if show_notifications|default:True %}
+        <button class="topbar__action" aria-label="Notificaciones">
+            <i class="fas fa-bell"></i>
+            <span class="topbar__badge">3</span>
+        </button>
+        {% endif %}
+
+        {# Settings #}
+        <button class="topbar__action" aria-label="Configuración">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+</header>
+
+<style>
+    /* ========================================
+   TOPBAR STYLES
+   ======================================== */
+    .topbar {
+        height: var(--topbar-height);
+        background: var(--color-white);
+        border-bottom: 1px solid var(--color-gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--spacing-6);
+        gap: var(--spacing-4);
+        position: sticky;
+        top: 0;
+        z-index: var(--z-index-sticky);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .topbar__left {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-4);
+        flex: 1;
+        min-width: 0;
+    }
+
+    .topbar__menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        padding: var(--spacing-2);
+        cursor: pointer;
+        color: var(--color-gray-600);
+        font-size: var(--font-size-xl);
+        border-radius: var(--border-radius-md);
+        transition: var(--transition-colors);
+    }
+
+    .topbar__menu-toggle:hover {
+        background: var(--color-gray-100);
+        color: var(--color-gray-900);
+    }
+
+    .topbar__title {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-gray-900);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .topbar__right {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+    }
+
+    /* Search Bar */
+    .topbar__search {
+        position: relative;
+        width: 300px;
+    }
+
+    .topbar__search-icon {
+        position: absolute;
+        left: var(--spacing-3);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-gray-400);
+        pointer-events: none;
+    }
+
+    .topbar__search-input {
+        width: 100%;
+        padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-10);
+        border: 1px solid var(--color-gray-300);
+        border-radius: var(--border-radius-lg);
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-900);
+        background: var(--color-gray-50);
+        transition: var(--transition-all);
+    }
+
+    .topbar__search-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        background: var(--color-white);
+        box-shadow: 0 0 0 3px var(--color-primary-100);
+    }
+
+    .topbar__search-input::placeholder {
+        color: var(--color-gray-400);
+    }
+
+    /* Action Buttons */
+    .topbar__action {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-gray-100);
+        border: none;
+        border-radius: var(--border-radius-lg);
+        color: var(--color-gray-600);
+        font-size: var(--font-size-lg);
+        cursor: pointer;
+        transition: var(--transition-all);
+    }
+
+    .topbar__action:hover {
+        background: var(--color-gray-200);
+        color: var(--color-gray-900);
+    }
+
+    .topbar__action:active {
+        transform: scale(0.95);
+    }
+
+    .topbar__badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        background: var(--color-danger);
+        color: var(--color-white);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        border-radius: var(--border-radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--color-white);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .topbar__menu-toggle {
+            display: flex;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .topbar {
+            padding: 0 var(--spacing-4);
+        }
+
+        .topbar__title {
+            font-size: var(--font-size-lg);
+        }
+
+        .topbar__search {
+            display: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .topbar__title {
+            font-size: var(--font-size-base);
+        }
+
+        .topbar__action {
+            width: 36px;
+            height: 36px;
+            font-size: var(--font-size-base);
+        }
+    }
+</style>

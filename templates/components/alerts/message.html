@@ -1,0 +1,165 @@
+{#
+Componente: Alerta/Mensaje
+Uso: Mostrar mensajes de sistema, notificaciones, errores
+
+Parámetros:
+- type: str (requerido) - 'success', 'warning', 'danger', 'info'
+- message: str (requerido) - Texto del mensaje
+- icon: str (opcional) - Clase de Font Awesome personalizada
+- dismissible: bool (opcional) - Si se puede cerrar (default: False)
+- title: str (opcional) - Título del mensaje
+
+Ejemplo de uso:
+{% include 'components/alerts/message.html' with
+type="success"
+message="Operación completada exitosamente"
+dismissible=True
+%}
+#}
+
+{% load static %}
+
+<div class="alert alert--{{ type|default:'info' }} {% if dismissible %}alert--dismissible{% endif %}" role="alert"
+    id="alert-{{ type }}-{{ forloop.counter0|default:'0' }}">
+
+    <div class="alert__icon">
+        {% if icon %}
+        <i class="fas {{ icon }}"></i>
+        {% else %}
+        {% if type == 'success' %}
+        <i class="fas fa-check-circle"></i>
+        {% elif type == 'warning' %}
+        <i class="fas fa-exclamation-triangle"></i>
+        {% elif type == 'danger' %}
+        <i class="fas fa-times-circle"></i>
+        {% else %}
+        <i class="fas fa-info-circle"></i>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="alert__content">
+        {% if title %}
+        <div class="alert__title">{{ title }}</div>
+        {% endif %}
+        <div class="alert__message">{{ message }}</div>
+    </div>
+
+    {% if dismissible %}
+    <button class="alert__close" onclick="this.parentElement.style.display='none'" aria-label="Cerrar">
+        <i class="fas fa-times"></i>
+    </button>
+    {% endif %}
+</div>
+
+<style>
+    .alert {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-3);
+        padding: var(--spacing-4);
+        border-radius: var(--border-radius-lg);
+        border-left: 4px solid;
+        margin-bottom: var(--spacing-4);
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert--success {
+        background-color: var(--color-success-50);
+        border-color: var(--color-success);
+        color: var(--color-success-dark);
+    }
+
+    .alert--warning {
+        background-color: var(--color-warning-50);
+        border-color: var(--color-warning);
+        color: var(--color-warning-dark);
+    }
+
+    .alert--danger {
+        background-color: var(--color-danger-50);
+        border-color: var(--color-danger);
+        color: var(--color-danger-dark);
+    }
+
+    .alert--info {
+        background-color: var(--color-info-50);
+        border-color: var(--color-info);
+        color: var(--color-info-dark);
+    }
+
+    .alert__icon {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-lg);
+    }
+
+    .alert--success .alert__icon {
+        color: var(--color-success);
+    }
+
+    .alert--warning .alert__icon {
+        color: var(--color-warning);
+    }
+
+    .alert--danger .alert__icon {
+        color: var(--color-danger);
+    }
+
+    .alert--info .alert__icon {
+        color: var(--color-info);
+    }
+
+    .alert__content {
+        flex: 1;
+    }
+
+    .alert__title {
+        font-weight: var(--font-weight-semibold);
+        font-size: var(--font-size-base);
+        margin-bottom: var(--spacing-1);
+    }
+
+    .alert__message {
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .alert__close {
+        flex-shrink: 0;
+        background: none;
+        border: none;
+        padding: var(--spacing-1);
+        cursor: pointer;
+        color: currentColor;
+        opacity: 0.6;
+        transition: var(--transition-all);
+        border-radius: var(--border-radius-sm);
+    }
+
+    .alert__close:hover {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .alert__close:focus {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
+</style>

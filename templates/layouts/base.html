@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    {# SEO Meta Tags #}
+    <title>{% block title %}KoreBase ERP{% endblock %}</title>
+    <meta name="description"
+        content="{% block meta_description %}Sistema de Gestión Empresarial - KoreBase ERP{% endblock %}">
+    <meta name="keywords"
+        content="{% block meta_keywords %}ERP, gestión empresarial, logística, producción, finanzas{% endblock %}">
+
+    {# Favicon #}
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
+    {# Design System - SIEMPRE se carga primero #}
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+
+    {# Google Fonts #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    {# Font Awesome Icons #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {# HTMX for dynamic interactions #}
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    {# CSS adicional por bloque #}
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    {% if user.is_authenticated %}
+    {# ========================================
+    LAYOUT AUTENTICADO (Dashboard/App)
+    ======================================== #}
+    <div class="app-layout">
+        {# Sidebar #}
+        {% include 'components/navigation/sidebar.html' %}
+
+        {# Main Content Area #}
+        <main class="app-main">
+            {# Top Bar #}
+            {% include 'components/navigation/topbar.html' %}
+
+            {# Messages/Alerts #}
+            {% if messages %}
+            <div class="app-messages">
+                {% for message in messages %}
+                {% include 'components/alerts/message.html' with
+                type=message.tags
+                message=message
+                dismissible=True
+                %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {# Page Content #}
+            <div class="app-content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    {% else %}
+    {# ========================================
+    LAYOUT NO AUTENTICADO (Login/Auth)
+    ======================================== #}
+    {% block auth_content %}{% endblock %}
+    {% endif %}
+
+    {# JavaScript Global #}
+    <script src="{% static 'js/app.js' %}"></script>
+
+    {# JavaScript adicional por bloque #}
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>
+
+<style>
+    /* ========================================
+   APP LAYOUT STYLES
+   ======================================== */
+    .app-layout {
+        display: flex;
+        min-height: 100vh;
+        background-color: var(--color-gray-50);
+    }
+
+    .app-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-left: var(--sidebar-width);
+        transition: margin-left var(--transition-base);
+    }
+
+    .app-messages {
+        padding: var(--spacing-4) var(--spacing-6);
+        padding-bottom: 0;
+    }
+
+    .app-content {
+        flex: 1;
+        padding: var(--spacing-6);
+        max-width: var(--container-max-width);
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .app-main {
+            margin-left: 0;
+        }
+
+        .app-content {
+            padding: var(--spacing-4);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .app-content {
+            padding: var(--spacing-3);
+        }
+    }
+</style>

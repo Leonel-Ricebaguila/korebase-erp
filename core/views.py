@@ -54,7 +54,7 @@ def dashboard_view(request):
 
 
 def register_view(request):
-    """User registration view with OTP (disabled in production)"""
+    """User registration view with OTP verification"""
     if request.user.is_authenticated:
         return redirect('core:dashboard')
 
@@ -62,42 +62,32 @@ def register_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            user.is_active = False  # Inactive until OTP verification
+            user.save()
             
-            # PRODUCTION FIX: Skip OTP verification if DEBUG=False (Render blocks SMTP)
-            if settings.DEBUG:
-                # Development: Use OTP verification
-                user.is_active = False  # Inactive until OTP verification
-                user.save()
-                
-                # Generate OTP
-                otp_code = secrets.randbelow(1000000)
-                otp_str = f"{otp_code:06d}"
-                
-                # Save OTP
-                expires_at = timezone.now() + timedelta(minutes=10)
-                OTPToken.objects.create(user=user, otp_code=otp_str, expires_at=expires_at)
-                
-                # Send Email
-                try:
-                    send_mail(
-                        'Código de Verificación - KoreBase',
-                        f'Tu código de verificación es: {otp_str}\nExpira en 10 minutos.',
-                        settings.DEFAULT_FROM_EMAIL or 'noreply@korebase.com',
-                        [user.email],
-                        fail_silently=False,
-                    )
-                    messages.success(request, f'Cuenta creada. Se ha enviado un código a {user.email}.')
-                    request.session['otp_user_id'] = user.id
-                    return redirect('core:verify_otp')
-                except Exception as e:
-                    messages.error(request, f'Error enviando correo: {e}')
-                    user.delete()  # Cleanup failed registration
-            else:
-                # Production: Activate user immediately (skip OTP due to SMTP issues)
-                user.is_active = True
-                user.save()
-                messages.success(request, f'¡Cuenta creada exitosamente! Ya puedes iniciar sesión.')
-                return redirect('core:login')
+            # Generate OTP
+            otp_code = secrets.randbelow(1000000)
+            otp_str = f"{otp_code:06d}"
+            
+            # Save OTP
+            expires_at = timezone.now() + timedelta(minutes=10)
+            OTPToken.objects.create(user=user, otp_code=otp_str, expires_at=expires_at)
+            
+            # Send Email (SendGrid in production, Gmail in development)
+            try:
+                send_mail(
+                    'Código de Verificación - KoreBase',
+                    f'Tu código de verificación es: {otp_str}\nExpira en 10 minutos.',
+                    settings.DEFAULT_FROM_EMAIL or 'noreply@korebase.com',
+                    [user.email],
+                    fail_silently=False,
+                )
+                messages.success(request, f'Cuenta creada. Se ha enviado un código a {user.email}.')
+                request.session['otp_user_id'] = user.id
+                return redirect('core:verify_otp')
+            except Exception as e:
+                messages.error(request, f'Error enviando correo: {e}')
+                user.delete()  # Cleanup failed registration
         else:
             messages.error(request, "Por favor corrige los errores señalados en el formulario.")
     else:

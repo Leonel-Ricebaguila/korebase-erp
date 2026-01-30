@@ -1,209 +1,121 @@
-{% extends 'base.html' %}
+{% extends 'layouts/base.html' %}
+{% load static %}
 
-{% block title %}Logística - KoreBase{% endblock %}
-{% block page_title %}Módulo de Logística{% endblock %}
+{% block title %}Logística | KoreBase ERP{% endblock %}
+{% block page_title %}Gestión Logística{% endblock %}
+{% block breadcrumb_parent %}Módulos Operativos{% endblock %}
+
+{% block header_icon %}<i class="fas fa-truck-ramp-box" style="color: var(--kore-teal-500);"></i>{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb -->
-<nav class="erp-breadcrumb">
-    <div class="erp-breadcrumb-item">
-        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
-    </div>
-    <div class="erp-breadcrumb-item">
-        <span class="erp-breadcrumb-link">Logística</span>
-    </div>
-</nav>
 
-<!-- Page Header -->
-<div class="erp-card">
-    <div class="erp-card-header">
+<!-- KPI CARDS (Resumen rápido) -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+
+    <!-- Total Productos -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-box"></i>
+        </div>
         <div>
-            <h2 class="erp-card-title">Gestión de Logística y Supply Chain</h2>
-            <p style="color: var(--erp-gray-600); font-size: 14px; margin-top: 4px;">Control de inventario, almacenes y proveedores</p>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Productos</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_products|default:"0"
+                }}</div>
         </div>
-        <a href="{% url 'logistica:product_create' %}" class="erp-btn erp-btn-primary">
-            <i class="fas fa-plus"></i> Nuevo Producto
-        </a>
     </div>
+
+    <!-- Almacenes -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-teal-500); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-warehouse"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Almacenes</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{
+                total_warehouses|default:"0" }}</div>
+        </div>
+    </div>
+
+    <!-- Proveedores -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--status-info); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-users"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Proveedores</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{
+                total_suppliers|default:"0" }}</div>
+        </div>
+    </div>
+
+    <!-- Valor Inventario -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--status-success); font-size: 1.25rem;">
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Valor Total</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">$0.00</div>
+        </div>
+    </div>
+
 </div>
 
-<!-- Metrics Grid -->
-<div class="erp-metrics-grid">
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Productos</span>
-            <span class="erp-metric-icon"><i class="fas fa-box"></i></span>
-        </div>
-        <div class="erp-metric-value">{{ total_products }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-success">En inventario</span>
-        </div>
-    </div>
+<!-- ACCIONES PRINCIPALES Y TABLA -->
+<div class="kore-card">
+    <div class="kore-card-header"
+        style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900);">Inventario Maestro</h3>
 
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Almacenes</span>
-            <span class="erp-metric-icon"><i class="fas fa-warehouse"></i></span>
-        </div>
-        <div class="erp-metric-value">{{ total_warehouses }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-primary">Activos</span>
-        </div>
-    </div>
-
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Proveedores</span>
-            <span class="erp-metric-icon"><i class="fas fa-truck"></i></span>
-        </div>
-        <div class="erp-metric-value">{{ total_suppliers }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-info">Registrados</span>
-        </div>
-    </div>
-
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Valor Inventario</span>
-            <span class="erp-metric-icon"><i class="fas fa-dollar-sign"></i></span>
-        </div>
-        <div class="erp-metric-value">$0.00</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-info">MXN</span>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Acciones Rápidas</h2>
-    </div>
-    <div class="erp-card-body">
-        <div class="erp-action-grid">
-            <a href="{% url 'logistica:inventory_list' %}" class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-boxes"></i></span>
-                <span class="erp-action-text">Ver Inventario</span>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{% url 'logistica:product_create' %}" class="btn btn-action">
+                <i class="fas fa-plus"></i> Nuevo Producto
             </a>
-            <a href="{% url 'logistica:product_create' %}" class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-plus-circle"></i></span>
-                <span class="erp-action-text">Nuevo Producto</span>
-            </a>
-            <a href="{% url 'logistica:warehouse_create' %}" class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-warehouse"></i></span>
-                <span class="erp-action-text">Gestionar Almacenes</span>
-            </a>
-            <a href="{% url 'logistica:supplier_create' %}" class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-truck"></i></span>
-                <span class="erp-action-text">Gestionar Proveedores</span>
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- Inventory Table -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Inventario Reciente</h2>
-        <div class="erp-flex erp-gap-2">
-            <button class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-download"></i> Exportar
+            <button class="btn btn-outline">
+                <i class="fas fa-filter"></i> Filtrar
             </button>
-            <a href="{% url 'logistica:product_create' %}" class="erp-btn erp-btn-primary erp-btn-sm">
-                <i class="fas fa-plus"></i> Agregar
-            </a>
-        </div>
-    </div>
-    <div class="erp-card-body">
-        <div class="erp-table-container">
-            <table class="erp-table">
-                <thead>
-                    <tr>
-                        <th>SKU</th>
-                        <th>Producto</th>
-                        <th>Categoría</th>
-                        <th>Stock</th>
-                        <th>Precio Unitario</th>
-                        <th>Ubicación</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="8" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                            <i class="fas fa-boxes" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                            <p>No hay productos en el inventario</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- Warehouses Overview -->
-<div class="erp-flex erp-gap-4" style="flex-wrap: wrap;">
-    <div class="erp-card" style="flex: 1; min-width: 300px;">
-        <div class="erp-card-header">
-            <h2 class="erp-card-title">Almacenes</h2>
-            <a href="{% url 'logistica:warehouse_create' %}" class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-plus"></i> Nuevo
-            </a>
-        </div>
-        <div class="erp-card-body">
-            <div class="erp-table-container">
-                <table class="erp-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Ubicación</th>
-                            <th>Capacidad</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="4" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                                <i class="fas fa-warehouse" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                                <p>No hay almacenes registrados</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
 
-    <div class="erp-card" style="flex: 1; min-width: 300px;">
-        <div class="erp-card-header">
-            <h2 class="erp-card-title">Proveedores</h2>
-            <a href="{% url 'logistica:supplier_create' %}" class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-plus"></i> Nuevo
-            </a>
-        </div>
-        <div class="erp-card-body">
-            <div class="erp-table-container">
-                <table class="erp-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Contacto</th>
-                            <th>Teléfono</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="4" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                                <i class="fas fa-truck" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                                <p>No hay proveedores registrados</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Tabla Estilo Industrial -->
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead
+                style="background: var(--kore-gray-100); color: var(--kore-gray-500); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                <tr>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600;">SKU / Código</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Producto</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Categoría</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Stock Actual</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Costo Unit.</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Ubicación</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600;">Estado</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600;"></th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem; color: var(--kore-gray-800);">
+                <!-- Empty State -->
+                <tr>
+                    <td colspan="8" style="padding: 4rem; text-align: center;">
+                        <div style="color: var(--kore-gray-200); font-size: 3rem; margin-bottom: 1rem;">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay
+                            inventario registrado</h4>
+                        <p style="color: var(--kore-gray-500); margin-bottom: 1.5rem;">Comience creando nuevas materias
+                            primas o productos terminados.</p>
+                        <a href="{% url 'logistica:product_create' %}" class="btn btn-primary">
+                            Crear Primer Producto
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
+
 {% endblock %}

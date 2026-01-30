@@ -1,0 +1,66 @@
+2026-01-30T05:43:58.300283422Z Using cached django_htmx-1.27.0-py3-none-any.whl (62 kB)
+2026-01-30T05:43:58.302023495Z Using cached gunicorn-24.1.1-py3-none-any.whl (114 kB)
+2026-01-30T05:43:58.303939459Z Using cached python_dotenv-1.2.1-py3-none-any.whl (21 kB)
+2026-01-30T05:43:58.305643591Z Using cached pillow-12.1.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.0 MB)
+2026-01-30T05:43:58.320513572Z Using cached asgiref-3.11.0-py3-none-any.whl (24 kB)
+2026-01-30T05:43:58.337962705Z Using cached requests-2.32.5-py3-none-any.whl (64 kB)
+2026-01-30T05:43:58.340134863Z Using cached certifi-2026.1.4-py3-none-any.whl (152 kB)
+2026-01-30T05:43:58.342631355Z Using cached sqlparse-0.5.5-py3-none-any.whl (46 kB)
+2026-01-30T05:43:58.344356878Z Using cached urllib3-2.6.3-py3-none-any.whl (131 kB)
+2026-01-30T05:43:58.346391654Z Using cached packaging-26.0-py3-none-any.whl (74 kB)
+2026-01-30T05:43:58.375448106Z Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-01-30T05:43:58.377603074Z Using cached charset_normalizer-3.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (151 kB)
+2026-01-30T05:43:58.379499528Z Using cached idna-3.11-py3-none-any.whl (71 kB)
+2026-01-30T05:43:58.562186451Z Installing collected packages: whitenoise, urllib3, sqlparse, six, python-dotenv, psycopg2-binary, pillow, packaging, idna, charset_normalizer, certifi, asgiref, requests, gunicorn, Django, cloudinary, django-htmx, django-cloudinary-storage, dj-database-url
+2026-01-30T05:44:10.969333258Z Successfully installed Django-5.2.10 asgiref-3.11.0 certifi-2026.1.4 charset_normalizer-3.4.4 cloudinary-1.44.1 dj-database-url-3.1.0 django-cloudinary-storage-0.3.0 django-htmx-1.27.0 gunicorn-24.1.1 idna-3.11 packaging-26.0 pillow-12.1.0 psycopg2-binary-2.9.11 python-dotenv-1.2.1 requests-2.32.5 six-1.17.0 sqlparse-0.5.5 urllib3-2.6.3 whitenoise-6.11.0
+2026-01-30T05:44:11.046576248Z 
+2026-01-30T05:44:11.046597619Z [notice] A new release of pip is available: 24.0 -> 25.3
+2026-01-30T05:44:11.046602229Z [notice] To update, run: pip install --upgrade pip
+2026-01-30T05:44:11.207134107Z 📦 Collecting static files...
+2026-01-30T05:44:12.666541051Z 
+2026-01-30T05:44:12.666563141Z 145 static files copied to '/opt/render/project/src/staticfiles'.
+2026-01-30T05:44:12.727957119Z 🗄️  Running database migrations...
+2026-01-30T05:44:13.970825737Z Operations to perform:
+2026-01-30T05:44:14.000842971Z   Apply all migrations: admin, auth, contenttypes, core, financiero, logistica, produccion, sessions
+2026-01-30T05:44:14.000893532Z Running migrations:
+2026-01-30T05:44:14.000899812Z   No migrations to apply.
+2026-01-30T05:44:14.036284376Z 👤 Creating superuser (if not exists)...
+2026-01-30T05:44:14.386326414Z ℹ️  Superusuario "admin" ya existe, omitiendo creación.
+2026-01-30T05:44:14.449724857Z ✅ Build completed successfully!
+2026-01-30T05:44:18.535326356Z ==> Uploading build...
+2026-01-30T05:44:42.647564271Z ==> Uploaded in 11.4s. Compression took 12.7s
+2026-01-30T05:44:42.776851138Z ==> Build successful 🎉
+2026-01-30T05:44:47.035187236Z ==> Deploying...
+2026-01-30T05:44:47.158406449Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-01-30T05:45:14.355535437Z ==> Running 'gunicorn korebase.wsgi:application'
+2026-01-30T05:45:20.753471802Z [2026-01-29 23:45:20 -0600] [54] [INFO] Starting gunicorn 24.1.1
+2026-01-30T05:45:20.753875523Z [2026-01-29 23:45:20 -0600] [54] [INFO] Listening at: http://0.0.0.0:10000 (54)
+2026-01-30T05:45:20.753933095Z [2026-01-29 23:45:20 -0600] [54] [INFO] Using worker: sync
+2026-01-30T05:45:20.758136524Z [2026-01-29 23:45:20 -0600] [56] [INFO] Booting worker with pid: 56
+2026-01-30T05:45:21.605941436Z 127.0.0.1 - - [29/Jan/2026:23:45:21 -0600] "HEAD / HTTP/1.1" 301 0 "-" "Go-http-client/1.1"
+2026-01-30T05:45:28.606297472Z ==> Your service is live 🎉
+2026-01-30T05:45:28.755838648Z ==> 
+2026-01-30T05:45:28.75920411Z 127.0.0.1 - - [29/Jan/2026:23:45:28 -0600] "GET / HTTP/1.1" 302 0 "-" "Go-http-client/2.0"
+2026-01-30T05:45:28.759368797Z ==> ///////////////////////////////////////////////////////////
+2026-01-30T05:45:28.762627814Z ==> 
+2026-01-30T05:45:28.76599241Z ==> Available at your primary URL https://korebase-erp.onrender.com
+2026-01-30T05:45:28.76901361Z ==> 
+2026-01-30T05:45:28.771636089Z ==> ///////////////////////////////////////////////////////////
+2026-01-30T05:45:28.999433047Z 127.0.0.1 - - [29/Jan/2026:23:45:28 -0600] "GET /core/ HTTP/1.1" 302 0 "https://korebase-erp.onrender.com" "Go-http-client/2.0"
+2026-01-30T05:45:29.320634091Z 127.0.0.1 - - [29/Jan/2026:23:45:29 -0600] "GET /core/login/?next=/core/ HTTP/1.1" 200 6301 "https://korebase-erp.onrender.com/core/" "Go-http-client/2.0"
+2026-01-30T05:46:09.192218671Z 127.0.0.1 - - [29/Jan/2026:23:46:09 -0600] "GET / HTTP/1.1" 302 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:09.311896332Z 127.0.0.1 - - [29/Jan/2026:23:46:09 -0600] "GET /core/ HTTP/1.1" 302 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:09.43535609Z 127.0.0.1 - - [29/Jan/2026:23:46:09 -0600] "GET /core/login/?next=/core/ HTTP/1.1" 200 6301 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:09.580672195Z 127.0.0.1 - - [29/Jan/2026:23:46:09 -0600] "GET /static/css/erp-style.css HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/core/login/?next=/core/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:09.585851792Z 127.0.0.1 - - [29/Jan/2026:23:46:09 -0600] "GET /static/js/htmx.min.js HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/core/login/?next=/core/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:15.71196915Z 127.0.0.1 - - [29/Jan/2026:23:46:15 -0600] "GET /admin+ HTTP/1.1" 404 179 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.191784468Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /admin/ HTTP/1.1" 302 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.354399522Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4237 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.481344388Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /static/admin/css/responsive.css HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/admin/login/?next=/admin/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.487854272Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/admin/login/?next=/admin/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.488941343Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /static/admin/js/theme.js HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/admin/login/?next=/admin/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.51714396Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /static/admin/css/base.css HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/admin/login/?next=/admin/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.560390242Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/admin/login/?next=/admin/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.585062859Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /static/admin/css/login.css HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/admin/login/?next=/admin/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:46:19.681546444Z 127.0.0.1 - - [29/Jan/2026:23:46:19 -0600] "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/admin/login/?next=/admin/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T05:47:04.164928331Z 127.0.0.1 - - [29/Jan/2026:23:47:04 -0600] "POST /admin/login/?next=/admin/ HTTP/1.1" 200 4485 "https://korebase-erp.onrender.com/admin/login/?next=/admin/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"

@@ -1,415 +1,575 @@
 /**
- * KoreBase ERP - Professional Stylesheet
- * Sistema de Gestión Empresarial
- * Universidad Politécnica de Yucatán
+ * KoreBase ERP - Industrial Modern Theme
+ * Identidad: "Ingeniería Sólida y Accesible"
  */
 
 /* ==================== CSS VARIABLES ==================== */
 :root {
-    /* Primary Colors */
-    --erp-primary: #714B67;
-    --erp-primary-dark: #5a3b52;
-    --erp-primary-light: #8f6283;
+    /* --- PALETA KOREBASE --- */
+    --kore-navy-900: #0f172a;
+    --kore-navy-800: #1e293b;
+    --kore-navy-700: #334155;
 
-    /* Secondary Colors */
-    --erp-secondary: #667eea;
-    --erp-accent: #764ba2;
+    --kore-teal-500: #14b8a6;
+    --kore-teal-600: #0d9488;
+    --kore-teal-400: #2dd4bf;
+    /** Accent **/
 
-    /* Neutral Colors */
-    --erp-gray-50: #f9fafb;
-    --erp-gray-100: #f3f4f6;
-    --erp-gray-200: #e5e7eb;
-    --erp-gray-300: #d1d5db;
-    --erp-gray-400: #9ca3af;
-    --erp-gray-500: #6b7280;
-    --erp-gray-600: #4b5563;
-    --erp-gray-700: #374151;
-    --erp-gray-800: #1f2937;
-    --erp-gray-900: #111827;
+    --kore-gray-50: #f8fafc;
+    --kore-gray-100: #f1f5f9;
+    --kore-gray-200: #e2e8f0;
+    --kore-gray-500: #64748b;
+    --kore-gray-800: #1e293b;
 
-    /* Status Colors */
-    --erp-success: #10b981;
-    --erp-warning: #f59e0b;
-    --erp-danger: #ef4444;
-    --erp-info: #3b82f6;
+    --status-success: #10b981;
+    --status-warning: #f59e0b;
+    --status-danger: #ef4444;
+    --status-info: #3b82f6;
 
-    /* Spacing */
-    --erp-spacing-xs: 0.25rem;
-    --erp-spacing-sm: 0.5rem;
-    --erp-spacing-md: 1rem;
-    --erp-spacing-lg: 1.5rem;
-    --erp-spacing-xl: 2rem;
+    /* ESTRUCTURA */
+    --sidebar-width: 260px;
+    --sidebar-width-collapsed: 80px;
+    --header-height: 64px;
 
-    /* Border Radius */
-    --erp-radius-sm: 4px;
-    --erp-radius-md: 6px;
-    --erp-radius-lg: 8px;
-    --erp-radius-xl: 12px;
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
 
-    /* Shadows */
-    --erp-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --erp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --erp-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --erp-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-
-    /* Sidebar */
-    --erp-sidebar-width: 280px;
-    --erp-sidebar-bg: #1f2937;
-    --erp-sidebar-text: #e5e7eb;
+    /* SOMBRAS */
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-/* ==================== RESET & BASE ==================== */
-* {
+/* ==================== BASE ==================== */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--kore-gray-50);
+    color: var(--kore-gray-800);
+    line-height: 1.5;
+    font-size: 0.9rem;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--erp-gray-900);
-    background: var(--erp-gray-50);
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
 /* ==================== LAYOUT ==================== */
-.erp-flex {
+.kore-layout {
     display: flex;
+    min-height: 100vh;
 }
 
-.erp-items-center {
-    align-items: center;
-}
-
-.erp-gap-4 {
-    gap: 1rem;
-}
-
-/* ==================== SIDEBAR ==================== */
-.erp-sidebar {
-    width: var(--erp-sidebar-width);
-    height: 100vh;
-    background: var(--erp-sidebar-bg);
-    color: var(--erp-sidebar-text);
-    position: fixed;
-    left: 0;
-    top: 0;
-    overflow-y: auto;
+/* --- SIDEBAR --- */
+.kore-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--kore-navy-900);
+    color: white;
     display: flex;
     flex-direction: column;
-    z-index: 1000;
-    transition: transform 0.3s ease;
+    position: fixed;
+    height: 100vh;
+    z-index: 50;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    left: 0;
+    top: 0;
 }
 
-.erp-sidebar-header {
-    padding: 1.5rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.erp-sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.erp-sidebar-logo-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--erp-primary), var(--erp-primary-dark));
-    border-radius: var(--erp-radius-lg);
+.kore-brand {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    color: white;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    min-height: 80px;
+    padding: 0.5rem 0;
 }
 
-.erp-sidebar-logo-text {
-    font-size: 18px;
-    font-weight: 700;
-    color: white;
-}
-
-.erp-sidebar-logo-subtitle {
-    font-size: 11px;
-    color: var(--erp-gray-400);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.erp-sidebar-user {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.erp-sidebar-user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.erp-sidebar-user-avatar {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--erp-secondary), var(--erp-accent));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: white;
-    font-size: 16px;
-}
-
-.erp-sidebar-user-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: white;
-}
-
-.erp-sidebar-user-role {
-    font-size: 12px;
-    color: var(--erp-gray-400);
-}
-
-.erp-sidebar-nav {
+.kore-nav {
     flex: 1;
-    padding: 1rem 0.5rem;
+    padding: 1.5rem 0.75rem;
+    gap: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
 
-.erp-sidebar-nav-item {
+.nav-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--kore-gray-500);
+    padding: 0 0.75rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.nav-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    margin-bottom: 0.25rem;
-    border-radius: var(--erp-radius-md);
-    color: var(--erp-gray-300);
-    text-decoration: none;
-    transition: all 0.2s ease;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--border-radius-md);
+    color: #94a3b8;
+    transition: all 0.2s;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.erp-sidebar-nav-item:hover {
+.nav-item:hover {
     background: rgba(255, 255, 255, 0.05);
     color: white;
 }
 
-.erp-sidebar-nav-item.active {
-    background: linear-gradient(135deg, var(--erp-primary), var(--erp-primary-dark));
-    color: white;
-    box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);
+.nav-item.active {
+    background: linear-gradient(90deg, rgba(20, 184, 166, 0.15) 0%, transparent 100%);
+    color: var(--kore-teal-400);
+    border-left: 3px solid var(--kore-teal-500);
 }
 
-.erp-sidebar-nav-icon {
-    width: 20px;
+.nav-icon {
+    width: 24px;
+    margin-right: 0.75rem;
     text-align: center;
-    font-size: 16px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
 }
 
-.erp-sidebar-nav-text {
-    font-size: 14px;
-    font-weight: 500;
+.sidebar-footer {
+    margin-top: auto;
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s;
 }
 
-.erp-sidebar-footer {
-    padding: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.erp-sidebar-logout {
+/* --- MAIN CONTENT --- */
+.kore-main {
+    flex: 1;
+    margin-left: var(--sidebar-width);
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: var(--erp-radius-md);
-    color: var(--erp-danger);
-    text-decoration: none;
-    transition: all 0.2s ease;
+    flex-direction: column;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.erp-sidebar-logout:hover {
-    background: rgba(239, 68, 68, 0.1);
-}
-
-/* ==================== MAIN CONTENT ==================== */
-.erp-main {
-    margin-left: var(--erp-sidebar-width);
-    min-height: 100vh;
-    background: var(--erp-gray-50);
-}
-
-.erp-header {
+.kore-header {
+    min-height: var(--header-height);
     background: white;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--erp-gray-200);
+    border-bottom: 1px solid var(--kore-gray-200);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 2rem;
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 40;
+    box-sizing: border-box;
 }
 
-.erp-header-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--erp-gray-900);
+.header-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.erp-header-actions {
+.module-name {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--kore-navy-900);
+    margin: 0;
+}
+
+.header-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1.5rem;
 }
 
-.erp-search-bar {
+.search-container {
     position: relative;
 }
 
-.erp-search-bar input {
-    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
-    border: 1px solid var(--erp-gray-300);
-    border-radius: var(--erp-radius-md);
-    font-size: 14px;
+.search-input {
+    padding: 0.6rem 1rem 0.6rem 2.8rem !important;
+    border-radius: 50px;
+    border: 1px solid var(--kore-gray-200);
+    background: var(--kore-gray-100);
+    font-size: 0.9rem;
     width: 250px;
-    transition: all 0.2s ease;
+    transition: width 0.3s;
 }
 
-.erp-search-bar input:focus {
+.search-input:focus {
+    width: 350px;
+    background: white;
+    border-color: var(--kore-teal-500);
     outline: none;
-    border-color: var(--erp-primary);
-    box-shadow: 0 0 0 3px rgba(113, 75, 103, 0.1);
 }
 
-.erp-search-icon {
+.search-icon {
     position: absolute;
-    left: 0.75rem;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--erp-gray-400);
+    color: var(--kore-gray-400);
+    pointer-events: none;
 }
 
-.erp-content {
-    padding: 1.5rem;
-}
-
-/* ==================== BUTTONS ==================== */
-.erp-btn {
-    padding: 0.5rem 1rem;
+.icon-btn {
+    background: transparent;
     border: none;
-    border-radius: var(--erp-radius-md);
-    font-size: 14px;
-    font-weight: 500;
+    color: var(--kore-gray-500);
+    font-size: 1.25rem;
     cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.erp-btn-primary {
-    background: linear-gradient(135deg, var(--erp-primary), var(--erp-primary-dark));
-    color: white;
-    box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);
-}
-
-.erp-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(113, 75, 103, 0.4);
-}
-
-.erp-btn-secondary {
-    background: var(--erp-gray-100);
-    color: var(--erp-gray-700);
-}
-
-.erp-btn-secondary:hover {
-    background: var(--erp-gray-200);
-}
-
-.erp-btn-sm {
-    padding: 0.375rem 0.75rem;
-    font-size: 13px;
-}
-
-/* ==================== ALERTS ==================== */
-.erp-alert {
-    padding: 1rem;
-    border-radius: var(--erp-radius-md);
-    margin-bottom: 1rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    justify-content: center;
+    transition: background 0.2s;
 }
 
-.erp-alert-success {
-    background: #d1fae5;
-    color: #065f46;
-    border-left: 4px solid var(--erp-success);
+.icon-btn:hover {
+    background: var(--kore-gray-100);
+    color: var(--kore-teal-600);
 }
 
-.erp-alert-danger {
-    background: #fee2e2;
-    color: #991b1b;
-    border-left: 4px solid var(--erp-danger);
+#sidebarToggle {
+    border-radius: 8px !important;
+    margin-right: 0.5rem;
 }
 
-.erp-alert-info {
-    background: #dbeafe;
-    color: #1e40af;
-    border-left: 4px solid var(--erp-info);
+.kore-content {
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.erp-alert-icon {
-    font-size: 18px;
+/* ==================== UTILITIES & COMPONENTS ==================== */
+
+/* --- GRID SYSTEM --- */
+.dashboard-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
-/* ==================== CARDS ==================== */
-.erp-card {
+/* --- CARDS --- */
+.kore-card {
     background: white;
-    border-radius: var(--erp-radius-lg);
-    box-shadow: var(--erp-shadow-sm);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
 }
 
-.erp-card-header {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--erp-gray-900);
+/* --- BUTTONS --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--border-radius-md);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+.btn-primary,
+.erp-btn-primary {
+    background-color: var(--kore-teal-500);
+    color: white;
+}
+
+.btn-primary:hover,
+.erp-btn-primary:hover {
+    background-color: var(--kore-teal-600);
+}
+
+.btn-secondary,
+.erp-btn-secondary {
+    background-color: white;
+    border-color: var(--kore-gray-200);
+    color: var(--kore-gray-800);
+}
+
+.btn-secondary:hover {
+    background-color: var(--kore-gray-50);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--kore-gray-200);
+    color: var(--kore-gray-500);
+}
+
+.btn-outline:hover {
+    border-color: var(--kore-teal-500);
+    color: var(--kore-teal-500);
+}
+
+.btn-action {
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--kore-teal-600);
+    border: none;
+}
+
+.btn-action:hover {
+    background: rgba(20, 184, 166, 0.2);
+}
+
+/* --- DASHBOARD MODULE CARDS (Core App Fix) --- */
+.module-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    border: 1px solid var(--kore-gray-200);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--kore-teal-500);
+}
+
+.module-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
     margin-bottom: 1rem;
+}
+
+/* Module Colors */
+.mod-logistica .module-icon-wrapper {
+    background: #f0f9ff;
+    color: #0284c7;
+}
+
+.mod-produccion .module-icon-wrapper {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.mod-financiero .module-icon-wrapper {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.mod-admin .module-icon-wrapper {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.module-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--kore-navy-900);
+    margin-bottom: 0.5rem;
+}
+
+.module-desc {
+    font-size: 0.85rem;
+    color: var(--kore-gray-500);
+    margin-bottom: 1.5rem;
+    flex: 1;
+    display: block;
+}
+
+.module-stats {
+    padding-top: 1rem;
+    border-top: 1px solid var(--kore-gray-100);
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.stat-item {
+    font-size: 0.75rem;
+    color: var(--kore-gray-500);
+}
+
+.stat-value {
+    display: block;
+    font-weight: 700;
+    color: var(--kore-navy-900);
+    font-size: 0.9rem;
+}
+
+
+/* ==================== COLLAPSED SIDEBAR LOGIC ==================== */
+.kore-sidebar.collapsed {
+    width: var(--sidebar-width-collapsed);
+}
+
+.kore-main.collapsed {
+    margin-left: var(--sidebar-width-collapsed);
+}
+
+.kore-sidebar.collapsed .kore-logo-full,
+.kore-sidebar.collapsed .nav-text,
+.kore-sidebar.collapsed .nav-label,
+.kore-sidebar.collapsed .user-info-text,
+.kore-sidebar.collapsed .logout-text {
+    display: none !important;
+}
+
+/* Asegurar ocultamiento por defecto */
+.kore-logo-collapsed {
+    display: none !important;
+}
+
+.kore-sidebar.collapsed .kore-logo-collapsed {
+    display: flex !important;
+    margin: 0 auto;
+}
+
+.kore-sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 0.75rem 0;
+}
+
+.kore-sidebar.collapsed .nav-icon {
+    margin-right: 0;
+    font-size: 1.25rem;
+}
+
+.kore-sidebar.collapsed .kore-brand {
+    padding: 0.5rem 0;
+    min-height: 64px;
+}
+
+.kore-sidebar.collapsed .sidebar-footer {
+    padding: 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.kore-sidebar.collapsed .user-avatar {
+    margin: 0;
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+}
+
+.kore-sidebar.collapsed .logout-link {
+    justify-content: center;
+}
+
+.kore-sidebar.collapsed .logout-link i {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* ==================== FORM STYLES ==================== */
+.form-control,
+input[type="text"]:not(.search-input),
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--kore-gray-200);
+    border-radius: var(--border-radius-md);
+    background-color: white;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+/* Animaciones y Posicionamiento de Iconos */
+.icon-btn {
+    position: relative;
+    /* Fix para punto rojo */
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes swing {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    20% {
+        transform: rotate(15deg);
+    }
+
+    40% {
+        transform: rotate(-10deg);
+    }
+
+    60% {
+        transform: rotate(5deg);
+    }
+
+    80% {
+        transform: rotate(-5deg);
+    }
+}
+
+.icon-btn.settings:hover i {
+    animation: spin 3s linear infinite;
+}
+
+.icon-btn.notifications:hover i {
+    animation: swing 1s ease infinite;
+}
+
+/* ==================== KOREPILOT ==================== */
+.korepilot-btn {
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.korepilot-btn:hover {
+    transform: scale(1.1) rotate(-3deg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(135deg, var(--kore-navy-800), var(--kore-teal-500));
+    cursor: pointer;
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 1024px) {
-    .erp-sidebar {
+@media (max-width: 768px) {
+    .kore-sidebar {
         transform: translateX(-100%);
     }
 
-    .erp-sidebar.open {
+    .kore-sidebar.active {
         transform: translateX(0);
     }
 
-    .erp-main {
+    .kore-main {
         margin-left: 0;
-    }
-
-    .erp-search-bar input {
-        width: 180px;
-    }
-}
-
-@media (max-width: 640px) {
-    .erp-header {
-        padding: 1rem;
-    }
-
-    .erp-content {
-        padding: 1rem;
-    }
-
-    .erp-search-bar {
-        display: none;
     }
 }

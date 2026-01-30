@@ -1,234 +1,253 @@
-{% extends 'base.html' %}
+{% extends 'layouts/base.html' %}
+{% load static %}
 
 {% block title %}Producción - KoreBase{% endblock %}
-{% block page_title %}Módulo de Producción{% endblock %}
+{% block page_title %}Gestión de Producción{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb -->
-<nav class="erp-breadcrumb">
-    <div class="erp-breadcrumb-item">
-        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
-    </div>
-    <div class="erp-breadcrumb-item">
-        <span class="erp-breadcrumb-link">Producción</span>
-    </div>
-</nav>
+<!-- KPI CARDS -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 2rem;">
 
-<!-- Page Header -->
-<div class="erp-card">
-    <div class="erp-card-header">
+    <!-- Eficiencia General (OEE) -->
+    <div class="kore-card" style="padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+            <div>
+                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Eficiencia (OEE)</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">87%
+                </div>
+            </div>
+            <div
+                style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--kore-blue-600);">
+                <i class="fas fa-chart-line" style="font-size: 1.25rem;"></i>
+            </div>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--status-success); display: flex; align-items: center; gap: 0.25rem;">
+            <i class="fas fa-arrow-up"></i>
+            <span>2.5% vs semana anterior</span>
+        </div>
+    </div>
+
+    <!-- Órdenes Activas -->
+    <div class="kore-card" style="padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+            <div>
+                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Órdenes Activas</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">{{
+                    active_work_orders|default:"12" }}</div>
+            </div>
+            <div
+                style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-warning);">
+                <i class="fas fa-cogs" style="font-size: 1.25rem;"></i>
+            </div>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--kore-gray-500);">
+            4 en etapa final de ensamble
+        </div>
+    </div>
+
+    <!-- Alertas de Calidad -->
+    <div class="kore-card" style="padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+            <div>
+                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Alertas Calidad</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">3
+                </div>
+            </div>
+            <div
+                style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-danger);">
+                <i class="fas fa-exclamation-triangle" style="font-size: 1.25rem;"></i>
+            </div>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--kore-gray-500);">
+            Requieren atención inmediata
+        </div>
+    </div>
+
+    <!-- Unidades Producidas -->
+    <div class="kore-card" style="padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+            <div>
+                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Prod. Diaria</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">342
+                </div>
+            </div>
+            <div
+                style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-success);">
+                <i class="fas fa-boxes" style="font-size: 1.25rem;"></i>
+            </div>
+        </div>
+        <div style="width: 100%; background: var(--kore-gray-100); height: 6px; border-radius: 3px; margin-top: 5px;">
+            <div style="background: var(--status-success); width: 85%; height: 100%; border-radius: 3px;"></div>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 5px; text-align: right;">85% Objetivo
+        </div>
+    </div>
+</div>
+
+<!-- MAIN DASHBOARD CONTENT -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+
+    <!-- Gráfica de Producción -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Rendimiento de Producción</h3>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">Semanal</button>
+                <button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">Mensual</button>
+            </div>
+        </div>
+        <div style="flex: 1; min-height: 300px; position: relative;">
+            <canvas id="productionChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Órdenes Prioritarias -->
+    <div class="kore-card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); background: var(--kore-gray-50);">
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Cola de Prioridad</h3>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <!-- Item 1 -->
+            <div
+                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; gap: 1rem; align-items: center;">
+                <div
+                    style="width: 40px; height: 40px; background: var(--kore-navy-800); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
+                    OP
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--kore-navy-900);">OP-2023-001</div>
+                    <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Lote Electrónicos A1</div>
+                </div>
+                <span
+                    style="font-size: 0.75rem; background: #fee2e2; color: #991b1b; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">URGENTE</span>
+            </div>
+
+            <!-- Item 2 -->
+            <div
+                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; gap: 1rem; align-items: center;">
+                <div
+                    style="width: 40px; height: 40px; background: var(--kore-gray-200); color: var(--kore-gray-600); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
+                    OP
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--kore-navy-900);">OP-2023-005</div>
+                    <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Componentes Mecánicos</div>
+                </div>
+                <span
+                    style="font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">EN
+                    ESPERA</span>
+            </div>
+
+            <!-- Item 3 -->
+            <div style="padding: 1rem 1.5rem; display: flex; gap: 1rem; align-items: center;">
+                <div
+                    style="width: 40px; height: 40px; background: var(--kore-gray-200); color: var(--kore-gray-600); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
+                    OP
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--kore-navy-900);">OP-2023-008</div>
+                    <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Empaque Final</div>
+                </div>
+                <span
+                    style="font-size: 0.75rem; background: var(--kore-gray-100); color: var(--kore-gray-600); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">PROGR.</span>
+            </div>
+        </div>
+        <div
+            style="padding: 1rem 1.5rem; border-top: 1px solid var(--kore-gray-200); background: var(--kore-gray-50); text-align: center;">
+            <a href="#"
+                style="font-size: 0.85rem; color: var(--kore-teal-600); font-weight: 600; text-decoration: none;">Ver
+                todas las órdenes &rarr;</a>
+        </div>
+    </div>
+</div>
+
+<!-- ACTIONS GRID -->
+<h3 style="margin: 2rem 0 1rem; color: var(--kore-navy-900); font-size: 1.25rem;">Acciones Rápidas</h3>
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+    <button class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem;"
+        onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem;">
+            <i class="fas fa-plus"></i>
+        </div>
         <div>
-            <h2 class="erp-card-title">Gestión de Producción y MRP</h2>
-            <p style="color: var(--erp-gray-600); font-size: 14px; margin-top: 4px;">Control de manufactura, órdenes de trabajo y BOMs</p>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Nueva Orden</div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Crear orden de trabajo
+                manual</div>
         </div>
-        <button class="erp-btn erp-btn-primary">
-            <i class="fas fa-plus"></i> Nueva Orden
-        </button>
-    </div>
-</div>
+    </button>
 
-<!-- Metrics Grid -->
-<div class="erp-metrics-grid">
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Órdenes Totales</span>
-            <span class="erp-metric-icon"><i class="fas fa-clipboard-list"></i></span>
+    <button class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem;"
+        onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem;">
+            <i class="fas fa-layer-group"></i>
         </div>
-        <div class="erp-metric-value">{{ total_work_orders }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-primary">Registradas</span>
+        <div>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Gestión BOMs</div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Configurar listas de
+                materiales</div>
         </div>
-    </div>
+    </button>
 
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">En Proceso</span>
-            <span class="erp-metric-icon"><i class="fas fa-cogs"></i></span>
+    <button class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem;"
+        onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem;">
+            <i class="fas fa-calendar-alt"></i>
         </div>
-        <div class="erp-metric-value">{{ active_work_orders }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-warning">Activas</span>
-        </div>
-    </div>
-
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">BOMs Activos</span>
-            <span class="erp-metric-icon"><i class="fas fa-sitemap"></i></span>
-        </div>
-        <div class="erp-metric-value">{{ total_boms }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-success">Configurados</span>
-        </div>
-    </div>
-
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Eficiencia</span>
-            <span class="erp-metric-icon"><i class="fas fa-chart-line"></i></span>
-        </div>
-        <div class="erp-metric-value">0%</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-info">Sin datos</span>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Acciones Rápidas</h2>
-    </div>
-    <div class="erp-card-body">
-        <div class="erp-action-grid">
-            <button class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-plus-circle"></i></span>
-                <span class="erp-action-text">Nueva Orden de Trabajo</span>
-            </button>
-            <button class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-sitemap"></i></span>
-                <span class="erp-action-text">Gestionar BOMs</span>
-            </button>
-            <button class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-industry"></i></span>
-                <span class="erp-action-text">Centros de Trabajo</span>
-            </button>
-            <button class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-tasks"></i></span>
-                <span class="erp-action-text">Planificación</span>
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Work Orders Table -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Órdenes de Trabajo</h2>
-        <div class="erp-flex erp-gap-2">
-            <button class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-filter"></i> Filtrar
-            </button>
-            <button class="erp-btn erp-btn-primary erp-btn-sm">
-                <i class="fas fa-plus"></i> Crear
-            </button>
-        </div>
-    </div>
-    <div class="erp-card-body">
-        <div class="erp-table-container">
-            <table class="erp-table">
-                <thead>
-                    <tr>
-                        <th>Orden #</th>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Fecha Inicio</th>
-                        <th>Fecha Fin</th>
-                        <th>Progreso</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="8" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                            <i class="fas fa-clipboard-list" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                            <p>No hay órdenes de trabajo registradas</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- BOMs Overview -->
-<div class="erp-flex erp-gap-4" style="flex-wrap: wrap;">
-    <div class="erp-card" style="flex: 1; min-width: 300px;">
-        <div class="erp-card-header">
-            <h2 class="erp-card-title">Listas de Materiales (BOMs)</h2>
-            <button class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-plus"></i> Nuevo
-            </button>
-        </div>
-        <div class="erp-card-body">
-            <div class="erp-table-container">
-                <table class="erp-table">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Producto</th>
-                            <th>Componentes</th>
-                            <th>Versión</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                                <i class="fas fa-sitemap" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                                <p>No hay BOMs configurados</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Planificador</div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Calendario de producción
             </div>
         </div>
-    </div>
-
-    <div class="erp-card" style="flex: 1; min-width: 300px;">
-        <div class="erp-card-header">
-            <h2 class="erp-card-title">Centros de Trabajo</h2>
-            <button class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-plus"></i> Nuevo
-            </button>
-        </div>
-        <div class="erp-card-body">
-            <div class="erp-table-container">
-                <table class="erp-table">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Nombre</th>
-                            <th>Capacidad</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="4" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                                <i class="fas fa-industry" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                                <p>No hay centros de trabajo configurados</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    </button>
 </div>
 
-<!-- Production Schedule -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Programa de Producción</h2>
-        <div class="erp-flex erp-gap-2">
-            <button class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-calendar"></i> Semana
-            </button>
-            <button class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-calendar"></i> Mes
-            </button>
-        </div>
-    </div>
-    <div class="erp-card-body">
-        <div style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-            <i class="fas fa-calendar-alt" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-            <p>No hay producción programada</p>
-            <button class="erp-btn erp-btn-primary erp-btn-sm" style="margin-top: 16px;">
-                <i class="fas fa-plus"></i> Programar Producción
-            </button>
-        </div>
-    </div>
-</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Producción Chart
+        const ctx = document.getElementById('productionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                datasets: [{
+                    label: 'Real',
+                    data: [120, 132, 101, 134, 90, 230, 210],
+                    backgroundColor: '#10b981',
+                    borderRadius: 4
+                }, {
+                    label: 'Objetivo',
+                    data: [150, 150, 150, 150, 150, 150, 150],
+                    type: 'line',
+                    borderColor: '#94a3b8',
+                    borderDash: [5, 5],
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

@@ -1,132 +1,128 @@
-{% extends 'base.html' %}
+{% extends 'layouts/base.html' %}
+{% load static %}
 
 {% block title %}Inventario - KoreBase{% endblock %}
 {% block page_title %}Inventario de Productos{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb -->
-<nav class="erp-breadcrumb">
-    <div class="erp-breadcrumb-item">
-        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
-    </div>
-    <div class="erp-breadcrumb-item">
-        <a href="{% url 'logistica:index' %}" class="erp-breadcrumb-link">Logística</a>
-    </div>
-    <div class="erp-breadcrumb-item">
-        <span class="erp-breadcrumb-link">Inventario</span>
-    </div>
-</nav>
 
-<!-- Page Header -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <div>
-            <h2 class="erp-card-title">Inventario de Productos</h2>
-            <p style="color: var(--erp-gray-600); font-size: 14px; margin-top: 4px;">Gestión completa del catálogo de productos</p>
-        </div>
-        <div class="erp-flex erp-gap-2">
-            <a href="{% url 'logistica:index' %}" class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-arrow-left"></i> Volver
-            </a>
-            <a href="{% url 'logistica:product_create' %}" class="erp-btn erp-btn-primary erp-btn-sm">
-                <i class="fas fa-plus"></i> Nuevo Producto
-            </a>
-        </div>
+<!-- Actions Toolbar -->
+<div class="kore-card"
+    style="margin-bottom: 2rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h2 style="margin: 0; font-size: 1.25rem; color: var(--kore-navy-900);">Gestión de Catálogo</h2>
+        <p style="margin: 0.25rem 0 0; color: var(--kore-gray-500); font-size: 0.9rem;">Administra todos los productos y
+            servicios.</p>
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        <a href="{% url 'logistica:product_create' %}" class="btn btn-action">
+            <i class="fas fa-plus"></i> Nuevo Producto
+        </a>
+        <button class="btn btn-outline">
+            <i class="fas fa-filter"></i> Filtrar
+        </button>
+        <button class="btn btn-outline">
+            <i class="fas fa-download"></i> Exportar
+        </button>
     </div>
 </div>
 
 <!-- Inventory Table -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Listado de Productos</h2>
-        <div class="erp-flex erp-gap-2">
-            <button class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-download"></i> Exportar
-            </button>
-            <button class="erp-btn erp-btn-secondary erp-btn-sm">
-                <i class="fas fa-filter"></i> Filtrar
-            </button>
-        </div>
-    </div>
-    <div class="erp-card-body">
-        <div class="erp-table-container">
-            <table class="erp-table">
-                <thead>
-                    <tr>
-                        <th>SKU</th>
-                        <th>Producto</th>
-                        <th>Categoría</th>
-                        <th>Costo Unitario</th>
-                        <th>Estado</th>
-                        <th>Creado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if products %}
-                        {% for product in products %}
-                        <tr>
-                            <td><strong>{{ product.sku }}</strong></td>
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.category }}</td>
-                            <td>${{ product.unit_cost }}</td>
-                            <td>
-                                {% if product.active %}
-                                <span class="erp-badge erp-badge-success">Activo</span>
-                                {% else %}
-                                <span class="erp-badge erp-badge-danger">Inactivo</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ product.created_at|date:"d/m/Y" }}</td>
-                            <td>
-                                <div class="erp-flex erp-gap-2">
-                                    <a href="{% url 'logistica:product_edit' product.pk %}" class="erp-btn erp-btn-secondary erp-btn-sm" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="{% url 'logistica:product_delete' product.pk %}" class="erp-btn erp-btn-danger erp-btn-sm" title="Eliminar">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                    <tr>
-                        <td colspan="7" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                            <i class="fas fa-boxes" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                            <p>No hay productos en el inventario</p>
-                            <a href="{% url 'logistica:product_create' %}" class="erp-btn erp-btn-primary erp-btn-sm" style="margin-top: 16px;">
-                                <i class="fas fa-plus"></i> Crear Primer Producto
+<div class="kore-card">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+            <thead>
+                <tr
+                    style="background-color: var(--kore-gray-50); border-bottom: 2px solid var(--kore-gray-100); text-align: left;">
+                    <th
+                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        SKU</th>
+                    <th
+                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        Producto</th>
+                    <th
+                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        Categoría</th>
+                    <th
+                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        Costo Unit.</th>
+                    <th
+                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        Estado</th>
+                    <th
+                        style="padding: 1rem; color: var(--kore-gray-500); font-weight: 600; font-size: 0.8rem; text-transform: uppercase;">
+                        Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if products %}
+                {% for product in products %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100); transition: background 0.2s;"
+                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem; font-family: monospace; font-weight: 600; color: var(--kore-navy-800);">{{
+                        product.sku }}</td>
+                    <td style="padding: 1rem; font-weight: 500;">
+                        <div>{{ product.name }}</div>
+                        {% if product.description %}
+                        <div style="font-size: 0.8rem; color: var(--kore-gray-500);">{{
+                            product.description|truncatechars:30 }}</div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem;">
+                        <span
+                            style="background: var(--kore-gray-100); padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.8rem; color: var(--kore-gray-600);">
+                            {{ product.category|default:"General" }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem; font-weight: 600;">${{ product.unit_cost|floatformat:2 }}</td>
+                    <td style="padding: 1rem;">
+                        {% if product.active %}
+                        <span
+                            style="color: var(--status-success); display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.85rem;">
+                            <i class="fas fa-check-circle"></i> Activo
+                        </span>
+                        {% else %}
+                        <span
+                            style="color: var(--kore-gray-400); display: flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.85rem;">
+                            <i class="fas fa-times-circle"></i> Inactivo
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem;">
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{% url 'logistica:product_edit' product.pk %}" class="icon-btn"
+                                style="width: 32px; height: 32px; font-size: 1rem;" title="Editar">
+                                <i class="fas fa-edit"></i>
                             </a>
-                        </td>
-                    </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
+                            <a href="{% url 'logistica:product_delete' product.pk %}" class="icon-btn"
+                                style="width: 32px; height: 32px; font-size: 1rem; color: var(--status-danger);"
+                                title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 4rem 2rem;">
+                        <div
+                            style="width: 64px; height: 64px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--kore-gray-400); font-size: 1.5rem;">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <h3 style="color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay productos registrados
+                        </h3>
+                        <p style="color: var(--kore-gray-500); margin-bottom: 1.5rem;">Comienza añadiendo el primer ítem
+                            a tu inventario maestro.</p>
+                        <a href="{% url 'logistica:product_create' %}" class="btn btn-action">
+                            <i class="fas fa-plus"></i> Crear Primer Producto
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
     </div>
 </div>
-
-<!-- Summary -->
-{% if products %}
-<div class="erp-flex erp-gap-4" style="flex-wrap: wrap;">
-    <div class="erp-card" style="flex: 1; min-width: 300px;">
-        <div class="erp-card-header">
-            <h2 class="erp-card-title">Resumen</h2>
-        </div>
-        <div class="erp-card-body">
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: var(--erp-gray-600); font-weight: 500;">Total Productos:</span>
-                    <span style="color: var(--erp-gray-800); font-weight: 700;">{{ products|length }}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: var(--erp-gray-600); font-weight: 500;">Productos Activos:</span>
-                    <span style="color: var(--erp-success); font-weight: 700;">{{ products|length }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
 {% endblock %}

@@ -1,161 +1,271 @@
-{% extends 'base.html' %}
+{% extends 'layouts/base.html' %}
+{% load static %}
 
-{% block title %}Dashboard - KoreBase{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
+{% block title %}Dashboard | KoreBase ERP{% endblock %}
+{% block page_title %}Panel de Control{% endblock %}
+{% block breadcrumb_parent %}Inicio{% endblock %}
+
+{% block header_icon %}<i class="fas fa-th-large" style="color: var(--kore-teal-500);"></i>{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb -->
-<nav class="erp-breadcrumb">
-    <div class="erp-breadcrumb-item">
-        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
-    </div>
-    <div class="erp-breadcrumb-item">
-        <span class="erp-breadcrumb-link">Dashboard</span>
-    </div>
-</nav>
 
-<!-- Welcome Section -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Bienvenido al Sistema ERP KoreBase</h2>
-    </div>
-    <div class="erp-card-body">
-        <p style="color: var(--erp-gray-600);">Panel de control general para la gestión empresarial. Acceda a todos los módulos del sistema desde este panel central.</p>
-    </div>
+<!-- Frase de bienvenida 'Ingenieril' -->
+<div style="margin-bottom: 2rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900); margin-bottom: 0.5rem;">
+        Bienvenido, {{ user.first_name|default:"Ingeniero" }}
+    </h2>
+    <p style="color: var(--kore-gray-500);">Resumen operativo del sistema en tiempo real.</p>
 </div>
 
-<!-- Metrics Grid -->
-<div class="erp-metrics-grid">
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Usuarios</span>
-            <span class="erp-metric-icon"><i class="fas fa-users"></i></span>
-        </div>
-        <div class="erp-metric-value">{{ total_users }}</div>
-        <div class="erp-metric-trend positive">
-            <i class="fas fa-arrow-up"></i> Total activos
-        </div>
-    </div>
+<!-- GRID DE APLICACIONES (Estilo Odoo) -->
+<div class="dashboard-grid">
 
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Inventario</span>
-            <span class="erp-metric-icon"><i class="fas fa-boxes"></i></span>
+    <!-- Módulo: LOGÍSTICA (Ámbar - Inventario/Movimiento) -->
+    <a href="{% url 'logistica:index' %}" class="module-card mod-logistica">
+        <div class="module-icon-wrapper">
+            <i class="fas fa-truck-ramp-box"></i>
         </div>
-        <div class="erp-metric-value">0</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-info">Sin datos</span>
-        </div>
-    </div>
+        <div class="module-title">Gestión Logística</div>
+        <div class="module-desc">Control de almacenes, movimientos de inventario y proveedores.</div>
 
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Órdenes de Trabajo</span>
-            <span class="erp-metric-icon"><i class="fas fa-industry"></i></span>
-        </div>
-        <div class="erp-metric-value">0</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-info">Sin datos</span>
-        </div>
-    </div>
-
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Facturas Pendientes</span>
-            <span class="erp-metric-icon"><i class="fas fa-file-invoice-dollar"></i></span>
-        </div>
-        <div class="erp-metric-value">0</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-info">Sin datos</span>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="erp-flex erp-gap-4" style="flex-wrap: wrap;">
-    <div class="erp-card" style="flex: 1; min-width: 300px;">
-        <div class="erp-card-header">
-            <h2 class="erp-card-title">Acciones Rápidas</h2>
-        </div>
-        <div class="erp-card-body">
-            <div class="erp-action-grid">
-                <a href="{% url 'logistica:index' %}" class="erp-action-card">
-                    <span class="erp-action-icon"><i class="fas fa-boxes"></i></span>
-                    <span class="erp-action-text">Gestionar Inventario</span>
-                </a>
-                <a href="{% url 'produccion:index' %}" class="erp-action-card">
-                    <span class="erp-action-icon"><i class="fas fa-industry"></i></span>
-                    <span class="erp-action-text">Nueva Orden de Trabajo</span>
-                </a>
-                <a href="{% url 'financiero:index' %}" class="erp-action-card">
-                    <span class="erp-action-icon"><i class="fas fa-file-invoice-dollar"></i></span>
-                    <span class="erp-action-text">Crear Factura</span>
-                </a>
+        <div class="module-stats">
+            <div class="stat-item">
+                <span class="stat-value">OK</span>
+                Estado Almacén
+            </div>
+            <div class="stat-item" style="margin-left: auto;">
+                <span class="stat-value">Activo</span>
+                Inventario
             </div>
         </div>
+    </a>
+
+    <!-- Módulo: PRODUCCIÓN (Azul - Industria/Proceso) -->
+    <a href="{% url 'produccion:index' %}" class="module-card mod-produccion">
+        <div class="module-icon-wrapper">
+            <i class="fas fa-industry"></i>
+        </div>
+        <div class="module-title">Producción / MRP</div>
+        <div class="module-desc">Planificación de órdenes de manufactura y control de planta.</div>
+
+        <div class="module-stats">
+            <div class="stat-item">
+                <span class="stat-value">--</span>
+                Órdenes Activas
+            </div>
+        </div>
+    </a>
+
+    <!-- Módulo: FINANCIERO (Verde - Dinero/Control) -->
+    <a href="{% url 'financiero:index' %}" class="module-card mod-financiero">
+        <div class="module-icon-wrapper">
+            <i class="fas fa-file-invoice-dollar"></i>
+        </div>
+        <div class="module-title">Finanzas & Costos</div>
+        <div class="module-desc">Contabilidad, facturación y análisis de costos operativos.</div>
+
+        <div class="module-stats">
+            <div class="stat-item">
+                <span class="stat-value">Día 30</span>
+                Cierre Fiscal
+            </div>
+        </div>
+    </a>
+
+    <!-- Módulo: CONFIGURACIÓN (Indigo - Admin) -->
+    <a href="/admin/" class="module-card mod-admin" target="_blank">
+        <div class="module-icon-wrapper">
+            <i class="fas fa-cogs"></i>
+        </div>
+        <div class="module-title">Configuración</div>
+        <div class="module-desc">Panel administrativo de Django, usuarios y permisos.</div>
+
+        <div class="module-stats">
+            <div class="stat-item">
+                <span class="stat-value">Admin</span>
+                Acceso Total
+            </div>
+        </div>
+    </a>
+
+</div>
+
+<!-- SECCIÓN DE GRÁFICAS (Business Intelligence) -->
+<div class="dashboard-grid"
+    style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); margin-top: 5rem; gap: 2rem;">
+
+    <!-- Gráfica 1: Valor de Inventario -->
+    <div class="kore-card" style="padding: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 1rem;">Distribución de
+            Inventario</h3>
+        <div style="height: 250px; position: relative;">
+            <canvas id="inventoryChart"></canvas>
+        </div>
     </div>
 
-    <div class="erp-card" style="flex: 1; min-width: 300px;">
-        <div class="erp-card-header">
-            <h2 class="erp-card-title">Información del Sistema</h2>
+    <!-- Gráfica 2: Eficiencia Producción -->
+    <div class="kore-card" style="padding: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 1rem;">Estado de
+            Producción Semanal</h3>
+        <div style="height: 250px; position: relative;">
+            <canvas id="productionChart"></canvas>
         </div>
-        <div class="erp-card-body">
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: var(--erp-gray-600); font-weight: 500;">Estado:</span>
-                    <span class="erp-badge erp-badge-success">
-                        <i class="fas fa-circle" style="font-size: 8px; margin-right: 4px;"></i>
-                        En línea
-                    </span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: var(--erp-gray-600); font-weight: 500;">Versión:</span>
-                    <span style="color: var(--erp-gray-800);">Django 6.0</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: var(--erp-gray-600); font-weight: 500;">Base de Datos:</span>
-                    <span style="color: var(--erp-gray-800);">PostgreSQL</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="color: var(--erp-gray-600); font-weight: 500;">Último Acceso:</span>
-                    <span style="color: var(--erp-gray-800);">{{ user.last_login|date:"d/m/Y H:i" }}</span>
-                </div>
-            </div>
+    </div>
+
+</div>
+
+<!-- SECCIÓN DE KPI RÁPIDOS (Resumen Ejecutivo) -->
+<div style="margin-top: 3rem;">
+    <h3
+        style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 1rem; border-bottom: 1px solid var(--kore-gray-200); padding-bottom: 0.5rem;">
+        Alertas de Sistema
+    </h3>
+
+    <div
+        style="background: white; border-radius: var(--border-radius-lg); border: 1px solid var(--kore-gray-200); padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 40px; height: 40px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #10b981;">
+            <i class="fas fa-check"></i>
+        </div>
+        <div>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Sistema Operativo Normal</div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Todas las conexiones de base de datos están
+                estables.</div>
+        </div>
+        <div style="margin-left: auto;">
+            <span
+                style="font-size: 0.75rem; background: var(--kore-gray-100); padding: 0.25rem 0.5rem; border-radius: 4px; color: var(--kore-gray-500);">v1.0.0</span>
         </div>
     </div>
 </div>
 
-<!-- Recent Activity -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Actividad Reciente</h2>
-        <button class="erp-btn erp-btn-secondary erp-btn-sm">
-            <i class="fas fa-history"></i> Ver Todo
+<!-- AGENTE IA FLOTANTE (KorePilot) -->
+<div style="position: fixed; bottom: 2rem; right: 2rem; z-index: 100;">
+    <button onclick="toggleKorePilot()" class="korepilot-btn"
+        style="width: 56px; height: 56px; border-radius: 50%; background: var(--kore-teal-500); color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        <i class="fas fa-robot"></i>
+    </button>
+</div>
+
+<!-- MODAL CHAT IA (Oculto por defecto) -->
+<div id="korePilotModal" class="kore-card"
+    style="display: none; position: fixed; bottom: 6rem; right: 2rem; width: 350px; height: 500px; z-index: 100; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); flex-direction: column;">
+    <!-- Header Chat -->
+    <div
+        style="background: var(--kore-navy-900); padding: 1rem; color: white; display: flex; align-items: center; gap: 0.75rem;">
+        <div
+            style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-robot" style="font-size: 0.9rem;"></i>
+        </div>
+        <div>
+            <div style="font-weight: 600; font-size: 0.9rem;">KorePilot AI</div>
+            <div style="font-size: 0.7rem; opacity: 0.7;">Asistente Operativo</div>
+        </div>
+        <button onclick="toggleKorePilot()"
+            style="margin-left: auto; background: none; border: none; color: white; cursor: pointer;">
+            <i class="fas fa-times"></i>
         </button>
     </div>
-    <div class="erp-card-body">
-        <div class="erp-table-container">
-            <table class="erp-table">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Usuario</th>
-                        <th>Acción</th>
-                        <th>Módulo</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ user.last_login|date:"d/m/Y H:i" }}</td>
-                        <td>{{ user.get_full_name|default:user.username }}</td>
-                        <td>Inicio de sesión</td>
-                        <td>Core</td>
-                        <td><span class="erp-badge erp-badge-success">Completado</span></td>
-                    </tr>
-                </tbody>
-            </table>
+
+    <!-- Body Chat -->
+    <div style="flex: 1; padding: 1rem; background: var(--kore-gray-50); overflow-y: auto;">
+
+        <!-- Mensaje Bienvenida -->
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+            <div
+                style="width: 28px; height: 28px; background: var(--kore-teal-500); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7rem;">
+                AI</div>
+            <div
+                style="background: white; padding: 0.75rem; border-radius: 0 12px 12px 12px; border: 1px solid var(--kore-gray-200); font-size: 0.85rem; color: var(--kore-gray-800); box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                Hola, Ingeniero. Soy KorePilot, tu analista de datos. ¿En qué puedo ayudarte hoy con el inventario o
+                producción?
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Input Area -->
+    <div style="padding: 0.75rem; background: white; border-top: 1px solid var(--kore-gray-200);">
+        <div style="display: flex; gap: 0.5rem;">
+            <input type="text" placeholder="Escribe tu consulta..."
+                style="flex: 1; padding: 0.5rem; border: 1px solid var(--kore-gray-300); border-radius: 6px; font-size: 0.85rem;">
+            <button
+                style="background: var(--kore-teal-500); color: white; border: none; border-radius: 6px; width: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Inicialización de Gráficas
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Gráfica Inventario (Doughnut)
+        const ctxInv = document.getElementById('inventoryChart').getContext('2d');
+        new Chart(ctxInv, {
+            type: 'doughnut',
+            data: {
+                labels: ['Materia Prima', 'Producto Terminado', 'Refacciones'],
+                datasets: [{
+                    data: [30, 50, 20], // Datos Dummy
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // Gráfica Producción (Bar)
+        const ctxProd = document.getElementById('productionChart').getContext('2d');
+        new Chart(ctxProd, {
+            type: 'bar',
+            data: {
+                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
+                datasets: [{
+                    label: 'Órdenes Completadas',
+                    data: [12, 19, 3, 5, 2], // Datos Dummy
+                    backgroundColor: '#1e293b',
+                    borderRadius: 4
+                }, {
+                    label: 'Objetivo',
+                    data: [15, 20, 15, 15, 15], // Datos Dummy
+                    backgroundColor: '#e2e8f0',
+                    borderRadius: 4,
+                    type: 'line'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+
+    // Toggle Chat Modal
+    function toggleKorePilot() {
+        const modal = document.getElementById('korePilotModal');
+        if (modal.style.display === 'none') {
+            modal.style.display = 'flex';
+        } else {
+            modal.style.display = 'none';
+        }
+    }
+</script>
 {% endblock %}

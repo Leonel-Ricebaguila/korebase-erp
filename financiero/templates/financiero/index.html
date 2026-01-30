@@ -1,186 +1,200 @@
-{% extends 'base.html' %}
+{% extends 'layouts/base.html' %}
+{% load static %}
 
-{% block title %}Financiero - KoreBase{% endblock %}
-{% block page_title %}Módulo Financiero{% endblock %}
+{% block title %}Finanzas - KoreBase{% endblock %}
+{% block page_title %}Panel Financiero{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb -->
-<nav class="erp-breadcrumb">
-    <div class="erp-breadcrumb-item">
-        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
-    </div>
-    <div class="erp-breadcrumb-item">
-        <span class="erp-breadcrumb-link">Financiero</span>
-    </div>
-</nav>
+<!-- FINANCIAL KPIS -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-bottom: 2rem;">
 
-<!-- Page Header -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <div>
-            <h2 class="erp-card-title">Gestión Financiera y Contable</h2>
-            <p style="color: var(--erp-gray-600); font-size: 14px; margin-top: 4px;">Control contable, facturación y reportes financieros</p>
+    <!-- Ingresos Totales -->
+    <div class="kore-card"
+        style="padding: 1.5rem; background: linear-gradient(135deg, var(--kore-navy-900), var(--kore-navy-800)); color: white; border: none;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+            <div>
+                <div style="font-size: 0.9rem; opacity: 0.8; font-weight: 500;">Ingresos Totales (Mes)</div>
+                <div style="font-size: 2rem; font-weight: 700; margin-top: 0.25rem;">$124,500</div>
+            </div>
+            <div
+                style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-wallet" style="font-size: 1.5rem; color: var(--kore-teal-400);"></i>
+            </div>
         </div>
-        <button class="erp-btn erp-btn-primary">
-            <i class="fas fa-plus"></i> Nueva Transacción
-        </button>
+        <div style="width: 100%; height: 1px; background: rgba(255, 255, 255, 0.1); margin-bottom: 1rem;"></div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+            <span style="opacity: 0.7;">Vs mes anterior</span>
+            <span style="color: var(--kore-teal-400); font-weight: 600;">+12.5% <i class="fas fa-arrow-up"></i></span>
+        </div>
     </div>
+
+    <!-- Gastos Operativos -->
+    <div class="kore-card" style="padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+            <div>
+                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Gastos Operativos</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">
+                    $45,200</div>
+            </div>
+            <div
+                style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-danger);">
+                <i class="fas fa-chart-pie" style="font-size: 1.25rem;"></i>
+            </div>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--kore-gray-500);">
+            36% del ingreso total
+        </div>
+    </div>
+
+    <!-- Margen Neto -->
+    <div class="kore-card" style="padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+            <div>
+                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Margen Neto</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">
+                    63.7%</div>
+            </div>
+            <div
+                style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-success);">
+                <i class="fas fa-percentage" style="font-size: 1.25rem;"></i>
+            </div>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--status-success);">
+            Saludable (> 50%)
+        </div>
+    </div>
+
 </div>
 
-<!-- Security Alert -->
-<div class="erp-alert erp-alert-warning">
-    <span class="erp-alert-icon"><i class="fas fa-shield-alt"></i></span>
-    <div>
-        <strong>Reglas de Seguridad Financiera:</strong>
-        <ul style="margin: 8px 0 0 20px; font-size: 13px;">
-            <li>Ecuación contable: Activo = Pasivo + Patrimonio</li>
-            <li>Tipo Decimal para dinero (nunca Float)</li>
-            <li>Asientos contables INMUTABLES (usar contra-asientos)</li>
-            <li>transaction.atomic para operaciones multi-tabla</li>
-        </ul>
-    </div>
-</div>
+<!-- CHART AND TRANSACTIONS -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
 
-<!-- Metrics Grid -->
-<div class="erp-metrics-grid">
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Cuentas Contables</span>
-            <span class="erp-metric-icon"><i class="fas fa-book"></i></span>
+    <!-- Cash Flow Chart -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Flujo de Caja</h3>
+            <select class="form-control" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.85rem;">
+                <option>Últimos 6 meses</option>
+                <option>Año actual</option>
+            </select>
         </div>
-        <div class="erp-metric-value">{{ total_accounts }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-primary">Plan de cuentas</span>
+        <div style="flex: 1; min-height: 300px; position: relative;">
+            <canvas id="financeChart"></canvas>
         </div>
     </div>
 
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Asientos Contables</span>
-            <span class="erp-metric-icon"><i class="fas fa-file-invoice"></i></span>
+    <!-- Recent Transactions -->
+    <div class="kore-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div
+            style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); background: var(--kore-gray-50); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Recientes</h3>
+            <button class="btn btn-action" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">+ Nuevo</button>
         </div>
-        <div class="erp-metric-value">{{ total_journal_entries }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-success">Registrados</span>
-        </div>
-    </div>
 
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Facturas Pendientes</span>
-            <span class="erp-metric-icon"><i class="fas fa-file-invoice-dollar"></i></span>
-        </div>
-        <div class="erp-metric-value">{{ pending_invoices }}</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-warning">Por procesar</span>
-        </div>
-    </div>
+        <div style="flex: 1; overflow-y: auto;">
+            <!-- Tx 1 -->
+            <div
+                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div
+                        style="width: 36px; height: 36px; background: #dcfce7; color: #166534; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: var(--kore-navy-900); font-size: 0.9rem;">Pago Cliente #402
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--kore-gray-500);">Hace 2 horas</div>
+                    </div>
+                </div>
+                <div style="font-weight: 700; color: var(--status-success);">+$4,500</div>
+            </div>
 
-    <div class="erp-metric-card">
-        <div class="erp-metric-header">
-            <span class="erp-metric-label">Balance Total</span>
-            <span class="erp-metric-icon"><i class="fas fa-balance-scale"></i></span>
-        </div>
-        <div class="erp-metric-value">$0.00</div>
-        <div class="erp-metric-trend">
-            <span class="erp-badge erp-badge-info">MXN</span>
-        </div>
-    </div>
-</div>
+            <!-- Tx 2 -->
+            <div
+                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div
+                        style="width: 36px; height: 36px; background: #fee2e2; color: #991b1b; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: var(--kore-navy-900); font-size: 0.9rem;">Proveedor Acero
+                            S.A.</div>
+                        <div style="font-size: 0.75rem; color: var(--kore-gray-500);">Ayer</div>
+                    </div>
+                </div>
+                <div style="font-weight: 700; color: var(--kore-navy-900);">-$1,250</div>
+            </div>
 
-<!-- Quick Actions -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Acciones Rápidas</h2>
-    </div>
-    <div class="erp-card-body">
-        <div class="erp-action-grid">
-            <button class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-file-invoice"></i></span>
-                <span class="erp-action-text">Nuevo Asiento Contable</span>
-            </button>
-            <button class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-file-invoice-dollar"></i></span>
-                <span class="erp-action-text">Nueva Factura</span>
-            </button>
-            <button class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-chart-pie"></i></span>
-                <span class="erp-action-text">Reportes Financieros</span>
-            </button>
-            <button class="erp-action-card">
-                <span class="erp-action-icon"><i class="fas fa-list-alt"></i></span>
-                <span class="erp-action-text">Gestionar Plan de Cuentas</span>
-            </button>
+            <!-- Tx 3 -->
+            <div
+                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div
+                        style="width: 36px; height: 36px; background: #e0f2fe; color: #075985; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: var(--kore-navy-900); font-size: 0.9rem;">Factura #9902
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--kore-gray-500);">Pendiente</div>
+                    </div>
+                </div>
+                <div style="font-weight: 700; color: var(--kore-gray-500);">$8,900</div>
+            </div>
         </div>
-    </div>
-</div>
 
-<!-- Recent Journal Entries -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Últimos Asientos Contables</h2>
-        <button class="erp-btn erp-btn-secondary erp-btn-sm">
-            <i class="fas fa-eye"></i> Ver Todos
-        </button>
-    </div>
-    <div class="erp-card-body">
-        <div class="erp-table-container">
-            <table class="erp-table">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Número</th>
-                        <th>Descripción</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="6" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                            <p>No hay asientos contables registrados</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- Pending Invoices -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">Facturas Pendientes</h2>
-        <button class="erp-btn erp-btn-secondary erp-btn-sm">
-            <i class="fas fa-filter"></i> Filtrar
-        </button>
-    </div>
-    <div class="erp-card-body">
-        <div class="erp-table-container">
-            <table class="erp-table">
-                <thead>
-                    <tr>
-                        <th>Número</th>
-                        <th>Cliente</th>
-                        <th>Fecha</th>
-                        <th>Vencimiento</th>
-                        <th>Monto</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="7" style="text-align: center; color: var(--erp-gray-500); padding: 40px;">
-                            <i class="fas fa-file-invoice-dollar" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
-                            <p>No hay facturas pendientes</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div style="padding: 1rem; text-align: center; background: var(--kore-gray-50);">
+            <a href="#" style="color: var(--kore-teal-600); font-size: 0.85rem; font-weight: 600;">Ver todo el
+                historial</a>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('financeChart').getContext('2d');
+
+        // Gradiente Sutil
+        let gradientSync = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientSync.addColorStop(0, 'rgba(20, 184, 166, 0.2)');
+        gradientSync.addColorStop(1, 'rgba(20, 184, 166, 0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [65, 59, 80, 81, 56, 124],
+                    borderColor: '#14b8a6',
+                    backgroundColor: gradientSync,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Gastos',
+                    data: [28, 48, 40, 19, 86, 45],
+                    borderColor: '#ef4444',
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', align: 'end' }
+                },
+                scales: {
+                    y: { grid: { borderDash: [2, 4] } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

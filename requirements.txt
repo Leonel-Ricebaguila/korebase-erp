@@ -8,3 +8,4 @@ django-htmx
 gunicorn
 python-dotenv
 pillow
+sendgrid

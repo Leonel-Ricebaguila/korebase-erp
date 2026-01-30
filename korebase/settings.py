@@ -173,22 +173,21 @@ LOGIN_REDIRECT_URL = 'core:dashboard'
 LOGOUT_REDIRECT_URL = 'core:login'
 
 # Email Service Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
 if DEBUG:
     # Development: Gmail SMTP (local only)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 else:
-    # Production: SendGrid (works on Render)
-    EMAIL_HOST = 'smtp.sendgrid.net'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
+    # Production: SendGrid HTTP API (bypasses Render's SMTP port blocking)
+    EMAIL_BACKEND = 'core.sendgrid_backend.SendGridBackend'
+    # API Key can be in either variable (for backwards compatibility)
+    SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY') or os.getenv('EMAIL_HOST_PASSWORD')
 
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@korebase.com')
 
 # OTP Settings
 OTP_EXPIRATION_MINUTES = 10

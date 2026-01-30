@@ -18,14 +18,23 @@ username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
 email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@korebase.com')
 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'admin123')
 
-# Verificar si el superusuario ya existe
-if not User.objects.filter(username=username).exists():
-    print(f'👤 Creando superusuario: {username}')
-    User.objects.create_superuser(
+try:
+    user, created = User.objects.get_or_create(
         username=username,
-        email=email,
-        password=password
+        defaults={'email': email}
     )
-    print('✅ Superusuario creado exitosamente!')
-else:
-    print(f'ℹ️  Superusuario "{username}" ya existe, omitiendo creación.')
+    
+    # SIEMPRE establecer la contraseña, sea nuevo o existente
+    user.set_password(password)
+    user.email = email
+    user.is_superuser = True
+    user.is_staff = True
+    user.save()
+
+    if created:
+        print(f'✅ Superusuario creado exitosamente: {username}')
+    else:
+        print(f'🔄 Superusuario existente actualizado: {username} (Contraseña reseteada)')
+
+except Exception as e:
+    print(f'❌ Error gestionando superusuario: {str(e)}')

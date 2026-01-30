@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     # Third party apps
     'django_htmx',
     'cloudinary',
+    'cloudinary_storage',
     
     # KoreBase modular apps
     'core.apps.CoreConfig',

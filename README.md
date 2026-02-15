@@ -81,9 +81,32 @@ korebase-django/
 
 - Python 3.11 o superior
 - Git
-- PostgreSQL (opcional, para desarrollo local)
 
-### **Paso 1: Clonar el Repositorio**
+### **🚀 Inicio Rápido (Recomendado)**
+
+La forma más fácil de empezar es usando nuestro script maestro de configuración:
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/Leonel-Ricebaguila/korebase-erp.git
+cd korebase-erp
+
+# 2. Ejecutar script de configuración automática
+python scripts/setup_dev_env.py
+```
+
+Este script se encargará de:
+*   ✅ Crear el entorno virtual
+*   ✅ Instalar dependencias
+*   ✅ Configurar variables de entorno (.env)
+*   ✅ Aplicar migraciones (SQLite por defecto)
+*   ✅ Verificar/Crear superusuario
+
+---
+
+### **Instalación Manual (Alternativa)**
+
+Si prefieres configurar todo paso a paso:
 
 ```bash
 git clone https://github.com/TU_USUARIO/korebase-django.git

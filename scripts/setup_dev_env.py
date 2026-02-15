@@ -77,43 +77,49 @@ def install_dependencies():
         sys.exit(1)
 
 def setup_env_file():
-    """Create .env file from example if missing."""
+    """Create .env file from example if missing, and ensure it is valid."""
     print_step("Configuring environment variables")
-    if ENV_FILE.exists():
+    
+    if not ENV_FILE.exists():
+        if not ENV_EXAMPLE.exists():
+            print_error(".env.example not found! Cannot create .env")
+            return
+
+        print("   Creating .env from .env.example...")
+        shutil.copy(ENV_EXAMPLE, ENV_FILE)
+        
+        # Read content
+        content = ENV_FILE.read_text(encoding='utf-8')
+        
+        # Generate Secret Key
+        secret_key = secrets.token_urlsafe(50)
+        if 'your-secret-key-here' in content:
+            content = content.replace('your-secret-key-here', secret_key)
+            print("   Generated new secure SECRET_KEY.")
+        
+        # Interactive Setup?
+        print("\n   [OPTIONAL CONFIGURATION]")
+        email = input("   Enter DEFAULT_FROM_EMAIL (e.g. noreply@korebase.com) [Press Enter to skip]: ").strip()
+        if email:
+            if "DEFAULT_FROM_EMAIL=" in content:
+                 # Logic for replacing existing key could go here but skipping for simplicity
+                 pass 
+            else:
+                content += f"\nDEFAULT_FROM_EMAIL={email}"
+
+        # Write initial content
+        ENV_FILE.write_text(content, encoding='utf-8')
+        print("   .env created successfully.")
+    else:
         print("   .env file already exists. Skipping creation.")
-        return
 
-    if not ENV_EXAMPLE.exists():
-        print_error(".env.example not found! Cannot create .env")
-        return
-
-    print("   Creating .env from .env.example...")
-    shutil.copy(ENV_EXAMPLE, ENV_FILE)
-    
-    # Read content
+    # Fix dummy DATABASE_URL if present (Common issue with defaults)
     content = ENV_FILE.read_text(encoding='utf-8')
-    
-    # Generate Secret Key
-    secret_key = secrets.token_urlsafe(50)
-    if 'your-secret-key-here' in content:
-        content = content.replace('your-secret-key-here', secret_key)
-        print("   Generated new secure SECRET_KEY.")
-    
-    # Interactive Setup?
-    print("\n   [OPTIONAL CONFIGURATION]")
-    email = input("   Enter DEFAULT_FROM_EMAIL (e.g. noreply@korebase.com) [Press Enter to skip]: ").strip()
-    if email:
-        # Simple string replacement for demonstration. A proper parser would be better but overkill here.
-        # Assuming .env.example has a placeholder or we append
-        if "DEFAULT_FROM_EMAIL=" in content:
-             # This is a bit risky with replace if not exact, but sufficient for fresh .env
-             pass # We'll just leave it for manual edit if complex
-        else:
-            content += f"\nDEFAULT_FROM_EMAIL={email}"
-
-    # Write back
-    ENV_FILE.write_text(content, encoding='utf-8')
-    print("   .env created successfully.")
+    dummy_url = "DATABASE_URL=postgresql://user:password@host:5432/korebase"
+    if dummy_url in content:
+        print("   ⚠️  Detected dummy DATABASE_URL. Disabling it to fallback to SQLite...")
+        content = content.replace(dummy_url, f"# {dummy_url}")
+        ENV_FILE.write_text(content, encoding='utf-8')
 
 def run_migrations():
     """Run Django migrations."""

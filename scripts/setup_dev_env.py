@@ -119,8 +119,9 @@ def run_migrations():
     """Run Django migrations."""
     print_step("Running database migrations")
     venv_python = get_venv_python()
+    manage_py = PROJECT_ROOT / "manage.py"
     try:
-        subprocess.check_call([str(venv_python), "manage.py", "migrate"])
+        subprocess.check_call([str(venv_python), str(manage_py), "migrate"])
     except subprocess.CalledProcessError:
         print_error("Migration failed.")
         sys.exit(1)
@@ -129,8 +130,9 @@ def collect_static():
     """Collect static files."""
     print_step("Collecting static files")
     venv_python = get_venv_python()
+    manage_py = PROJECT_ROOT / "manage.py"
     try:
-        subprocess.check_call([str(venv_python), "manage.py", "collectstatic", "--noinput"])
+        subprocess.check_call([str(venv_python), str(manage_py), "collectstatic", "--noinput"])
     except subprocess.CalledProcessError:
         print_error("Collectstatic failed.")
 
@@ -139,24 +141,24 @@ def check_superuser():
     print_step("Checking superuser")
     # We can check if any user exists via a simple script run
     venv_python = get_venv_python()
+    manage_py = PROJECT_ROOT / "manage.py"
     check_script = "from django.contrib.auth import get_user_model; User = get_user_model(); print(User.objects.filter(is_superuser=True).exists())"
     
     try:
         # We need to set up django environment for this one-liner
         # Using shell command is cleaner
-        cmd = [str(venv_python), "manage.py", "shell", "-c", check_script]
+        cmd = [str(venv_python), str(manage_py), "shell", "-c", check_script]
         # Run command and decode output
         result = subprocess.check_output(cmd, text=True).strip()
         
         # Check if "True" is in the output (handling potential startup logs)
-        if "True" in result.splitlines()[-1]: 
+        if result and "True" in result.splitlines()[-1]: 
             print("   Superuser already exists.")
         else:
             print("\n   No superuser found.")
-            # ... rest of logic
             create = input("   Do you want to create a superuser now? (y/n): ").lower().strip()
             if create == 'y':
-                subprocess.check_call([str(venv_python), "manage.py", "createsuperuser"])
+                subprocess.check_call([str(venv_python), str(manage_py), "createsuperuser"])
     except subprocess.CalledProcessError:
         print("   Could not verify superuser status (database accessible?).")
 

@@ -44,6 +44,10 @@ db.sqlite3-journal
 .env.local
 .env.*.local
 
+# Google OAuth Client Secrets
+client_secret*.json
+*client_secret*.json
+
 # IDE
 .vscode/
 .idea/

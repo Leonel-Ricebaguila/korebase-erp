@@ -48,7 +48,7 @@
                     style="width: 100%; padding: 0.75rem; border: 1px solid var(--kore-gray-300); border-radius: 6px; background-color: white;">
                     <option value="">Todas las Categorías</option>
                     {% for cat in categories %}
-                    <option value="{{ cat }}" {% if current_category==cat %}selected{% endif %}>{{ cat }}</option>
+                    <option value="{{ cat }}" {% ifequal current_category cat %}selected{% endifequal %}>{{ cat }}</option>
                     {% endfor %}
                 </select>
             </div>

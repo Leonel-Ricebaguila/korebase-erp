@@ -14,6 +14,12 @@ from datetime import timedelta
 from django.core.mail import send_mail
 from django.conf import settings
 import secrets
+import json
+import os
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from google_auth_oauthlib.flow import Flow
+from django.http import JsonResponse
 
 
 def login_view(request):
@@ -130,3 +136,151 @@ def verify_otp_view(request):
             return redirect('core:register')
             
     return render(request, 'core/verify_otp.html')
+
+
+def google_login_view(request):
+    """
+    Initiate Google OAuth2.0 flow
+    Redirects user to Google's consent screen
+    """
+    if request.user.is_authenticated:
+        return redirect('core:dashboard')
+    
+    try:
+        # Get the path to client secrets from environment variable
+        client_secrets_path = os.getenv('GOOGLE_CLIENT_SECRETS_PATH')
+        
+        if not client_secrets_path:
+            messages.error(request, 'Configuración de Google OAuth no encontrada')
+            return redirect('core:login')
+        
+        # Create OAuth flow
+        flow = Flow.from_client_secrets_file(
+            client_secrets_path,
+            scopes=['openid', 'https://www.googleapis.com/auth/userinfo.email', 
+                   'https://www.googleapis.com/auth/userinfo.profile'],
+            redirect_uri=request.build_absolute_uri('/core/auth/google/callback/')
+        )
+        
+        # Generate authorization URL
+        authorization_url, state = flow.authorization_url(
+            access_type='offline',
+            include_granted_scopes='true',
+            prompt='consent'
+        )
+        
+        # Store state in session for CSRF protection
+        request.session['oauth_state'] = state
+        
+        return redirect(authorization_url)
+        
+    except Exception as e:
+        messages.error(request, f'Error iniciando Google OAuth: {str(e)}')
+        return redirect('core:login')
+
+
+def google_callback_view(request):
+    """
+    Handle Google OAuth2.0 callback
+    Process the authorization code and authenticate user
+    """
+    if request.user.is_authenticated:
+        return redirect('core:dashboard')
+    
+    try:
+        # Verify state to prevent CSRF attacks
+        state = request.GET.get('state')
+        if not state or state != request.session.get('oauth_state'):
+            messages.error(request, 'Error de seguridad: estado OAuth inválido')
+            return redirect('core:login')
+        
+        # Clear the state from session
+        del request.session['oauth_state']
+        
+        # Get the path to client secrets from environment variable
+        client_secrets_path = os.getenv('GOOGLE_CLIENT_SECRETS_PATH')
+        
+        if not client_secrets_path:
+            messages.error(request, 'Configuración de Google OAuth no encontrada')
+            return redirect('core:login')
+        
+        # Create OAuth flow
+        flow = Flow.from_client_secrets_file(
+            client_secrets_path,
+            scopes=['openid', 'https://www.googleapis.com/auth/userinfo.email',
+                   'https://www.googleapis.com/auth/userinfo.profile'],
+            redirect_uri=request.build_absolute_uri('/core/auth/google/callback/')
+        )
+        
+        # Exchange authorization code for credentials
+        authorization_code = request.GET.get('code')
+        if not authorization_code:
+            messages.error(request, 'Código de autorización no proporcionado')
+            return redirect('core:login')
+        
+        flow.fetch_token(code=authorization_code)
+        credentials = flow.credentials
+        
+        # Get ID token and verify it
+        id_info = id_token.verify_oauth2_token(
+            credentials.id_token,
+            google_requests.Request(),
+            os.getenv('GOOGLE_CLIENT_ID')
+        )
+        
+        # Extract user information
+        email = id_info.get('email')
+        name = id_info.get('name', '')
+        given_name = id_info.get('given_name', '')
+        family_name = id_info.get('family_name', '')
+        
+        if not email:
+            messages.error(request, 'No se pudo obtener el correo electrónico de Google')
+            return redirect('core:login')
+        
+        # Get or create user
+        try:
+            user = CustomUser.objects.get(email=email)
+            created = False
+        except CustomUser.DoesNotExist:
+            # Generate unique employee_id
+            base_employee_id = email.split('@')[0]
+            employee_id = base_employee_id
+            counter = 1
+            
+            # Ensure employee_id is unique
+            while CustomUser.objects.filter(employee_id=employee_id).exists():
+                employee_id = f"{base_employee_id}{counter}"
+                counter += 1
+            
+            user = CustomUser.objects.create(
+                email=email,
+                username=base_employee_id,
+                first_name=given_name,
+                last_name=family_name,
+                employee_id=employee_id,
+                is_active=True,
+                email_verified=True
+            )
+            created = True
+        
+        # Update user info if they already exist
+        if not created:
+            user.first_name = given_name
+            user.last_name = family_name
+            user.email_verified = True
+            user.save()
+        
+        # Login the user
+        login(request, user)
+        
+        if created:
+            messages.success(request, f'Bienvenido, {user.get_full_name()}! Tu cuenta ha sido creada con Google.')
+        else:
+            messages.success(request, f'Bienvenido de nuevo, {user.get_full_name()}!')
+        
+        return redirect('core:dashboard')
+        
+    except Exception as e:
+        messages.error(request, f'Error en autenticación con Google: {str(e)}')
+        return redirect('core:login')

@@ -32,6 +32,11 @@ class CustomUser(AbstractUser):
         verbose_name="Puesto",
         blank=True
     )
+    email_verified = models.BooleanField(
+        default=False,
+        verbose_name="Correo Verificado",
+        help_text="Indica si el correo electrónico ha sido verificado"
+    )
     
     class Meta:
         verbose_name = "Usuario"

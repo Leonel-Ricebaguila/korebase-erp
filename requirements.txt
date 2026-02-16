@@ -9,3 +9,5 @@ gunicorn
 python-dotenv
 pillow
 sendgrid
+google-auth-oauthlib
+google-api-python-client

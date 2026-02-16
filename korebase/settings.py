@@ -191,3 +191,7 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@korebase.com')
 
 # OTP Settings
 OTP_EXPIRATION_MINUTES = 10
+
+# Google OAuth2.0 Settings
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
+GOOGLE_CLIENT_SECRETS_PATH = os.getenv('GOOGLE_CLIENT_SECRETS_PATH', '')

@@ -4,6 +4,75 @@ KoreBase ERP System
 """
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
+import uuid
+
+
+class Company(models.Model):
+    """
+    Representa a una entidad empresarial independiente (Tenant).
+    El corazón de la arquitectura SaaS Multi-Tenant.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255, verbose_name="Razón Social / Nombre")
+    rfc = models.CharField(max_length=13, blank=True, verbose_name="RFC")
+    currency = models.CharField(
+        max_length=3,
+        default='MXN',
+        choices=[('MXN', 'Peso Mexicano'), ('USD', 'Dólar Estadounidense')],
+        verbose_name="Moneda Base"
+    )
+    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    
+    # Subscription & Billing
+    SUBSCRIPTION_CHOICES = [
+        ('starter', 'Starter'),
+        ('business', 'Business'),
+        ('enterprise', 'Enterprise'),
+    ]
+    subscription_tier = models.CharField(
+        max_length=20, 
+        choices=SUBSCRIPTION_CHOICES, 
+        default='starter'
+    )
+    is_trial = models.BooleanField(default=True)
+    trial_end_date = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Empresa"
+        verbose_name_plural = "Empresas"
+
+    def __str__(self):
+        return f"{self.name} [{self.subscription_tier.upper()}]"
+
+
+from core.managers import TenantManager
+
+class TenantAwareModel(models.Model):
+    """
+    Clase base abstracta. TODO modelo operativo (Productos, Facturas, etc.)
+    debe heredar de esta clase para aislarse por Empresa (SaaS).
+    
+    NOTA: company es null=True solo para compatibilidad con migración.
+    Las vistas siempre deben asignar company = request.user.company al crear.
+    """
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="%(app_label)s_%(class)s_related"
+    )
+    # Auditable fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Manager que filtra todo por el Request
+    objects = TenantManager()
+
+    class Meta:
+        abstract = True
 
 
 class CustomUser(AbstractUser):
@@ -11,6 +80,16 @@ class CustomUser(AbstractUser):
     Custom User model extending Django's AbstractUser
     Adds employee-specific fields for the ERP system
     """
+    # Tenant Relationship
+    company = models.ForeignKey(
+        Company, 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True,
+        related_name="users",
+        help_text="Empresa a la que pertenece este usuario (Tenant)"
+    )
+
     # Override email to enforce uniqueness — critical for OAuth + OTP flows
     email = models.EmailField(
         unique=True,

@@ -22,6 +22,25 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from google_auth_oauthlib.flow import Flow
 from django.http import JsonResponse
+from django.utils import timezone
+from .models import Company
+
+
+def _ensure_company(user):
+    """
+    Multi-Tenant: Garantiza que el usuario tenga una Empresa (Tenant) asignada.
+    Si no tiene, crea una nueva empresa con el nombre del usuario y la asigna.
+    Siempre se llama justo antes del primer login exitoso.
+    """
+    if user.company is None:
+        company = Company.objects.create(
+            name=f"Empresa de {user.get_full_name() or user.username}",
+            is_trial=True,
+            trial_end_date=timezone.now() + timezone.timedelta(days=15),
+        )
+        user.company = company
+        user.save(update_fields=['company'])
+    return user.company
 
 
 class KoreBasePasswordResetForm(PasswordResetForm):
@@ -167,10 +186,13 @@ def verify_otp_view(request):
                 user.save()
                 # Clear tokens
                 user.otp_tokens.all().delete()
-                
+
+                # Multi-Tenant: Create or assign a Company for this new user
+                _ensure_company(user)
+
                 login(request, user)
                 del request.session['otp_user_id']
-                messages.success(request, 'Cuenta verificada exitosamente.')
+                messages.success(request, 'Cuenta verificada exitosamente. ¡Bienvenido a KoreBase!')
                 return redirect('core:dashboard')
             else:
                 messages.error(request, 'Código inválido o expirado.')
@@ -337,6 +359,8 @@ def google_callback_view(request):
                 is_active=True,
                 email_verified=True
             )
+            # Multi-Tenant: Create a Company for this brand new OAuth user
+            _ensure_company(user)
             created = True
         
         # Update user info if they already exist

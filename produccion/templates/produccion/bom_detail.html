@@ -1,0 +1,107 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}BOM {{ bom }} | KoreBase ERP{% endblock %}
+{% block page_title %}{{ bom }}{% endblock %}
+
+{% block content %}
+<!-- BOM Header Info -->
+<div class="kore-card" style="padding: 2rem; margin-bottom: 1.5rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Producto</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: var(--kore-navy-900);">{{ bom.product.name }}</div>
+            <div style="font-size: 0.85rem; font-family: monospace; color: var(--kore-gray-600);">{{ bom.product.sku }}
+            </div>
+        </div>
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Versión</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: var(--kore-navy-900);">v{{ bom.version }}</div>
+        </div>
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Estado</div>
+            {% if bom.active %}
+            <span
+                style="background: #dcfce7; color: #166534; padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">Activa</span>
+            {% else %}
+            <span
+                style="background: var(--kore-gray-100); color: var(--kore-gray-600); padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">Inactiva</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if bom.notes %}
+    <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--kore-gray-200);">
+        <div
+            style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+            Notas</div>
+        <div style="color: var(--kore-navy-900);">{{ bom.notes }}</div>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--kore-gray-500);">
+        Creado por: {{ bom.created_by.get_full_name|default:bom.created_by.username }} — {{ bom.created_at }}
+    </div>
+</div>
+
+<!-- Components Table -->
+<div class="kore-card" style="overflow: hidden; margin-bottom: 1.5rem;">
+    <div style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200);">
+        <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Componentes</h3>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead
+                style="background: var(--kore-gray-50); font-size: 0.75rem; text-transform: uppercase; color: var(--kore-gray-500);">
+                <tr>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Seq.</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        SKU</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Componente</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: right; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Cantidad</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem;">
+                {% for line in lines %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100);">
+                    <td style="padding: 1rem 1.5rem; text-align: center; color: var(--kore-gray-500);">{{ line.sequence
+                        }}</td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ line.component.sku }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem;">{{ line.component.name }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 700;">{{
+                        line.quantity|floatformat:3 }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 2rem; text-align: center; color: var(--kore-gray-500);">Sin
+                        componentes definidos.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Actions -->
+<div style="display: flex; gap: 0.75rem;">
+    <a href="{% url 'produccion:bom_list' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Volver</a>
+    <a href="{% url 'produccion:bom_edit' bom.pk %}" class="btn btn-primary"
+        style="background: var(--kore-teal-500); color: white;">
+        <i class="fas fa-edit"></i> Editar BOM
+    </a>
+</div>
+{% endblock %}

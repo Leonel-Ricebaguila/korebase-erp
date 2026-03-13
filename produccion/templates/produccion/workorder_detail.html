@@ -1,0 +1,186 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Orden {{ order.work_order_number }} | KoreBase ERP{% endblock %}
+{% block page_title %}Orden {{ order.work_order_number }}{% endblock %}
+
+{% block content %}
+<!-- Order Header Info -->
+<div class="kore-card" style="padding: 2rem; margin-bottom: 1.5rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Nº Orden</div>
+            <div style="font-size: 1.1rem; font-weight: 700; font-family: monospace; color: var(--kore-navy-900);">{{
+                order.work_order_number }}</div>
+        </div>
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Producto</div>
+            <div style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900);">{{ order.product.name }}
+            </div>
+            <div style="font-size: 0.85rem; font-family: monospace; color: var(--kore-gray-600);">{{ order.product.sku
+                }}</div>
+        </div>
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Estado</div>
+            {% if order.status == 'pending' %}
+            <span
+                style="background: var(--kore-gray-100); color: var(--kore-gray-600); padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">Pendiente</span>
+            {% elif order.status == 'in_progress' %}
+            <span
+                style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">En
+                Proceso</span>
+            {% elif order.status == 'completed' %}
+            <span
+                style="background: #dcfce7; color: #166534; padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">Completada</span>
+            {% elif order.status == 'cancelled' %}
+            <span
+                style="background: #fee2e2; color: #991b1b; padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">Cancelada</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div
+        style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--kore-gray-200);">
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Almacén</div>
+            <div style="color: var(--kore-navy-900);">{{ order.warehouse.name }}</div>
+        </div>
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Fecha Inicio</div>
+            <div style="color: var(--kore-navy-900);">{{ order.start_date }}</div>
+        </div>
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Fecha Finalización</div>
+            <div style="color: var(--kore-navy-900);">{{ order.completion_date|default:"—" }}</div>
+        </div>
+    </div>
+
+    <!-- Quantities with progress bar -->
+    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--kore-gray-200);">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--kore-navy-900);">Progreso de
+                Producción</span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--kore-navy-900);">
+                {{ order.quantity_produced|floatformat:0 }} / {{ order.quantity_planned|floatformat:0 }}
+            </span>
+        </div>
+        {% with pct=order.quantity_produced|floatformat:0 total=order.quantity_planned|floatformat:0 %}
+        <div style="width: 100%; background: var(--kore-gray-100); height: 8px; border-radius: 4px;">
+            <div style="background: {% if order.status == 'completed' %}var(--status-success){% elif order.status == 'cancelled' %}var(--status-danger){% else %}var(--kore-teal-500){% endif %}; height: 100%; border-radius: 4px; transition: width 0.3s;
+                {% if order.quantity_planned > 0 %}width: {{ order.quantity_produced|floatformat:0 }}%;{% else %}width: 0%;{% endif %}
+            "></div>
+        </div>
+        {% endwith %}
+    </div>
+
+    {% if order.notes %}
+    <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--kore-gray-200);">
+        <div
+            style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+            Notas</div>
+        <div style="color: var(--kore-navy-900);">{{ order.notes }}</div>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--kore-gray-500);">
+        Creado por: {{ order.created_by.get_full_name|default:order.created_by.username }} — {{ order.created_at }}
+    </div>
+</div>
+
+<!-- BOM Components (if linked) -->
+{% if bom_lines %}
+<div class="kore-card" style="overflow: hidden; margin-bottom: 1.5rem;">
+    <div style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200);">
+        <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">
+            Componentes ({{ order.bom }})
+        </h3>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead
+                style="background: var(--kore-gray-50); font-size: 0.75rem; text-transform: uppercase; color: var(--kore-gray-500);">
+                <tr>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Componente</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: right; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Cant./Unidad</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: right; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Total Req.</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem;">
+                {% for line in bom_lines %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100);">
+                    <td style="padding: 1rem 1.5rem;">
+                        <span style="font-family: monospace; font-weight: 600;">{{ line.component.sku }}</span>
+                        — {{ line.component.name }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: right;">{{ line.quantity|floatformat:3 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 700;">
+                        <!-- quantity per unit * planned quantity -->
+                        {{ line.quantity|floatformat:3 }} × {{ order.quantity_planned|floatformat:0 }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Actions -->
+<div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+    <a href="{% url 'produccion:workorder_list' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Volver</a>
+
+    {% if order.status == 'pending' %}
+    <a href="{% url 'produccion:workorder_edit' order.pk %}" class="btn btn-primary"
+        style="background: var(--kore-teal-500); color: white;">
+        <i class="fas fa-edit"></i> Editar
+    </a>
+    <form method="post" action="{% url 'produccion:workorder_status' order.pk %}" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="in_progress">
+        <button type="submit" class="btn" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">
+            <i class="fas fa-play"></i> Iniciar Producción
+        </button>
+    </form>
+    {% endif %}
+
+    {% if order.status == 'in_progress' %}
+    <form method="post" action="{% url 'produccion:workorder_status' order.pk %}" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="completed">
+        <button type="submit" class="btn" style="background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;"
+            onclick="return confirm('¿Marcar esta orden como completada?')">
+            <i class="fas fa-check"></i> Completar
+        </button>
+    </form>
+    {% endif %}
+
+    {% if order.status == 'pending' or order.status == 'in_progress' %}
+    <form method="post" action="{% url 'produccion:workorder_status' order.pk %}" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="cancelled">
+        <button type="submit" class="btn" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;"
+            onclick="return confirm('¿Cancelar esta orden de trabajo?')">
+            <i class="fas fa-ban"></i> Cancelar
+        </button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

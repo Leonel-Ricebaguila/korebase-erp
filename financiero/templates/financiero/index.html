@@ -13,8 +13,9 @@
         style="padding: 1.5rem; background: linear-gradient(135deg, var(--kore-navy-900), var(--kore-navy-800)); color: white; border: none;">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
             <div>
-                <div style="font-size: 0.9rem; opacity: 0.8; font-weight: 500;">Ingresos Totales (Mes)</div>
-                <div style="font-size: 2rem; font-weight: 700; margin-top: 0.25rem;">$124,500</div>
+                <div style="font-size: 0.9rem; opacity: 0.8; font-weight: 500;">Ingresos (Facturas Cliente)</div>
+                <div style="font-size: 2rem; font-weight: 700; margin-top: 0.25rem;">${{ income_total|floatformat:2 }}
+                </div>
             </div>
             <div
                 style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
@@ -23,18 +24,18 @@
         </div>
         <div style="width: 100%; height: 1px; background: rgba(255, 255, 255, 0.1); margin-bottom: 1rem;"></div>
         <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-            <span style="opacity: 0.7;">Vs mes anterior</span>
-            <span style="color: var(--kore-teal-400); font-weight: 600;">+12.5% <i class="fas fa-arrow-up"></i></span>
+            <span style="opacity: 0.7;">Facturas emitidas + pagadas</span>
         </div>
     </div>
 
-    <!-- Gastos Operativos -->
+    <!-- Gastos -->
     <div class="kore-card" style="padding: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
             <div>
-                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Gastos Operativos</div>
+                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Gastos (Facturas
+                    Proveedor)</div>
                 <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">
-                    $45,200</div>
+                    ${{ expense_total|floatformat:2 }}</div>
             </div>
             <div
                 style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-danger);">
@@ -42,159 +43,138 @@
             </div>
         </div>
         <div style="font-size: 0.8rem; color: var(--kore-gray-500);">
-            36% del ingreso total
+            Facturas proveedor emitidas + pagadas
         </div>
     </div>
 
-    <!-- Margen Neto -->
+    <!-- Resultado Neto -->
     <div class="kore-card" style="padding: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
             <div>
-                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Margen Neto</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">
-                    63.7%</div>
+                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Resultado Neto</div>
+                <div
+                    style="font-size: 1.75rem; font-weight: 700; color: {% if net_margin >= 0 %}var(--status-success){% else %}var(--status-danger){% endif %}; margin-top: 0.25rem;">
+                    ${{ net_margin|floatformat:2 }}</div>
             </div>
             <div
                 style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-success);">
                 <i class="fas fa-percentage" style="font-size: 1.25rem;"></i>
             </div>
         </div>
-        <div style="font-size: 0.8rem; color: var(--status-success);">
-            Saludable (> 50%)
+        <div style="font-size: 0.8rem; color: var(--kore-gray-500);">
+            Ingresos - Gastos
         </div>
     </div>
 
 </div>
 
-<!-- CHART AND TRANSACTIONS -->
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
-
-    <!-- Cash Flow Chart -->
-    <div class="kore-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Flujo de Caja</h3>
-            <select class="form-control" style="width: auto; padding: 0.25rem 0.5rem; font-size: 0.85rem;">
-                <option>Últimos 6 meses</option>
-                <option>Año actual</option>
-            </select>
-        </div>
-        <div style="flex: 1; min-height: 300px; position: relative;">
-            <canvas id="financeChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Recent Transactions -->
-    <div class="kore-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+<!-- QUICK STATS ROW -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+    <div class="kore-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
         <div
-            style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); background: var(--kore-gray-50); display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Recientes</h3>
-            <button class="btn btn-action" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">+ Nuevo</button>
+            style="width: 40px; height: 40px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.1rem;">
+            <i class="fas fa-sitemap"></i>
         </div>
-
-        <div style="flex: 1; overflow-y: auto;">
-            <!-- Tx 1 -->
-            <div
-                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; gap: 1rem; align-items: center;">
-                    <div
-                        style="width: 36px; height: 36px; background: #dcfce7; color: #166534; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-arrow-down"></i>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; color: var(--kore-navy-900); font-size: 0.9rem;">Pago Cliente #402
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--kore-gray-500);">Hace 2 horas</div>
-                    </div>
-                </div>
-                <div style="font-weight: 700; color: var(--status-success);">+$4,500</div>
-            </div>
-
-            <!-- Tx 2 -->
-            <div
-                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; gap: 1rem; align-items: center;">
-                    <div
-                        style="width: 36px; height: 36px; background: #fee2e2; color: #991b1b; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-arrow-up"></i>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; color: var(--kore-navy-900); font-size: 0.9rem;">Proveedor Acero
-                            S.A.</div>
-                        <div style="font-size: 0.75rem; color: var(--kore-gray-500);">Ayer</div>
-                    </div>
-                </div>
-                <div style="font-weight: 700; color: var(--kore-navy-900);">-$1,250</div>
-            </div>
-
-            <!-- Tx 3 -->
-            <div
-                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; gap: 1rem; align-items: center;">
-                    <div
-                        style="width: 36px; height: 36px; background: #e0f2fe; color: #075985; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-invoice"></i>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; color: var(--kore-navy-900); font-size: 0.9rem;">Factura #9902
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--kore-gray-500);">Pendiente</div>
-                    </div>
-                </div>
-                <div style="font-weight: 700; color: var(--kore-gray-500);">$8,900</div>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Cuentas</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_accounts }}</div>
+        </div>
+    </div>
+    <div class="kore-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 40px; height: 40px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-teal-500); font-size: 1.1rem;">
+            <i class="fas fa-book"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Asientos</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_journal_entries }}
             </div>
         </div>
-
-        <div style="padding: 1rem; text-align: center; background: var(--kore-gray-50);">
-            <a href="#" style="color: var(--kore-teal-600); font-size: 0.85rem; font-weight: 600;">Ver todo el
-                historial</a>
+    </div>
+    <div class="kore-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--status-warning); font-size: 1.1rem;">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Facturas Pendientes</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--kore-navy-900);">{{ pending_invoices }}</div>
+        </div>
+    </div>
+    <div class="kore-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 40px; height: 40px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--status-info); font-size: 1.1rem;">
+            <i class="fas fa-file-invoice"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Total Facturas</div>
+            <div style="font-size: 1.25rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_invoices }}</div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('financeChart').getContext('2d');
+<!-- ACCIONES RÁPIDAS -->
+<h3 style="margin: 0 0 1rem; color: var(--kore-navy-900); font-size: 1.25rem;">Acciones Rápidas</h3>
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+    <a href="{% url 'financiero:accounts_list' %}" class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem; text-decoration: none; color: inherit;"
+        onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem;">
+            <i class="fas fa-sitemap"></i>
+        </div>
+        <div>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Plan de Cuentas</div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Gestionar cuentas
+                contables</div>
+        </div>
+    </a>
 
-        // Gradiente Sutil
-        let gradientSync = ctx.createLinearGradient(0, 0, 0, 400);
-        gradientSync.addColorStop(0, 'rgba(20, 184, 166, 0.2)');
-        gradientSync.addColorStop(1, 'rgba(20, 184, 166, 0)');
+    <a href="{% url 'financiero:journal_create' %}" class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem; text-decoration: none; color: inherit;"
+        onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem;">
+            <i class="fas fa-book"></i>
+        </div>
+        <div>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Nuevo Asiento</div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Crear asiento contable
+            </div>
+        </div>
+    </a>
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Ingresos',
-                    data: [65, 59, 80, 81, 56, 124],
-                    borderColor: '#14b8a6',
-                    backgroundColor: gradientSync,
-                    fill: true,
-                    tension: 0.4
-                }, {
-                    label: 'Gastos',
-                    data: [28, 48, 40, 19, 86, 45],
-                    borderColor: '#ef4444',
-                    borderDash: [5, 5],
-                    tension: 0.4,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'top', align: 'end' }
-                },
-                scales: {
-                    y: { grid: { borderDash: [2, 4] } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-    });
-</script>
+    <a href="{% url 'financiero:invoice_create' %}" class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem; text-decoration: none; color: inherit;"
+        onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem;">
+            <i class="fas fa-file-invoice-dollar"></i>
+        </div>
+        <div>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Nueva Factura</div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Crear factura de cliente o
+                proveedor</div>
+        </div>
+    </a>
+
+    <a href="{% url 'financiero:journal_list' %}" class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem; text-decoration: none; color: inherit;"
+        onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem;">
+            <i class="fas fa-list"></i>
+        </div>
+        <div>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Libro Diario</div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Ver todos los asientos
+            </div>
+        </div>
+    </a>
+</div>
+
 {% endblock %}

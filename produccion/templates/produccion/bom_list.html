@@ -1,0 +1,110 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}BOMs | KoreBase ERP{% endblock %}
+{% block page_title %}Listas de Materiales (BOM){% endblock %}
+
+{% block content %}
+<!-- Header Actions -->
+<div
+    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <form method="get" style="display: flex; gap: 0.5rem;">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Buscar BOM..." class="erp-form-input"
+                style="width: 250px;">
+            <label
+                style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.85rem; color: var(--kore-gray-600);">
+                <input type="checkbox" name="inactive" value="1" {% if show_inactive %}checked{% endif %}
+                    onchange="this.form.submit()">
+                Inactivos
+            </label>
+            <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+    <a href="{% url 'produccion:bom_create' %}" class="btn btn-primary"
+        style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; border-radius: 6px;">
+        <i class="fas fa-plus"></i> Nueva BOM
+    </a>
+</div>
+
+<!-- BOM Table -->
+<div class="kore-card" style="overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead
+                style="background: var(--kore-gray-50); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--kore-gray-500);">
+                <tr>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Producto</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Versión</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Componentes</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Estado</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Acciones</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem;">
+                {% for bom in boms %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100);"
+                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem 1.5rem;">
+                        <span style="font-weight: 600; font-family: monospace;">{{ bom.product.sku }}</span>
+                        — {{ bom.product.name }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        <span
+                            style="background: var(--kore-gray-100); padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.8rem; font-weight: 600;">v{{
+                            bom.version }}</span>
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: center; font-weight: 600;">{{ bom.component_count }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        {% if bom.active %}
+                        <i class="fas fa-check-circle" style="color: var(--status-success);"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle" style="color: var(--kore-gray-400);"></i>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        <div style="display: flex; gap: 0.25rem; justify-content: center;">
+                            <a href="{% url 'produccion:bom_detail' bom.pk %}" class="btn btn-outline"
+                                style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" title="Ver">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'produccion:bom_edit' bom.pk %}" class="btn btn-outline"
+                                style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 4rem; text-align: center;">
+                        <div style="color: var(--kore-gray-300); font-size: 3rem; margin-bottom: 1rem;"><i
+                                class="fas fa-layer-group"></i></div>
+                        <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay listas
+                            de materiales</h4>
+                        <a href="{% url 'produccion:bom_create' %}" class="btn btn-primary"
+                            style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem;">
+                            <i class="fas fa-plus"></i> Crear Primera BOM
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

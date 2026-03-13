@@ -6,166 +6,146 @@
 
 {% block content %}
 <!-- KPI CARDS -->
-<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 2rem;">
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
 
-    <!-- Eficiencia General (OEE) -->
-    <div class="kore-card" style="padding: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Eficiencia (OEE)</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">87%
-                </div>
-            </div>
-            <div
-                style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--kore-blue-600);">
-                <i class="fas fa-chart-line" style="font-size: 1.25rem;"></i>
-            </div>
+    <!-- Total BOMs -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-blue-600); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-layer-group"></i>
         </div>
-        <div style="font-size: 0.8rem; color: var(--status-success); display: flex; align-items: center; gap: 0.25rem;">
-            <i class="fas fa-arrow-up"></i>
-            <span>2.5% vs semana anterior</span>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">BOMs Activas</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_boms }}</div>
         </div>
     </div>
 
     <!-- Órdenes Activas -->
-    <div class="kore-card" style="padding: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Órdenes Activas</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">{{
-                    active_work_orders|default:"12" }}</div>
-            </div>
-            <div
-                style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-warning);">
-                <i class="fas fa-cogs" style="font-size: 1.25rem;"></i>
-            </div>
-        </div>
-        <div style="font-size: 0.8rem; color: var(--kore-gray-500);">
-            4 en etapa final de ensamble
-        </div>
-    </div>
-
-    <!-- Alertas de Calidad -->
-    <div class="kore-card" style="padding: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Alertas Calidad</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">3
-                </div>
-            </div>
-            <div
-                style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-danger);">
-                <i class="fas fa-exclamation-triangle" style="font-size: 1.25rem;"></i>
-            </div>
-        </div>
-        <div style="font-size: 0.8rem; color: var(--kore-gray-500);">
-            Requieren atención inmediata
-        </div>
-    </div>
-
-    <!-- Unidades Producidas -->
-    <div class="kore-card" style="padding: 1.5rem;">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-                <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Prod. Diaria</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">342
-                </div>
-            </div>
-            <div
-                style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-success);">
-                <i class="fas fa-boxes" style="font-size: 1.25rem;"></i>
-            </div>
-        </div>
-        <div style="width: 100%; background: var(--kore-gray-100); height: 6px; border-radius: 3px; margin-top: 5px;">
-            <div style="background: var(--status-success); width: 85%; height: 100%; border-radius: 3px;"></div>
-        </div>
-        <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 5px; text-align: right;">85% Objetivo
-        </div>
-    </div>
-</div>
-
-<!-- MAIN DASHBOARD CONTENT -->
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
-
-    <!-- Gráfica de Producción -->
-    <div class="kore-card" style="padding: 1.5rem; display: flex; flex-direction: column;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Rendimiento de Producción</h3>
-            <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">Semanal</button>
-                <button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">Mensual</button>
-            </div>
-        </div>
-        <div style="flex: 1; min-height: 300px; position: relative;">
-            <canvas id="productionChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Órdenes Prioritarias -->
-    <div class="kore-card" style="padding: 0; overflow: hidden;">
-        <div style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); background: var(--kore-gray-50);">
-            <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Cola de Prioridad</h3>
-        </div>
-        <div style="display: flex; flex-direction: column;">
-            <!-- Item 1 -->
-            <div
-                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; gap: 1rem; align-items: center;">
-                <div
-                    style="width: 40px; height: 40px; background: var(--kore-navy-800); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
-                    OP
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--kore-navy-900);">OP-2023-001</div>
-                    <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Lote Electrónicos A1</div>
-                </div>
-                <span
-                    style="font-size: 0.75rem; background: #fee2e2; color: #991b1b; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">URGENTE</span>
-            </div>
-
-            <!-- Item 2 -->
-            <div
-                style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--kore-gray-100); display: flex; gap: 1rem; align-items: center;">
-                <div
-                    style="width: 40px; height: 40px; background: var(--kore-gray-200); color: var(--kore-gray-600); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
-                    OP
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--kore-navy-900);">OP-2023-005</div>
-                    <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Componentes Mecánicos</div>
-                </div>
-                <span
-                    style="font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">EN
-                    ESPERA</span>
-            </div>
-
-            <!-- Item 3 -->
-            <div style="padding: 1rem 1.5rem; display: flex; gap: 1rem; align-items: center;">
-                <div
-                    style="width: 40px; height: 40px; background: var(--kore-gray-200); color: var(--kore-gray-600); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
-                    OP
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--kore-navy-900);">OP-2023-008</div>
-                    <div style="font-size: 0.8rem; color: var(--kore-gray-500);">Empaque Final</div>
-                </div>
-                <span
-                    style="font-size: 0.75rem; background: var(--kore-gray-100); color: var(--kore-gray-600); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">PROGR.</span>
-            </div>
-        </div>
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
         <div
-            style="padding: 1rem 1.5rem; border-top: 1px solid var(--kore-gray-200); background: var(--kore-gray-50); text-align: center;">
-            <a href="#"
-                style="font-size: 0.85rem; color: var(--kore-teal-600); font-weight: 600; text-decoration: none;">Ver
-                todas las órdenes &rarr;</a>
+            style="width: 48px; height: 48px; background: rgba(245, 158, 11, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--status-warning); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-cogs"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Órdenes Activas</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ active_work_orders }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Completadas -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--status-success); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Completadas</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ completed_work_orders }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Órdenes -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Total Órdenes</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_work_orders }}</div>
         </div>
     </div>
 </div>
 
-<!-- ACTIONS GRID -->
-<h3 style="margin: 2rem 0 1rem; color: var(--kore-navy-900); font-size: 1.25rem;">Acciones Rápidas</h3>
+<!-- RECENT ORDERS TABLE -->
+<div class="kore-card" style="background: white; border-radius: 12px; padding: 0; margin-bottom: 2rem;">
+    <div class="kore-card-header"
+        style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900); margin: 0;">Órdenes Recientes</h3>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{% url 'produccion:workorder_create' %}" class="btn btn-action"
+                style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">
+                <i class="fas fa-plus"></i> Nueva
+            </a>
+            <a href="{% url 'produccion:workorder_list' %}" class="btn btn-outline"
+                style="border: 1px solid var(--kore-gray-300); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; color: var(--kore-navy-700);">
+                <i class="fas fa-list"></i> Ver Todo
+            </a>
+        </div>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead
+                style="background: var(--kore-gray-50); color: var(--kore-gray-500); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                <tr>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Nº Orden</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Producto</th>
+                    <th
+                        style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: right;">
+                        Cantidad</th>
+                    <th
+                        style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: center;">
+                        Estado</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem; color: var(--kore-gray-800);">
+                {% for order in recent_orders %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100); cursor: pointer;"
+                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                    onmouseout="this.style.background='transparent'"
+                    onclick="window.location='{% url 'produccion:workorder_detail' order.pk %}'">
+                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{
+                        order.work_order_number }}</td>
+                    <td style="padding: 1rem 1.5rem;">{{ order.product.name }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">{{
+                        order.quantity_planned|floatformat:0 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        {% if order.status == 'pending' %}
+                        <span
+                            style="background: var(--kore-gray-100); color: var(--kore-gray-600); padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Pendiente</span>
+                        {% elif order.status == 'in_progress' %}
+                        <span
+                            style="background: #fef3c7; color: #92400e; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">En
+                            Proceso</span>
+                        {% elif order.status == 'completed' %}
+                        <span
+                            style="background: #dcfce7; color: #166534; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Completada</span>
+                        {% elif order.status == 'cancelled' %}
+                        <span
+                            style="background: #fee2e2; color: #991b1b; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Cancelada</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 4rem; text-align: center;">
+                        <div style="color: var(--kore-gray-200); font-size: 3rem; margin-bottom: 1rem;"><i
+                                class="fas fa-cogs"></i></div>
+                        <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay órdenes
+                            de trabajo</h4>
+                        <p style="color: var(--kore-gray-500); margin-bottom: 1.5rem;">Comience creando nuevas órdenes
+                            de producción.</p>
+                        <a href="{% url 'produccion:workorder_create' %}" class="btn btn-action"
+                            style="background: var(--kore-navy-800); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;">
+                            <i class="fas fa-plus"></i> Crear Primera Orden
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ACCIONES RÁPIDAS -->
+<h3 style="margin: 0 0 1rem; color: var(--kore-navy-900); font-size: 1.25rem;">Acciones Rápidas</h3>
 <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
-    <button class="kore-card"
-        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem;"
+    <a href="{% url 'produccion:workorder_create' %}" class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem; text-decoration: none; color: inherit;"
         onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
         onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
         <div
@@ -175,12 +155,12 @@
         <div>
             <div style="font-weight: 600; color: var(--kore-navy-900);">Nueva Orden</div>
             <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Crear orden de trabajo
-                manual</div>
+            </div>
         </div>
-    </button>
+    </a>
 
-    <button class="kore-card"
-        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem;"
+    <a href="{% url 'produccion:bom_list' %}" class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem; text-decoration: none; color: inherit;"
         onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
         onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
         <div
@@ -192,62 +172,22 @@
             <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Configurar listas de
                 materiales</div>
         </div>
-    </button>
+    </a>
 
-    <button class="kore-card"
-        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem;"
+    <a href="{% url 'produccion:workorder_list' %}" class="kore-card"
+        style="padding: 1.5rem; text-align: left; border: 1px solid var(--kore-gray-200); transition: all 0.2s; cursor: pointer; display: flex; flex-direction: column; gap: 1rem; text-decoration: none; color: inherit;"
         onmouseover="this.style.borderColor='var(--kore-teal-500)'; this.style.transform='translateY(-2px)'"
         onmouseout="this.style.borderColor='var(--kore-gray-200)'; this.style.transform='translateY(0)'">
         <div
             style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem;">
-            <i class="fas fa-calendar-alt"></i>
+            <i class="fas fa-clipboard-list"></i>
         </div>
         <div>
-            <div style="font-weight: 600; color: var(--kore-navy-900);">Planificador</div>
-            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Calendario de producción
-            </div>
+            <div style="font-weight: 600; color: var(--kore-navy-900);">Todas las Órdenes</div>
+            <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Ver y filtrar órdenes de
+                trabajo</div>
         </div>
-    </button>
+    </a>
 </div>
 
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Producción Chart
-        const ctx = document.getElementById('productionChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                datasets: [{
-                    label: 'Real',
-                    data: [120, 132, 101, 134, 90, 230, 210],
-                    backgroundColor: '#10b981',
-                    borderRadius: 4
-                }, {
-                    label: 'Objetivo',
-                    data: [150, 150, 150, 150, 150, 150, 150],
-                    type: 'line',
-                    borderColor: '#94a3b8',
-                    borderDash: [5, 5],
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
-                },
-                scales: {
-                    y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-    });
-</script>
 {% endblock %}

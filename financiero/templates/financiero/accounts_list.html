@@ -1,0 +1,105 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Plan de Cuentas | KoreBase ERP{% endblock %}
+{% block page_title %}Plan de Cuentas{% endblock %}
+
+{% block content %}
+<!-- Header Actions -->
+<div
+    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <!-- Search -->
+        <form method="get" style="display: flex; gap: 0.5rem;">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Buscar cuenta..." class="erp-form-input"
+                style="width: 250px;">
+            <select name="type" class="erp-form-input" style="width: 160px;" onchange="this.form.submit()">
+                <option value="">Todos los tipos</option>
+                {% for value, label in account_types %}
+                <option value="{{ value }}" {% if current_type==value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+    <a href="{% url 'financiero:account_create' %}" class="btn btn-primary"
+        style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; border-radius: 6px;">
+        <i class="fas fa-plus"></i> Nueva Cuenta
+    </a>
+</div>
+
+<!-- Accounts Table -->
+<div class="kore-card" style="overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead
+                style="background: var(--kore-gray-50); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--kore-gray-500);">
+                <tr>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Código</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Nombre</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Tipo</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: right; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Balance</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Acciones</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem;">
+                {% for account in accounts %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100);"
+                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ account.account_code
+                        }}</td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 500;">
+                        {% if account.parent %}
+                        <span style="color: var(--kore-gray-400); margin-right: 0.25rem;">└</span>
+                        {% endif %}
+                        {{ account.account_name }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem;">
+                        <span
+                            style="background: var(--kore-gray-100); padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem;">
+                            {{ account.get_account_type_display }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">${{
+                        account.balance|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        <a href="{% url 'financiero:account_edit' account.pk %}" class="btn btn-outline"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 4rem; text-align: center;">
+                        <div style="color: var(--kore-gray-300); font-size: 3rem; margin-bottom: 1rem;"><i
+                                class="fas fa-sitemap"></i></div>
+                        <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay cuentas
+                            registradas</h4>
+                        <p style="color: var(--kore-gray-500); margin-bottom: 1rem;">Comience creando el plan de
+                            cuentas.</p>
+                        <a href="{% url 'financiero:account_create' %}" class="btn btn-primary"
+                            style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem;">
+                            <i class="fas fa-plus"></i> Crear Primera Cuenta
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

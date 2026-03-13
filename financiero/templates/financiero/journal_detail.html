@@ -1,0 +1,128 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Asiento {{ entry.entry_number }} | KoreBase ERP{% endblock %}
+{% block page_title %}Asiento {{ entry.entry_number }}{% endblock %}
+
+{% block content %}
+<!-- Entry Header Info -->
+<div class="kore-card" style="padding: 2rem; margin-bottom: 1.5rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Nº Asiento</div>
+            <div style="font-size: 1.1rem; font-weight: 700; font-family: monospace; color: var(--kore-navy-900);">{{
+                entry.entry_number }}</div>
+        </div>
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Fecha</div>
+            <div style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900);">{{ entry.entry_date }}</div>
+        </div>
+        <div>
+            <div
+                style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+                Estado</div>
+            {% if entry.reversed %}
+            <span
+                style="background: #fee2e2; color: #991b1b; padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">Revertido</span>
+            {% elif entry.reversal_of %}
+            <span
+                style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">Reverso
+                de {{ entry.reversal_of.entry_number }}</span>
+            {% else %}
+            <span
+                style="background: #dcfce7; color: #166534; padding: 0.3rem 0.75rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">Vigente</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--kore-gray-200);">
+        <div
+            style="font-size: 0.8rem; color: var(--kore-gray-500); text-transform: uppercase; font-weight: 600; margin-bottom: 0.25rem;">
+            Descripción</div>
+        <div style="color: var(--kore-navy-900);">{{ entry.description }}</div>
+    </div>
+
+    <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--kore-gray-500);">
+        Creado por: {{ entry.created_by.get_full_name|default:entry.created_by.username }} — {{ entry.created_at }}
+    </div>
+</div>
+
+<!-- Entry Lines Table -->
+<div class="kore-card" style="overflow: hidden; margin-bottom: 1.5rem;">
+    <div style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200);">
+        <h3 style="margin: 0; font-size: 1.1rem; color: var(--kore-navy-900);">Líneas del Asiento</h3>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead
+                style="background: var(--kore-gray-50); font-size: 0.75rem; text-transform: uppercase; color: var(--kore-gray-500);">
+                <tr>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Cuenta</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Descripción</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: right; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Debe</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: right; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Haber</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem;">
+                {% for line in lines %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100);">
+                    <td style="padding: 1rem 1.5rem;">
+                        <span style="font-family: monospace; font-weight: 600;">{{ line.account.account_code }}</span>
+                        — {{ line.account.account_name }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; color: var(--kore-gray-600);">{{ line.description|default:"-" }}
+                    </td>
+                    <td
+                        style="padding: 1rem 1.5rem; text-align: right; font-weight: {% if line.debit > 0 %}700{% else %}400{% endif %};">
+                        ${{ line.debit|floatformat:2 }}
+                    </td>
+                    <td
+                        style="padding: 1rem 1.5rem; text-align: right; font-weight: {% if line.credit > 0 %}700{% else %}400{% endif %};">
+                        ${{ line.credit|floatformat:2 }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot style="background: var(--kore-gray-50); font-weight: 700;">
+                <tr>
+                    <td colspan="2"
+                        style="padding: 1rem 1.5rem; text-align: right; text-transform: uppercase; font-size: 0.8rem; color: var(--kore-gray-500);">
+                        Totales</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-size: 1rem; color: var(--kore-navy-900);">
+                        ${{ total_debit|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-size: 1rem; color: var(--kore-navy-900);">
+                        ${{ total_credit|floatformat:2 }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<!-- Actions -->
+<div style="display: flex; gap: 0.75rem;">
+    <a href="{% url 'financiero:journal_list' %}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    {% if not entry.reversed and not entry.reversal_of %}
+    <form method="post" action="{% url 'financiero:journal_reverse' entry.pk %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;"
+            onclick="return confirm('¿Está seguro de revertir este asiento? Esta acción creará un contra-asiento.')">
+            <i class="fas fa-undo"></i> Revertir Asiento
+        </button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

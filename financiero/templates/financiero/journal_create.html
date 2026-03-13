@@ -1,0 +1,109 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Nuevo Asiento Contable | KoreBase ERP{% endblock %}
+{% block page_title %}Nuevo Asiento Contable{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+
+    <!-- Entry Header -->
+    <div class="kore-card" style="padding: 2rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900); margin: 0 0 1.5rem;">Datos del
+            Asiento</h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+            {% for field in form %}
+            <div {% if field.name=='description' %}style="grid-column: span 2;" {% endif %}>
+                <label
+                    style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">
+                    {{ field.label }} {% if field.field.required %}<span style="color: var(--status-danger);">*</span>{%
+                    endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color: var(--status-danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ field.errors.0 }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Entry Lines -->
+    <div class="kore-card" style="padding: 2rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900); margin: 0;">Líneas del Asiento
+            </h3>
+            <span style="font-size: 0.8rem; color: var(--kore-gray-500);">Total Debe = Total Haber</span>
+        </div>
+
+        {{ formset.management_form }}
+
+        {% if formset.non_form_errors %}
+        <div
+            style="background: #fee2e2; color: #991b1b; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.85rem;">
+            {% for error in formset.non_form_errors %}{{ error }}{% endfor %}
+        </div>
+        {% endif %}
+
+        <div id="formset-container">
+            {% for line_form in formset %}
+            <div class="line-row"
+                style="display: grid; grid-template-columns: 2fr 1fr 1fr 2fr auto; gap: 0.75rem; margin-bottom: 0.75rem; align-items: end; padding: 1rem; background: var(--kore-gray-50); border-radius: 8px;">
+                {% if line_form.instance.pk %}{{ line_form.id }}{% endif %}
+
+                <div>
+                    {% if forloop.first %}
+                    <label
+                        style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--kore-gray-500); margin-bottom: 0.25rem; text-transform: uppercase;">Cuenta</label>
+                    {% endif %}
+                    {{ line_form.account }}
+                    {% if line_form.account.errors %}<div style="color: var(--status-danger); font-size: 0.75rem;">{{
+                        line_form.account.errors.0 }}</div>{% endif %}
+                </div>
+                <div>
+                    {% if forloop.first %}
+                    <label
+                        style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--kore-gray-500); margin-bottom: 0.25rem; text-transform: uppercase;">Debe</label>
+                    {% endif %}
+                    {{ line_form.debit }}
+                </div>
+                <div>
+                    {% if forloop.first %}
+                    <label
+                        style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--kore-gray-500); margin-bottom: 0.25rem; text-transform: uppercase;">Haber</label>
+                    {% endif %}
+                    {{ line_form.credit }}
+                </div>
+                <div>
+                    {% if forloop.first %}
+                    <label
+                        style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--kore-gray-500); margin-bottom: 0.25rem; text-transform: uppercase;">Descripción</label>
+                    {% endif %}
+                    {{ line_form.description }}
+                </div>
+                <div>
+                    {% if line_form.DELETE %}
+                    <label
+                        style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: var(--status-danger); cursor: pointer;">
+                        {{ line_form.DELETE }} <i class="fas fa-trash"></i>
+                    </label>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div style="display: flex; gap: 0.75rem;">
+        <button type="submit" class="btn btn-primary"
+            style="background: var(--kore-teal-500); color: white; padding: 0.6rem 1.5rem;">
+            <i class="fas fa-save"></i> Crear Asiento
+        </button>
+        <a href="{% url 'financiero:journal_list' %}" class="btn btn-outline">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | KoreBase ERP{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px;">
+    <div class="kore-card" style="padding: 2rem;">
+        <form method="post">
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                {% for field in form %}
+                <div {% if field.name=='notes' %}style="grid-column: span 2;" {% endif %}>
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">
+                        {{ field.label }}
+                        {% if field.field.required %}<span style="color: var(--status-danger);">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div style="color: var(--status-danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ field.errors.0
+                        }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary" style="background: var(--kore-teal-500); color: white;">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+                <a href="{% url 'produccion:workorder_list' %}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

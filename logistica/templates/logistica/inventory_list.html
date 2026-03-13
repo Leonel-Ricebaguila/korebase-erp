@@ -48,7 +48,7 @@
                     style="width: 100%; padding: 0.75rem; border: 1px solid var(--kore-gray-300); border-radius: 6px; background-color: white;">
                     <option value="">Todas las Categorías</option>
                     {% for cat in categories %}
-                    <option value="{{ cat }}" {% ifequal current_category cat %}selected{% endifequal %}>{{ cat }}</option>
+                    <option value="{{ cat }}" {% if current_category == cat %}selected{% endif %}>{{ cat }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -109,8 +109,7 @@
                     <td style="padding: 1rem; border-bottom: 1px solid var(--kore-gray-100);">
                         <div style="font-weight: 600; color: var(--kore-navy-900);">{{ product.name }}</div>
                         {% if product.description %}
-                        <div style="font-size: 0.8rem; color: var(--kore-gray-500); margin-top: 0.25rem;">{{
-                            product.description|truncatechars:40 }}</div>
+                        <div style="font-size: 0.75rem; color: var(--kore-gray-400); margin-top: 0.25rem;">{{ product.description|truncatechars:40 }}</div>
                         {% endif %}
                     </td>
                     <td style="padding: 1rem; border-bottom: 1px solid var(--kore-gray-100);">

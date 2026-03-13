@@ -55,8 +55,7 @@
                         style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--kore-gray-500); margin-bottom: 0.25rem; text-transform: uppercase;">Componente</label>
                     {% endif %}
                     {{ line_form.component }}
-                    {% if line_form.component.errors %}<div style="color: var(--status-danger); font-size: 0.75rem;">{{
-                        line_form.component.errors.0 }}</div>{% endif %}
+                    {% if line_form.component.errors %}<div style="color: var(--status-danger); font-size: 0.75rem;">{{ line_form.component.errors.0 }}</div>{% endif %}
                 </div>
                 <div>
                     {% if forloop.first %}

@@ -59,8 +59,7 @@
                 <tr style="border-bottom: 1px solid var(--kore-gray-100);"
                     onmouseover="this.style.background='var(--kore-gray-50)'"
                     onmouseout="this.style.background='transparent'">
-                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ account.account_code
-                        }}</td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ account.account_code }}</td>
                     <td style="padding: 1rem 1.5rem; font-weight: 500;">
                         {% if account.parent %}
                         <span style="color: var(--kore-gray-400); margin-right: 0.25rem;">└</span>
@@ -73,8 +72,7 @@
                             {{ account.get_account_type_display }}
                         </span>
                     </td>
-                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">${{
-                        account.balance|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">${{ account.balance|floatformat:2 }}</td>
                     <td style="padding: 1rem 1.5rem; text-align: center;">
                         <a href="{% url 'financiero:account_edit' account.pk %}" class="btn btn-outline"
                             style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">

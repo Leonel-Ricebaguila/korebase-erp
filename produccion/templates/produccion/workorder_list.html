@@ -64,15 +64,13 @@
                 <tr style="border-bottom: 1px solid var(--kore-gray-100);"
                     onmouseover="this.style.background='var(--kore-gray-50)'"
                     onmouseout="this.style.background='transparent'">
-                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{
-                        order.work_order_number }}</td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ order.work_order_number }}</td>
                     <td style="padding: 1rem 1.5rem;">
                         <span style="font-weight: 600;">{{ order.product.name }}</span>
                         <div style="font-size: 0.75rem; color: var(--kore-gray-500);">{{ order.product.sku }}</div>
                     </td>
                     <td style="padding: 1rem 1.5rem;">{{ order.warehouse.name }}</td>
-                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">{{
-                        order.quantity_planned|floatformat:0 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">{{ order.quantity_planned|floatformat:0 }}</td>
                     <td
                         style="padding: 1rem 1.5rem; text-align: right; font-weight: 600; color: {% if order.quantity_produced >= order.quantity_planned %}var(--status-success){% else %}var(--kore-gray-600){% endif %};">
                         {{ order.quantity_produced|floatformat:0 }}

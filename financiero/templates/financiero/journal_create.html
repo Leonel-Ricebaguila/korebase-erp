@@ -59,8 +59,7 @@
                         style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--kore-gray-500); margin-bottom: 0.25rem; text-transform: uppercase;">Cuenta</label>
                     {% endif %}
                     {{ line_form.account }}
-                    {% if line_form.account.errors %}<div style="color: var(--status-danger); font-size: 0.75rem;">{{
-                        line_form.account.errors.0 }}</div>{% endif %}
+                    {% if line_form.account.errors %}<div style="color: var(--status-danger); font-size: 0.75rem;">{{ line_form.account.errors.0 }}</div>{% endif %}
                 </div>
                 <div>
                     {% if forloop.first %}

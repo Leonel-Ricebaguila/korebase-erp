@@ -64,8 +64,7 @@
                     </td>
                     <td style="padding: 1rem 1.5rem;">{{ entry.entry_date }}</td>
                     <td style="padding: 1rem 1.5rem;">{{ entry.description|truncatewords:10 }}</td>
-                    <td style="padding: 1rem 1.5rem;">{{
-                        entry.created_by.get_full_name|default:entry.created_by.username }}</td>
+                    <td style="padding: 1rem 1.5rem;">{{ entry.created_by.get_full_name|default:entry.created_by.username }}</td>
                     <td style="padding: 1rem 1.5rem; text-align: center;">
                         {% if entry.reversed %}
                         <span

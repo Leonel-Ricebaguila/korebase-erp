@@ -70,8 +70,7 @@
                 <tr style="border-bottom: 1px solid var(--kore-gray-100);"
                     onmouseover="this.style.background='var(--kore-gray-50)'"
                     onmouseout="this.style.background='transparent'">
-                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{
-                        invoice.invoice_number }}</td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ invoice.invoice_number }}</td>
                     <td style="padding: 1rem 1.5rem;">
                         {% if invoice.invoice_type == 'customer' %}
                         <span style="color: var(--status-success);"><i class="fas fa-arrow-down"></i> Cliente</span>
@@ -81,8 +80,7 @@
                     </td>
                     <td style="padding: 1rem 1.5rem;">{{ invoice.customer_supplier }}</td>
                     <td style="padding: 1rem 1.5rem;">{{ invoice.invoice_date }}</td>
-                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 700;">${{
-                        invoice.total|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 700;">${{ invoice.total|floatformat:2 }}</td>
                     <td style="padding: 1rem 1.5rem; text-align: center;">
                         {% if invoice.status == 'draft' %}
                         <span

@@ -77,13 +77,11 @@
             <tbody style="font-size: 0.9rem;">
                 {% for line in lines %}
                 <tr style="border-bottom: 1px solid var(--kore-gray-100);">
-                    <td style="padding: 1rem 1.5rem; text-align: center; color: var(--kore-gray-500);">{{ line.sequence
-                        }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: center; color: var(--kore-gray-500);">{{ line.sequence }}</td>
                     <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ line.component.sku }}
                     </td>
                     <td style="padding: 1rem 1.5rem;">{{ line.component.name }}</td>
-                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 700;">{{
-                        line.quantity|floatformat:3 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 700;">{{ line.quantity|floatformat:3 }}</td>
                 </tr>
                 {% empty %}
                 <tr>

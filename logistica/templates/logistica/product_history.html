@@ -84,10 +84,7 @@
                     <td style="padding: 1rem;">
                         <div style="font-weight: 500; color: var(--kore-navy-800);">{{ mov.reference|default:"-" }}
                         </div>
-                        {% if mov.notes %}
-                        <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-style: italic;">{{ mov.notes
-                            }}</div>
-                        {% endif %}
+                        {% if mov.notes %}<div style="font-size: 0.85rem; color: var(--kore-gray-500); font-style: italic;">{{ mov.notes }}</div>{% endif %}
                     </td>
                 </tr>
                 {% empty %}

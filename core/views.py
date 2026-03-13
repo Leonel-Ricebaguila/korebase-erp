@@ -138,6 +138,51 @@ def verify_otp_view(request):
     return render(request, 'core/verify_otp.html')
 
 
+OAUTH_SCOPES = [
+    'openid',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
+
+
+def _get_oauth_flow(redirect_uri):
+    """
+    Build Google OAuth flow from env vars (production) or JSON file (local dev).
+    On Render the client_secret*.json file doesn't exist (gitignored),
+    so we construct the config dict from GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET.
+    """
+    client_id = os.getenv('GOOGLE_CLIENT_ID')
+    client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
+
+    if client_id and client_secret:
+        # Production / env-var path — no JSON file needed
+        client_config = {
+            "web": {
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            }
+        }
+        return Flow.from_client_config(
+            client_config,
+            scopes=OAUTH_SCOPES,
+            redirect_uri=redirect_uri,
+        )
+
+    # Local dev fallback — use the JSON file
+    client_secrets_path = os.getenv('GOOGLE_CLIENT_SECRETS_PATH')
+    if client_secrets_path:
+        return Flow.from_client_secrets_file(
+            client_secrets_path,
+            scopes=OAUTH_SCOPES,
+            redirect_uri=redirect_uri,
+        )
+
+    raise ValueError("Google OAuth is not configured. Set GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET, or GOOGLE_CLIENT_SECRETS_PATH.")
+
+
 def google_login_view(request):
     """
     Initiate Google OAuth2.0 flow
@@ -147,20 +192,8 @@ def google_login_view(request):
         return redirect('core:dashboard')
     
     try:
-        # Get the path to client secrets from environment variable
-        client_secrets_path = os.getenv('GOOGLE_CLIENT_SECRETS_PATH')
-        
-        if not client_secrets_path:
-            messages.error(request, 'Configuración de Google OAuth no encontrada')
-            return redirect('core:login')
-        
-        # Create OAuth flow
-        flow = Flow.from_client_secrets_file(
-            client_secrets_path,
-            scopes=['openid', 'https://www.googleapis.com/auth/userinfo.email', 
-                   'https://www.googleapis.com/auth/userinfo.profile'],
-            redirect_uri=request.build_absolute_uri('/core/auth/google/callback/')
-        )
+        redirect_uri = request.build_absolute_uri('/core/auth/google/callback/')
+        flow = _get_oauth_flow(redirect_uri)
         
         # Generate authorization URL
         authorization_url, state = flow.authorization_url(
@@ -197,20 +230,8 @@ def google_callback_view(request):
         # Clear the state from session
         del request.session['oauth_state']
         
-        # Get the path to client secrets from environment variable
-        client_secrets_path = os.getenv('GOOGLE_CLIENT_SECRETS_PATH')
-        
-        if not client_secrets_path:
-            messages.error(request, 'Configuración de Google OAuth no encontrada')
-            return redirect('core:login')
-        
-        # Create OAuth flow
-        flow = Flow.from_client_secrets_file(
-            client_secrets_path,
-            scopes=['openid', 'https://www.googleapis.com/auth/userinfo.email',
-                   'https://www.googleapis.com/auth/userinfo.profile'],
-            redirect_uri=request.build_absolute_uri('/core/auth/google/callback/')
-        )
+        redirect_uri = request.build_absolute_uri('/core/auth/google/callback/')
+        flow = _get_oauth_flow(redirect_uri)
         
         # Exchange authorization code for credentials
         authorization_code = request.GET.get('code')

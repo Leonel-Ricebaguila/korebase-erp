@@ -21,11 +21,15 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-pr$h9o4p2b09nten&@h(x_qw0f
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [
-    'korebase.onrender.com',
+    'korebase-erp.onrender.com',
     'localhost',
     '127.0.0.1',
     '.onrender.com',  # Allow all Render subdomains
 ]
+
+# Render runs behind a reverse proxy that terminates SSL
+# This tells Django the original request was HTTPS so build_absolute_uri() works
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 INSTALLED_APPS = [
@@ -160,7 +164,7 @@ if not DEBUG:
 
 # CSRF trusted origins for Render
 CSRF_TRUSTED_ORIGINS = [
-    'https://korebase.onrender.com',
+    'https://korebase-erp.onrender.com',
     'https://*.onrender.com',
 ]
 
@@ -194,4 +198,5 @@ OTP_EXPIRATION_MINUTES = 10
 
 # Google OAuth2.0 Settings
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '')
 GOOGLE_CLIENT_SECRETS_PATH = os.getenv('GOOGLE_CLIENT_SECRETS_PATH', '')

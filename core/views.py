@@ -202,8 +202,9 @@ def google_login_view(request):
             prompt='consent'
         )
         
-        # Store state in session for CSRF protection
+        # Store state and code_verifier in session for the callback
         request.session['oauth_state'] = state
+        request.session['oauth_code_verifier'] = flow.code_verifier
         
         return redirect(authorization_url)
         
@@ -232,6 +233,11 @@ def google_callback_view(request):
         
         redirect_uri = request.build_absolute_uri('/core/auth/google/callback/')
         flow = _get_oauth_flow(redirect_uri)
+        
+        # Restore PKCE code_verifier from login step
+        code_verifier = request.session.pop('oauth_code_verifier', None)
+        if code_verifier:
+            flow.code_verifier = code_verifier
         
         # Exchange authorization code for credentials
         authorization_code = request.GET.get('code')

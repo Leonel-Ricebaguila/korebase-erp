@@ -4,7 +4,6 @@ KoreBase ERP System
 """
 from django import forms
 from django.forms import inlineformset_factory
-from logistica.models import Product, Warehouse
 from .models import BillOfMaterial, BOMLine, WorkOrder
 
 
@@ -26,14 +25,14 @@ class BillOfMaterialForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        company = kwargs.pop('company', None)
+        product_qs = kwargs.pop('product_qs', None)
         super().__init__(*args, **kwargs)
         self.fields['product'].label = 'Producto Final'
         self.fields['version'].label = 'Versión'
         self.fields['active'].label = 'Activa'
         self.fields['notes'].label = 'Notas'
-        if company:
-            self.fields['product'].queryset = Product.objects.filter(active=True, company=company)
+        if product_qs is not None:
+            self.fields['product'].queryset = product_qs
 
 
 class BOMLineForm(forms.ModelForm):
@@ -58,10 +57,10 @@ class BOMLineForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        company = kwargs.pop('company', None)
+        component_qs = kwargs.pop('component_qs', None)
         super().__init__(*args, **kwargs)
-        if company:
-            self.fields['component'].queryset = Product.objects.filter(active=True, company=company)
+        if component_qs is not None:
+            self.fields['component'].queryset = component_qs
 
 
 BOMLineFormSet = inlineformset_factory(
@@ -110,7 +109,9 @@ class WorkOrderForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        company = kwargs.pop('company', None)
+        product_qs = kwargs.pop('product_qs', None)
+        warehouse_qs = kwargs.pop('warehouse_qs', None)
+        bom_qs = kwargs.pop('bom_qs', None)
         super().__init__(*args, **kwargs)
         self.fields['work_order_number'].label = 'Nº Orden de Trabajo'
         self.fields['product'].label = 'Producto'
@@ -120,7 +121,9 @@ class WorkOrderForm(forms.ModelForm):
         self.fields['warehouse'].label = 'Almacén'
         self.fields['start_date'].label = 'Fecha de Inicio'
         self.fields['notes'].label = 'Notas'
-        if company:
-            self.fields['product'].queryset = Product.objects.filter(active=True, company=company)
-            self.fields['warehouse'].queryset = Warehouse.objects.filter(active=True, company=company)
-            self.fields['bom'].queryset = BillOfMaterial.objects.filter(active=True, company=company)
+        if product_qs is not None:
+            self.fields['product'].queryset = product_qs
+        if warehouse_qs is not None:
+            self.fields['warehouse'].queryset = warehouse_qs
+        if bom_qs is not None:
+            self.fields['bom'].queryset = bom_qs

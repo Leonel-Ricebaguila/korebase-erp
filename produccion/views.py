@@ -10,6 +10,7 @@ from django.db.models import Q, Count
 
 from .models import BillOfMaterial, BOMLine, WorkOrder
 from .forms import BillOfMaterialForm, BOMLineFormSet, WorkOrderForm
+from logistica.models import Product, Warehouse
 
 
 # ==================== DASHBOARD ====================
@@ -75,8 +76,9 @@ def bom_list(request):
 def bom_create(request):
     """Create a new BOM with component lines"""
     company = request.user.company
+    product_qs = Product.objects.filter(active=True, company=company)
     if request.method == 'POST':
-        form = BillOfMaterialForm(request.POST, company=company)
+        form = BillOfMaterialForm(request.POST, product_qs=product_qs)
         if form.is_valid():
             bom = form.save(commit=False)
             bom.created_by = request.user
@@ -94,7 +96,7 @@ def bom_create(request):
         else:
             formset = BOMLineFormSet(request.POST)
     else:
-        form = BillOfMaterialForm(company=company)
+        form = BillOfMaterialForm(product_qs=product_qs)
         formset = BOMLineFormSet()
 
     return render(request, 'produccion/bom_form.html', {
@@ -107,10 +109,11 @@ def bom_create(request):
 def bom_edit(request, pk):
     """Edit an existing BOM"""
     company = request.user.company
+    product_qs = Product.objects.filter(active=True, company=company)
     bom = get_object_or_404(BillOfMaterial, pk=pk, company=company)  # Tenant-safe
 
     if request.method == 'POST':
-        form = BillOfMaterialForm(request.POST, instance=bom, company=company)
+        form = BillOfMaterialForm(request.POST, instance=bom, product_qs=product_qs)
         formset = BOMLineFormSet(request.POST, instance=bom)
 
         if form.is_valid() and formset.is_valid():
@@ -121,7 +124,7 @@ def bom_edit(request, pk):
         else:
             messages.error(request, 'Corrige los errores.')
     else:
-        form = BillOfMaterialForm(instance=bom, company=company)
+        form = BillOfMaterialForm(instance=bom, product_qs=product_qs)
         formset = BOMLineFormSet(instance=bom)
 
     return render(request, 'produccion/bom_form.html', {
@@ -174,8 +177,11 @@ def workorder_list(request):
 def workorder_create(request):
     """Create a new work order"""
     company = request.user.company
+    product_qs = Product.objects.filter(active=True, company=company)
+    warehouse_qs = Warehouse.objects.filter(active=True, company=company)
+    bom_qs = BillOfMaterial.objects.filter(active=True, company=company)
     if request.method == 'POST':
-        form = WorkOrderForm(request.POST, company=company)
+        form = WorkOrderForm(request.POST, product_qs=product_qs, warehouse_qs=warehouse_qs, bom_qs=bom_qs)
         if form.is_valid():
             order = form.save(commit=False)
             order.created_by = request.user
@@ -184,7 +190,7 @@ def workorder_create(request):
             messages.success(request, f'Orden "{order.work_order_number}" creada exitosamente.')
             return redirect('produccion:workorder_detail', pk=order.pk)
     else:
-        form = WorkOrderForm(company=company)
+        form = WorkOrderForm(product_qs=product_qs, warehouse_qs=warehouse_qs, bom_qs=bom_qs)
 
     return render(request, 'produccion/workorder_form.html', {
         'form': form, 'title': 'Nueva Orden de Trabajo'
@@ -195,6 +201,9 @@ def workorder_create(request):
 def workorder_edit(request, pk):
     """Edit a work order (only if pending)"""
     company = request.user.company
+    product_qs = Product.objects.filter(active=True, company=company)
+    warehouse_qs = Warehouse.objects.filter(active=True, company=company)
+    bom_qs = BillOfMaterial.objects.filter(active=True, company=company)
     order = get_object_or_404(WorkOrder, pk=pk, company=company)  # Tenant-safe
 
     if order.status not in ['pending']:
@@ -202,13 +211,13 @@ def workorder_edit(request, pk):
         return redirect('produccion:workorder_detail', pk=pk)
 
     if request.method == 'POST':
-        form = WorkOrderForm(request.POST, instance=order, company=company)
+        form = WorkOrderForm(request.POST, instance=order, product_qs=product_qs, warehouse_qs=warehouse_qs, bom_qs=bom_qs)
         if form.is_valid():
             form.save()
             messages.success(request, f'Orden "{order.work_order_number}" actualizada.')
             return redirect('produccion:workorder_detail', pk=order.pk)
     else:
-        form = WorkOrderForm(instance=order, company=company)
+        form = WorkOrderForm(instance=order, product_qs=product_qs, warehouse_qs=warehouse_qs, bom_qs=bom_qs)
 
     return render(request, 'produccion/workorder_form.html', {
         'form': form, 'title': 'Editar Orden de Trabajo', 'order': order

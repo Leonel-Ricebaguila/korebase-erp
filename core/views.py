@@ -302,15 +302,17 @@ def google_callback_view(request):
             user.last_name = family_name
             user.email_verified = True
             user.save()
-        
-        # Login the user
+
+        # IMPORTANT: specify backend so login() doesn't fail silently
+        # when the user object wasn't returned by authenticate()
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
         login(request, user)
-        
+
         if created:
             messages.success(request, f'Bienvenido, {user.get_full_name()}! Tu cuenta ha sido creada con Google.')
         else:
             messages.success(request, f'Bienvenido de nuevo, {user.get_full_name()}!')
-        
+
         return redirect('core:dashboard')
         
     except Exception as e:

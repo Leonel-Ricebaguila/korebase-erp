@@ -177,6 +177,9 @@ CSRF_TRUSTED_ORIGINS = [
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Sessions stored in DB (not filesystem) so they survive Render restarts/redeploys
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
 # Login URLs
 LOGIN_URL = 'core:login'
 LOGIN_REDIRECT_URL = 'core:dashboard'

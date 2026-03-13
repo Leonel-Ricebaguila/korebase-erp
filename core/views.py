@@ -7,7 +7,8 @@ from django.contrib.messages import get_messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
+from django.contrib.auth.views import PasswordResetConfirmView
 from .forms import CustomUserCreationForm
 from .models import CustomUser, OTPToken
 from django.utils import timezone
@@ -21,6 +22,40 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from google_auth_oauthlib.flow import Flow
 from django.http import JsonResponse
+
+
+class KoreBasePasswordResetForm(PasswordResetForm):
+    """
+    Custom reset form that also allows accounts created via Google OAuth
+    (which have no usable password) to receive a reset email and set
+    a local password for the first time.
+    """
+    def get_users(self, email):
+        """Return matching active users regardless of usable_password status."""
+        active_users = CustomUser.objects.filter(
+            email__iexact=email,
+            is_active=True,
+        )
+        return active_users
+
+
+class KoreBasePasswordResetConfirmView(PasswordResetConfirmView):
+    """
+    Custom confirm view that allows setting a password even when the
+    original account had no usable password (OAuth-only accounts).
+    """
+    post_reset_login = True  # Auto-login after successful password set
+    post_reset_login_backend = 'django.contrib.auth.backends.ModelBackend'
+    success_url = '/core/'
+
+    def form_valid(self, form):
+        user = form.save()
+        # Ensure account is activated and marked verified
+        user.is_active = True
+        user.email_verified = True
+        user.save()
+        return super().form_valid(form)
+
 
 
 def login_view(request):

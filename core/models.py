@@ -11,6 +11,12 @@ class CustomUser(AbstractUser):
     Custom User model extending Django's AbstractUser
     Adds employee-specific fields for the ERP system
     """
+    # Override email to enforce uniqueness — critical for OAuth + OTP flows
+    email = models.EmailField(
+        unique=True,
+        verbose_name="Correo electrónico"
+    )
+
     employee_id = models.CharField(
         max_length=20,
         unique=True,

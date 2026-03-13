@@ -265,24 +265,29 @@ def google_callback_view(request):
             messages.error(request, 'No se pudo obtener el correo electrónico de Google')
             return redirect('core:login')
         
-        # Get or create user
-        try:
-            user = CustomUser.objects.get(email=email)
-            created = False
-        except CustomUser.DoesNotExist:
-            # Generate unique employee_id
-            base_employee_id = email.split('@')[0]
-            employee_id = base_employee_id
+        # Get or create user — use filter().first() to avoid MultipleObjectsReturned
+        user = CustomUser.objects.filter(email=email).first()
+        created = False
+
+        if user is None:
+            # Generate unique username derived from the email prefix
+            base_username = email.split('@')[0]
+            username = base_username
             counter = 1
-            
-            # Ensure employee_id is unique
-            while CustomUser.objects.filter(employee_id=employee_id).exists():
-                employee_id = f"{base_employee_id}{counter}"
+            while CustomUser.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
                 counter += 1
-            
+
+            # Generate unique employee_id as well
+            employee_id = base_username
+            counter = 1
+            while CustomUser.objects.filter(employee_id=employee_id).exists():
+                employee_id = f"{base_username}{counter}"
+                counter += 1
+
             user = CustomUser.objects.create(
                 email=email,
-                username=base_employee_id,
+                username=username,
                 first_name=given_name,
                 last_name=family_name,
                 employee_id=employee_id,

@@ -3,6 +3,7 @@ Core Views - Authentication and Dashboard
 KoreBase ERP System
 """
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.messages import get_messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -43,8 +44,15 @@ def login_view(request):
 
 
 def logout_view(request):
-    """User logout view"""
+    """User logout view — clears all pending messages before logout
+    to prevent previous session's notifications from leaking into the login page."""
+    # Drain (consume) all unread messages so they don't bleed into the next session
+    storage = get_messages(request)
+    list(storage)  # Iterating through consumes and clears the message queue
+    storage.used = True
+
     logout(request)
+    # Add a single clean message AFTER logout (in the new anonymous session)
     messages.info(request, 'Sesión cerrada correctamente')
     return redirect('core:login')
 
@@ -301,6 +309,7 @@ def google_callback_view(request):
             user.first_name = given_name
             user.last_name = family_name
             user.email_verified = True
+            user.is_active = True  # Auto-activate if it was inactive (e.g. pending OTP)
             user.save()
 
         # IMPORTANT: specify backend so login() doesn't fail silently

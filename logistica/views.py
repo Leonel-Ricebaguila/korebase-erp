@@ -147,7 +147,7 @@ def stock_adjustment(request, pk):
     product = get_object_or_404(Product, pk=pk)
 
     if request.method == 'POST':
-        form = StockMovementForm(request.POST)
+        form = StockMovementForm(request.POST, company=request.user.company)
         if form.is_valid():
             warehouse = form.cleaned_data['warehouse']
             movement_type = form.cleaned_data['movement_type']
@@ -193,7 +193,7 @@ def stock_adjustment(request, pk):
             messages.success(request, 'Movimiento registrado exitosamente.')
             return redirect('logistica:product_history', pk=product.pk)
     else:
-        form = StockMovementForm()
+        form = StockMovementForm(company=request.user.company)
 
     # Show current stock by warehouse for this product
     stock_by_warehouse = Stock.objects.filter(product=product, quantity__gt=0).select_related('warehouse')

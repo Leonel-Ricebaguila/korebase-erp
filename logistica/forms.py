@@ -147,7 +147,7 @@ class SupplierForm(forms.ModelForm):
 class StockMovementForm(forms.Form):
     """Form for manual stock adjustments"""
     warehouse = forms.ModelChoiceField(
-        queryset=Warehouse.objects.filter(active=True),
+        queryset=Warehouse.objects.none(),  # Placeholder; overridden in __init__
         label="Almacén",
         widget=forms.Select(attrs={'class': 'erp-form-input'})
     )
@@ -162,7 +162,7 @@ class StockMovementForm(forms.Form):
     )
     quantity = forms.DecimalField(
         min_value=0.001,
-        max_digits=15, 
+        max_digits=15,
         decimal_places=3,
         label="Cantidad",
         widget=forms.NumberInput(attrs={'class': 'erp-form-input', 'placeholder': '0.00'})
@@ -177,3 +177,17 @@ class StockMovementForm(forms.Form):
         label="Notas / Justificación",
         widget=forms.Textarea(attrs={'class': 'erp-form-textarea', 'rows': 2, 'placeholder': 'Detalles del movimiento...'})
     )
+
+    def __init__(self, *args, **kwargs):
+        # Accept an optional 'company' kwarg injected by the view for tenant isolation
+        company = kwargs.pop('company', None)
+        super().__init__(*args, **kwargs)
+        # Evaluate queryset NOW (at request time), filtered by the current tenant
+        if company:
+            self.fields['warehouse'].queryset = Warehouse.objects.filter(
+                active=True, company=company
+            )
+        else:
+            # Fallback: use the TenantManager (evaluated at request time)
+            self.fields['warehouse'].queryset = Warehouse.objects.filter(active=True)
+

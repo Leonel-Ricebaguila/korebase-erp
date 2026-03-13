@@ -12,7 +12,7 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
                 {% for field in form %}
-                <div {% if field.name=='notes' %}style="grid-column: span 2;" {% endif %}>
+                <div {% if field.name == 'notes' %}style="grid-column: span 2;" {% endif %}>
                     <label
                         style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">
                         {{ field.label }}

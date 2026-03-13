@@ -15,13 +15,13 @@
             <select name="status" class="erp-form-input" style="width: 140px;" onchange="this.form.submit()">
                 <option value="">Estado</option>
                 {% for value, label in status_choices %}
-                <option value="{{ value }}" {% if current_status==value %}selected{% endif %}>{{ label }}</option>
+                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
             <select name="type" class="erp-form-input" style="width: 140px;" onchange="this.form.submit()">
                 <option value="">Tipo</option>
                 {% for value, label in type_choices %}
-                <option value="{{ value }}" {% if current_type==value %}selected{% endif %}>{{ label }}</option>
+                <option value="{{ value }}" {% if current_type == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
             <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">

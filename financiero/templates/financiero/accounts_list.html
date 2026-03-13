@@ -16,7 +16,7 @@
             <select name="type" class="erp-form-input" style="width: 160px;" onchange="this.form.submit()">
                 <option value="">Todos los tipos</option>
                 {% for value, label in account_types %}
-                <option value="{{ value }}" {% if current_type==value %}selected{% endif %}>{{ label }}</option>
+                <option value="{{ value }}" {% if current_type == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
             <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">

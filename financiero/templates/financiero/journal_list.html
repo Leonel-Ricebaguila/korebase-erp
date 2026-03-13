@@ -14,8 +14,8 @@
                 class="erp-form-input" style="width: 250px;">
             <select name="reversed" class="erp-form-input" style="width: 160px;" onchange="this.form.submit()">
                 <option value="">Todos</option>
-                <option value="0" {% if show_reversed=='0' %}selected{% endif %}>Vigentes</option>
-                <option value="1" {% if show_reversed=='1' %}selected{% endif %}>Revertidos</option>
+                <option value="0" {% if show_reversed == '0' %}selected{% endif %}>Vigentes</option>
+                <option value="1" {% if show_reversed == '1' %}selected{% endif %}>Revertidos</option>
             </select>
             <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">
                 <i class="fas fa-search"></i>

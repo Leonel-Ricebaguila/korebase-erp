@@ -69,14 +69,20 @@ ROOT_URLCONF = 'korebase.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Templates globales
-        'APP_DIRS': True,
+        'DIRS': [BASE_DIR / 'templates'],  # Templates globales (prioridad sobre apps)
+        'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+            ],
+            'loaders': [
+                # 1. Templates del directorio global /templates/ (nuestros templates)
+                'django.template.loaders.filesystem.Loader',
+                # 2. Templates dentro de cada app (app_dirs behavior)
+                'django.template.loaders.app_directories.Loader',
             ],
         },
     },

@@ -2,64 +2,149 @@
 {% load static %}
 
 {% block login_content %}
-<div
-    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--kore-navy-900) 0%, #0f172a 100%); padding: 1rem; z-index: 9999; overflow-y: auto;">
-    <div style="max-width: 440px; width: 100%; margin-top: auto; margin-bottom: auto;">
+<div style="min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--kore-navy-900) 0%, #0f172a 100%); padding: 2rem 1rem;">
+    <div style="max-width: 480px; width: 100%;">
         <!-- Brand Header -->
         <div style="text-align: center; margin-bottom: 2rem;">
             <img src="{% static 'images/logo_no background.png' %}" alt="KoreBase"
                 style="height: 60px; margin-bottom: 1rem; object-fit: contain;">
             <h2 style="color: white; font-weight: 300; font-size: 1.75rem; margin: 0;">Registro</h2>
-            <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem;">Únete a KoreBase ERP</p>
+            <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; margin-top: 0.5rem;">Únete a KoreBase ERP</p>
         </div>
 
-        <div class="kore-card"
-            style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+        <div class="kore-card" style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
             <form method="post">
                 {% csrf_token %}
 
                 {% if messages %}
                 {% for message in messages %}
-                <div
-                    style="padding: 0.75rem; margin-bottom: 1rem; border-radius: 6px; font-size: 0.9rem; 
-                            {% if message.tags == 'error' %}background: #fee2e2; color: #991b1b;{% else %}background: #dcfce7; color: #166534;{% endif %}">
+                <div style="padding: 0.75rem; margin-bottom: 1.25rem; border-radius: 8px; font-size: 0.9rem;
+                        {% if message.tags == 'error' %}background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;{% else %}background: #dcfce7; color: #166534; border: 1px solid #86efac;{% endif %}">
                     {{ message }}
                 </div>
                 {% endfor %}
                 {% endif %}
 
-                {% for field in form %}
+                <!-- Nombre y Apellidos en fila (desktop) -->
+                <div class="reg-row">
+                    <div class="reg-field">
+                        <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.4rem; color: var(--kore-navy-900);">
+                            Nombre
+                        </label>
+                        <div class="form-field-wrapper">
+                            {{ form.first_name }}
+                        </div>
+                        {% for error in form.first_name.errors %}
+                        <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="reg-field">
+                        <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.4rem; color: var(--kore-navy-900);">
+                            Apellidos
+                        </label>
+                        <div class="form-field-wrapper">
+                            {{ form.last_name }}
+                        </div>
+                        {% for error in form.last_name.errors %}
+                        <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Email -->
                 <div style="margin-bottom: 1.25rem;">
-                    <label
-                        style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--kore-navy-900);">
-                        {{ field.label }}
+                    <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.4rem; color: var(--kore-navy-900);">
+                        Correo electrónico
                     </label>
                     <div class="form-field-wrapper">
-                        {{ field }}
+                        {{ form.email }}
                     </div>
-                    {% if field.help_text %}
-                    <small
-                        style="color: #6b7280; font-size: 0.75rem; display: block; margin-top: 0.25rem; line-height: 1.3;">{{
-                        field.help_text|safe }}</small>
-                    {% endif %}
-                    {% for error in field.errors %}
-                    <div style="color: #dc2626; font-size: 0.8rem; margin-top: 0.25rem;">{{ error }}</div>
+                    {% for error in form.email.errors %}
+                    <div class="field-error">{{ error }}</div>
                     {% endfor %}
+                </div>
+
+                <!-- Nombre de usuario -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.4rem; color: var(--kore-navy-900);">
+                        Nombre de usuario
+                    </label>
+                    <div class="form-field-wrapper">
+                        {{ form.username }}
+                    </div>
+                    <small style="color: #6b7280; font-size: 0.75rem; display: block; margin-top: 0.3rem;">
+                        Solo letras, números y @/./+/-/_
+                    </small>
+                    {% for error in form.username.errors %}
+                    <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- ID de Empleado -->
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.4rem; color: var(--kore-navy-900);">
+                        ID de Empleado
+                    </label>
+                    <div class="form-field-wrapper">
+                        {{ form.employee_id }}
+                    </div>
+                    <small style="color: #6b7280; font-size: 0.75rem; display: block; margin-top: 0.3rem;">
+                        Ej. EMP-001 — Identificador único asignado por tu empresa
+                    </small>
+                    {% for error in form.employee_id.errors %}
+                    <div class="field-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Contraseña en fila (desktop) -->
+                <div class="reg-row">
+                    <div class="reg-field">
+                        <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.4rem; color: var(--kore-navy-900);">
+                            Contraseña
+                        </label>
+                        <div class="form-field-wrapper pwd-wrapper">
+                            {{ form.password1 }}
+                            <button type="button" class="pwd-toggle" onclick="togglePwd('id_password1', this)" tabindex="-1">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        {% for error in form.password1.errors %}
+                        <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="reg-field">
+                        <label style="display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.4rem; color: var(--kore-navy-900);">
+                            Confirmar contraseña
+                        </label>
+                        <div class="form-field-wrapper pwd-wrapper">
+                            {{ form.password2 }}
+                            <button type="button" class="pwd-toggle" onclick="togglePwd('id_password2', this)" tabindex="-1">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        {% for error in form.password2.errors %}
+                        <div class="field-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Non-field errors -->
+                {% for error in form.non_field_errors %}
+                <div style="background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 0.75rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 1rem;">
+                    {{ error }}
                 </div>
                 {% endfor %}
 
                 <button type="submit" class="btn btn-primary"
-                    style="width: 100%; height: 3rem; font-weight: 600; margin-top: 0.5rem;">
+                    style="width: 100%; height: 3rem; font-weight: 600; font-size: 1rem; margin-top: 0.75rem; background: var(--kore-teal-500); border: none; border-radius: 8px; color: white; cursor: pointer; transition: background 0.2s;">
                     Crear Cuenta
                 </button>
             </form>
 
-            <div
-                style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--kore-gray-100);">
+            <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--kore-gray-100);">
                 <p style="color: var(--kore-gray-600); margin: 0; font-size: 0.9rem;">
                     ¿Ya tienes cuenta?
-                    <a href="{% url 'core:login' %}"
-                        style="color: var(--kore-teal-600); font-weight: 700; text-decoration: none;">Iniciar Sesión</a>
+                    <a href="{% url 'core:login' %}" style="color: var(--kore-teal-600); font-weight: 700; text-decoration: none;">Iniciar Sesión</a>
                 </p>
             </div>
         </div>
@@ -67,39 +152,101 @@
 </div>
 
 <style>
-    /* Estilos inyectados solo para esta página */
-    .form-field-wrapper input {
+    .reg-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 480px) {
+        .reg-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        .reg-field {
+            margin-bottom: 1.25rem;
+        }
+    }
+
+    .form-field-wrapper input,
+    .form-field-wrapper select {
         width: 100%;
-        padding: 0.75rem;
+        padding: 0.75rem 1rem;
         border: 1px solid var(--kore-gray-200);
         border-radius: 8px;
         box-sizing: border-box;
         font-size: 0.95rem;
-        transition: border-color 0.2s;
+        background: var(--kore-gray-50);
+        transition: border-color 0.2s, box-shadow 0.2s;
+        height: 3rem;
     }
 
-    .form-field-wrapper input:focus {
+    .form-field-wrapper input:focus,
+    .form-field-wrapper select:focus {
         border-color: var(--kore-teal-500);
         outline: none;
-        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
+        background: white;
     }
 
-    small ul {
-        padding-left: 1.25rem;
-        margin: 0.5rem 0;
-        font-size: 0.75rem;
-        color: #6b7280;
-        list-style-type: disc;
-    }
-
-    small li {
-        margin-bottom: 0.25rem;
-    }
-
-    .helptext {
+    /* Ocultar el helptext que Django inyecta automáticamente dentro del widget */
+    .form-field-wrapper .helptext,
+    .form-field-wrapper ul.errorlist + span,
+    .form-field-wrapper ~ span.helptext {
         display: none;
     }
 
-    /* Ocultar helptext default de Django si interfiere, pero lo renderizamos manualmente */
+    .pwd-wrapper {
+        position: relative;
+    }
+
+    .pwd-wrapper input {
+        padding-right: 3rem;
+    }
+
+    .pwd-toggle {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--kore-gray-400);
+        padding: 0.25rem;
+        transition: color 0.2s;
+    }
+
+    .pwd-toggle:hover {
+        color: var(--kore-navy-700);
+    }
+
+    .field-error {
+        color: #dc2626;
+        font-size: 0.78rem;
+        margin-top: 0.3rem;
+    }
+
+    small ul {
+        padding-left: 1.2rem;
+        margin: 0.3rem 0 0;
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
 </style>
+
+<script>
+    function togglePwd(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+</script>
 {% endblock %}

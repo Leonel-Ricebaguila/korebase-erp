@@ -43,6 +43,8 @@ db.sqlite3-journal
 .env
 .env.local
 .env.*.local
+*.env
+korebase-erp.env
 
 # Google OAuth Client Secrets
 client_secret*.json

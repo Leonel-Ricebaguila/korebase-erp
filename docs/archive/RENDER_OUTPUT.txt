@@ -1,0 +1,159 @@
+2026-01-30T13:20:20.299566884Z Using cached sqlparse-0.5.5-py3-none-any.whl (46 kB)
+2026-01-30T13:20:20.301197088Z Using cached urllib3-2.6.3-py3-none-any.whl (131 kB)
+2026-01-30T13:20:20.302973976Z Using cached packaging-26.0-py3-none-any.whl (74 kB)
+2026-01-30T13:20:20.304699532Z Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-01-30T13:20:20.306311985Z Using cached charset_normalizer-3.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (151 kB)
+2026-01-30T13:20:20.308131644Z Using cached idna-3.11-py3-none-any.whl (71 kB)
+2026-01-30T13:20:20.460181248Z Installing collected packages: whitenoise, urllib3, sqlparse, six, python-dotenv, psycopg2-binary, pillow, packaging, idna, charset_normalizer, certifi, asgiref, requests, gunicorn, Django, cloudinary, django-htmx, django-cloudinary-storage, dj-database-url
+2026-01-30T13:20:23.29391864Z Successfully installed Django-5.2.10 asgiref-3.11.0 certifi-2026.1.4 charset_normalizer-3.4.4 cloudinary-1.44.1 dj-database-url-3.1.0 django-cloudinary-storage-0.3.0 django-htmx-1.27.0 gunicorn-24.1.1 idna-3.11 packaging-26.0 pillow-12.1.0 psycopg2-binary-2.9.11 python-dotenv-1.2.1 requests-2.32.5 six-1.17.0 sqlparse-0.5.5 urllib3-2.6.3 whitenoise-6.11.0
+2026-01-30T13:20:23.366083019Z 
+2026-01-30T13:20:23.366109299Z [notice] A new release of pip is available: 24.0 -> 25.3
+2026-01-30T13:20:23.366113279Z [notice] To update, run: pip install --upgrade pip
+2026-01-30T13:20:23.520026933Z 📦 Collecting static files...
+2026-01-30T13:20:23.894679335Z 
+2026-01-30T13:20:23.894705615Z 149 static files copied to '/opt/render/project/src/staticfiles'.
+2026-01-30T13:20:23.947441071Z 🗄️  Running database migrations...
+2026-01-30T13:20:24.529544324Z Operations to perform:
+2026-01-30T13:20:24.529568945Z   Apply all migrations: admin, auth, contenttypes, core, financiero, logistica, produccion, sessions
+2026-01-30T13:20:24.529575355Z Running migrations:
+2026-01-30T13:20:24.529581676Z   No migrations to apply.
+2026-01-30T13:20:24.628395059Z 👤 Creating superuser (if not exists)...
+2026-01-30T13:20:25.249404487Z 🔄 Superusuario existente actualizado: admin (Contraseña reseteada)
+2026-01-30T13:20:25.308892575Z ✅ Build completed successfully!
+2026-01-30T13:20:26.055837015Z ==> Uploading build...
+2026-01-30T13:20:40.607660399Z ==> Uploaded in 10.9s. Compression took 3.6s
+2026-01-30T13:20:40.684861293Z ==> Build successful 🎉
+2026-01-30T13:20:43.621928141Z ==> Deploying...
+2026-01-30T13:20:43.754118538Z ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+2026-01-30T13:21:10.438593666Z ==> Running 'gunicorn korebase.wsgi:application'
+2026-01-30T13:21:15.025984922Z [2026-01-30 07:21:15 -0600] [55] [INFO] Starting gunicorn 24.1.1
+2026-01-30T13:21:15.026398993Z [2026-01-30 07:21:15 -0600] [55] [INFO] Listening at: http://0.0.0.0:10000 (55)
+2026-01-30T13:21:15.026419504Z [2026-01-30 07:21:15 -0600] [55] [INFO] Using worker: sync
+2026-01-30T13:21:15.031072335Z [2026-01-30 07:21:15 -0600] [57] [INFO] Booting worker with pid: 57
+2026-01-30T13:21:15.039623737Z 127.0.0.1 - - [30/Jan/2026:07:21:15 -0600] "HEAD / HTTP/1.1" 301 0 "-" "Go-http-client/1.1"
+2026-01-30T13:21:25.177901428Z ==> Your service is live 🎉
+2026-01-30T13:21:25.4281726Z 127.0.0.1 - - [30/Jan/2026:07:21:25 -0600] "GET / HTTP/1.1" 302 0 "-" "Go-http-client/2.0"
+2026-01-30T13:21:25.496501072Z ==> 
+2026-01-30T13:21:25.499938727Z ==> ///////////////////////////////////////////////////////////
+2026-01-30T13:21:25.503160918Z ==> 
+2026-01-30T13:21:25.506982259Z ==> Available at your primary URL https://korebase-erp.onrender.com
+2026-01-30T13:21:25.510548397Z ==> 
+2026-01-30T13:21:25.514377139Z ==> ///////////////////////////////////////////////////////////
+2026-01-30T13:21:25.51918189Z 127.0.0.1 - - [30/Jan/2026:07:21:25 -0600] "GET /core/ HTTP/1.1" 302 0 "https://korebase-erp.onrender.com" "Go-http-client/2.0"
+2026-01-30T13:21:25.637947952Z 127.0.0.1 - - [30/Jan/2026:07:21:25 -0600] "GET /core/login/?next=/core/ HTTP/1.1" 200 7668 "https://korebase-erp.onrender.com/core/" "Go-http-client/2.0"
+2026-01-30T13:21:54.262280236Z 127.0.0.1 - - [30/Jan/2026:07:21:54 -0600] "GET / HTTP/1.1" 302 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:21:54.384685203Z 127.0.0.1 - - [30/Jan/2026:07:21:54 -0600] "GET /core/ HTTP/1.1" 302 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:21:54.507114191Z 127.0.0.1 - - [30/Jan/2026:07:21:54 -0600] "GET /core/login/?next=/core/ HTTP/1.1" 200 7668 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:21:54.643335127Z 127.0.0.1 - - [30/Jan/2026:07:21:54 -0600] "GET /static/css/erp-style.css HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/core/login/?next=/core/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:21:54.708778041Z 127.0.0.1 - - [30/Jan/2026:07:21:54 -0600] "GET /static/images/logo_no%20background.png HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/core/login/?next=/core/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:21:54.744020959Z 127.0.0.1 - - [30/Jan/2026:07:21:54 -0600] "GET /static/js/htmx.min.js HTTP/1.1" 200 0 "https://korebase-erp.onrender.com/core/login/?next=/core/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:21:57.268937517Z 127.0.0.1 - - [30/Jan/2026:07:21:57 -0600] "GET /core/register/ HTTP/1.1" 200 9572 "https://korebase-erp.onrender.com/core/login/?next=/core/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:23:52.156883331Z [2026-01-30 07:23:52 -0600] [55] [CRITICAL] WORKER TIMEOUT (pid:57)
+2026-01-30T13:23:52.162852636Z [2026-01-30 07:23:52 -0600] [57] [ERROR] Error handling request /core/register/
+2026-01-30T13:23:52.162870316Z Traceback (most recent call last):
+2026-01-30T13:23:52.162877607Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 134, in handle
+2026-01-30T13:23:52.162887597Z     self.handle_request(listener, req, client, addr)
+2026-01-30T13:23:52.162893467Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+2026-01-30T13:23:52.162902517Z     respiter = self.wsgi(environ, resp.start_response)
+2026-01-30T13:23:52.162906097Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162909708Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/wsgi.py", line 124, in __call__
+2026-01-30T13:23:52.162925788Z     response = self.get_response(request)
+2026-01-30T13:23:52.162928078Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162930498Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 140, in get_response
+2026-01-30T13:23:52.162932888Z     response = self._middleware_chain(request)
+2026-01-30T13:23:52.162935058Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162937208Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.162939308Z     response = get_response(request)
+2026-01-30T13:23:52.162941478Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162943658Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 120, in __call__
+2026-01-30T13:23:52.162945769Z     response = response or self.get_response(request)
+2026-01-30T13:23:52.162948069Z                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162950189Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.162952399Z     response = get_response(request)
+2026-01-30T13:23:52.162957329Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162959599Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/whitenoise/middleware.py", line 123, in __call__
+2026-01-30T13:23:52.162961769Z     return self.get_response(request)
+2026-01-30T13:23:52.162963889Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162966009Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.162968179Z     response = get_response(request)
+2026-01-30T13:23:52.162970289Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162972409Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 120, in __call__
+2026-01-30T13:23:52.162974539Z     response = response or self.get_response(request)
+2026-01-30T13:23:52.162976689Z                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.162978849Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.162980979Z     response = get_response(request)
+2026-01-30T13:23:52.162983079Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.16298519Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 120, in __call__
+2026-01-30T13:23:52.16298785Z     response = response or self.get_response(request)
+2026-01-30T13:23:52.16299054Z                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.16299631Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.16299845Z     response = get_response(request)
+2026-01-30T13:23:52.1630048Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.16300714Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 120, in __call__
+2026-01-30T13:23:52.16300931Z     response = response or self.get_response(request)
+2026-01-30T13:23:52.16301142Z                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.16301352Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.16301562Z     response = get_response(request)
+2026-01-30T13:23:52.1630184Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163024211Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 120, in __call__
+2026-01-30T13:23:52.163026451Z     response = response or self.get_response(request)
+2026-01-30T13:23:52.163028591Z                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163031461Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.163035191Z     response = get_response(request)
+2026-01-30T13:23:52.163038631Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163042081Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 120, in __call__
+2026-01-30T13:23:52.163082842Z     response = response or self.get_response(request)
+2026-01-30T13:23:52.163086052Z 127.0.0.1 - - [30/Jan/2026:07:23:52 -0600] "POST /core/register/ HTTP/1.1" 500 0 "-" "-"
+2026-01-30T13:23:52.163086112Z                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163089682Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.163092942Z     response = get_response(request)
+2026-01-30T13:23:52.163095922Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163111173Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/utils/deprecation.py", line 120, in __call__
+2026-01-30T13:23:52.163114473Z     response = response or self.get_response(request)
+2026-01-30T13:23:52.163117713Z                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163121293Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.163125053Z     response = get_response(request)
+2026-01-30T13:23:52.163127653Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163129823Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django_htmx/middleware.py", line 39, in __call__
+2026-01-30T13:23:52.163132033Z     return self.get_response(request)
+2026-01-30T13:23:52.163134123Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163136213Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+2026-01-30T13:23:52.163138343Z     response = get_response(request)
+2026-01-30T13:23:52.163140483Z                ^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163142723Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+2026-01-30T13:23:52.163144894Z     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+2026-01-30T13:23:52.163147194Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163149344Z   File "/opt/render/project/src/core/views.py", line 78, in register_view
+2026-01-30T13:23:52.163151574Z     send_mail(
+2026-01-30T13:23:52.163153804Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/mail/__init__.py", line 92, in send_mail
+2026-01-30T13:23:52.163156684Z     return mail.send()
+2026-01-30T13:23:52.163158814Z            ^^^^^^^^^^^
+2026-01-30T13:23:52.163160964Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/mail/message.py", line 307, in send
+2026-01-30T13:23:52.163163114Z     return self.get_connection(fail_silently).send_messages([self])
+2026-01-30T13:23:52.163165244Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163168034Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/mail/backends/smtp.py", line 128, in send_messages
+2026-01-30T13:23:52.163176655Z     new_conn_created = self.open()
+2026-01-30T13:23:52.163178895Z                        ^^^^^^^^^^^
+2026-01-30T13:23:52.163181024Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/django/core/mail/backends/smtp.py", line 86, in open
+2026-01-30T13:23:52.163183195Z     self.connection = self.connection_class(
+2026-01-30T13:23:52.163185385Z                       ^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163188365Z   File "/opt/render/project/python/Python-3.11.9/lib/python3.11/smtplib.py", line 255, in __init__
+2026-01-30T13:23:52.163190535Z     (code, msg) = self.connect(host, port)
+2026-01-30T13:23:52.163192655Z                   ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163194925Z   File "/opt/render/project/python/Python-3.11.9/lib/python3.11/smtplib.py", line 341, in connect
+2026-01-30T13:23:52.163197105Z     self.sock = self._get_socket(host, port, self.timeout)
+2026-01-30T13:23:52.163199225Z                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163201365Z   File "/opt/render/project/python/Python-3.11.9/lib/python3.11/smtplib.py", line 312, in _get_socket
+2026-01-30T13:23:52.163203565Z     return socket.create_connection((host, port), timeout,
+2026-01-30T13:23:52.163205715Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-30T13:23:52.163207825Z   File "/opt/render/project/python/Python-3.11.9/lib/python3.11/socket.py", line 836, in create_connection
+2026-01-30T13:23:52.163210095Z     sock.connect(sa)
+2026-01-30T13:23:52.163212245Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/gunicorn/workers/base.py", line 204, in handle_abort
+2026-01-30T13:23:52.163214436Z     sys.exit(1)
+2026-01-30T13:23:52.163216585Z SystemExit: 1
+2026-01-30T13:23:52.1633954Z [2026-01-30 07:23:52 -0600] [57] [INFO] Worker exiting (pid: 57)
+2026-01-30T13:23:53.1320718Z [2026-01-30 07:23:53 -0600] [59] [INFO] Booting worker with pid: 59
+2026-01-30T13:24:08.837747931Z 127.0.0.1 - - [30/Jan/2026:07:24:08 -0600] "POST /core/register/ HTTP/1.1" 200 10402 "https://korebase-erp.onrender.com/core/register/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:24:08.961282187Z 127.0.0.1 - - [30/Jan/2026:07:24:08 -0600] "GET /static/images/logo_no%20background.png HTTP/1.1" 304 0 "https://korebase-erp.onrender.com/core/register/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:24:08.96487545Z 127.0.0.1 - - [30/Jan/2026:07:24:08 -0600] "GET /static/js/htmx.min.js HTTP/1.1" 304 0 "https://korebase-erp.onrender.com/core/register/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"
+2026-01-30T13:24:08.965814805Z 127.0.0.1 - - [30/Jan/2026:07:24:08 -0600] "GET /static/css/erp-style.css HTTP/1.1" 304 0 "https://korebase-erp.onrender.com/core/register/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"

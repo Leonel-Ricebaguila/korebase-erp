@@ -13,4 +13,6 @@ urlpatterns = [
     path('logistica/', include('logistica.urls')),
     path('produccion/', include('produccion.urls')),
     path('financiero/', include('financiero.urls')),
+    # Password reset flow (Django built-in views)
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

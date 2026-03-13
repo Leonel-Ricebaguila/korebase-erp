@@ -1,0 +1,164 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Logística | KoreBase ERP{% endblock %}
+{% block page_title %}Gestión Logística{% endblock %}
+{% block breadcrumb_parent %}Módulos Operativos{% endblock %}
+
+{% block header_icon %}<i class="fas fa-truck-ramp-box" style="color: var(--kore-teal-500);"></i>{% endblock %}
+
+{% block content %}
+
+<!-- KPI CARDS (Resumen rápido) -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+
+    <!-- Total Productos -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-navy-900); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-box"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Productos</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{ total_products|default:"0"
+                }}</div>
+        </div>
+    </div>
+
+    <!-- Almacenes -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--kore-teal-500); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-warehouse"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Almacenes</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{
+                total_warehouses|default:"0" }}</div>
+        </div>
+    </div>
+
+    <!-- Proveedores -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: var(--kore-gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--status-info); font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fas fa-users"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Proveedores</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">{{
+                total_suppliers|default:"0" }}</div>
+        </div>
+    </div>
+
+    <!-- Valor Inventario -->
+    <div class="kore-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <div
+            style="width: 48px; height: 48px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--status-success); font-size: 1.25rem;">
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div>
+            <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Valor Inventario</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">${{ total_value|floatformat:2
+                }}</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ACCIONES PRINCIPALES Y TABLA -->
+<div class="kore-card" style="background: white; border-radius: 12px; padding: 0;">
+    <div class="kore-card-header"
+        style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900); margin: 0;">Inventario Reciente
+        </h3>
+
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{% url 'logistica:product_create' %}" class="btn btn-action"
+                style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">
+                <i class="fas fa-plus"></i> Nuevo
+            </a>
+            <a href="{% url 'logistica:inventory_list' %}" class="btn btn-outline"
+                style="border: 1px solid var(--kore-gray-300); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; color: var(--kore-navy-700);">
+                <i class="fas fa-list"></i> Ver Todo
+            </a>
+        </div>
+    </div>
+
+    <!-- Tabla Estilo Industrial -->
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead
+                style="background: var(--kore-gray-50); color: var(--kore-gray-500); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                <tr>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        SKU</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Producto</th>
+                    <th style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Categoría</th>
+                    <th
+                        style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: right;">
+                        Stock</th>
+                    <th
+                        style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: right;">
+                        Costo</th>
+                    <th
+                        style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: center;">
+                        Estado</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem; color: var(--kore-gray-800);">
+                {% for product in recent_products %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100); transition: background 0.1s;"
+                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td
+                        style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace; color: var(--kore-navy-800);">
+                        {{ product.sku }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 600;">{{ product.name }}</td>
+                    <td style="padding: 1rem 1.5rem;">
+                        <span
+                            style="background: var(--kore-gray-100); padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem;">
+                            {{ product.category }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: right;">
+                        <span
+                            style="font-weight: 700; color: {% if product.total_stock <= 0 %}#ef4444{% else %}#10b981{% endif %};">
+                            {{ product.total_stock|floatformat:0 }}
+                        </span>
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: right;">${{ product.unit_cost|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        {% if product.active %}
+                        <i class="fas fa-check-circle" style="color: var(--status-success);"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle" style="color: var(--kore-gray-400);"></i>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 4rem; text-align: center;">
+                        <div style="color: var(--kore-gray-200); font-size: 3rem; margin-bottom: 1rem;">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay
+                            inventario reciente</h4>
+                        <p style="color: var(--kore-gray-500); margin-bottom: 1.5rem;">Comience creando nuevas materias
+                            primas.</p>
+                        <a href="{% url 'logistica:product_create' %}" class="btn btn-action"
+                            style="background: var(--kore-navy-800); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;">
+                            Crear Primer Producto
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

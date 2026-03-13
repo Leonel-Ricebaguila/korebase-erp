@@ -111,6 +111,18 @@
                         {% if product.description %}
                         <div style="font-size: 0.75rem; color: var(--kore-gray-400); margin-top: 0.25rem;">{{ product.description|truncatechars:40 }}</div>
                         {% endif %}
+                        <div style="display: flex; gap: 0.4rem; margin-top: 0.4rem; flex-wrap: wrap;">
+                            {% if product.clave_producto_sat %}
+                            <span style="font-size: 0.65rem; background: #f0f9ff; color: #0284c7; padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid #bae6fd;" title="Clave Producto SAT">
+                                <i class="fas fa-barcode"></i> CFDI: {{ product.clave_producto_sat }}
+                            </span>
+                            {% endif %}
+                            {% if product.clave_unidad_sat %}
+                            <span style="font-size: 0.65rem; background: #fdf4ff; color: #c026d3; padding: 0.15rem 0.4rem; border-radius: 4px; border: 1px solid #f5d0fe;" title="Clave Unidad SAT">
+                                <i class="fas fa-balance-scale"></i> UD: {{ product.clave_unidad_sat }}
+                            </span>
+                            {% endif %}
+                        </div>
                     </td>
                     <td style="padding: 1rem; border-bottom: 1px solid var(--kore-gray-100);">
                         <span

@@ -11,7 +11,7 @@ class ProductForm(forms.ModelForm):
     
     class Meta:
         model = Product
-        fields = ['sku', 'name', 'description', 'category', 'unit_cost', 'active']
+        fields = ['sku', 'name', 'description', 'category', 'unit_cost', 'clave_producto_sat', 'clave_unidad_sat', 'active']
         widgets = {
             'sku': forms.TextInput(attrs={
                 'class': 'erp-form-input',
@@ -38,6 +38,16 @@ class ProductForm(forms.ModelForm):
             }),
             'active': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
+            }),
+            'clave_producto_sat': forms.TextInput(attrs={
+                'class': 'erp-form-input',
+                'placeholder': 'Ej. 43211500',
+                'maxlength': '8'
+            }),
+            'clave_unidad_sat': forms.TextInput(attrs={
+                'class': 'erp-form-input',
+                'placeholder': 'Ej. H87',
+                'maxlength': '3'
             })
         }
     
@@ -49,6 +59,8 @@ class ProductForm(forms.ModelForm):
         self.fields['category'].label = 'Categoría'
         self.fields['unit_cost'].label = 'Costo Unitario (MXN)'
         self.fields['active'].label = 'Activo'
+        self.fields['clave_producto_sat'].label = 'Clave Producto SAT (CFDI)'
+        self.fields['clave_unidad_sat'].label = 'Clave Unidad SAT (CFDI)'
 
 
 class WarehouseForm(forms.ModelForm):

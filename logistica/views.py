@@ -75,7 +75,9 @@ def product_create(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
-            product = form.save()
+            product = form.save(commit=False)
+            product.company = request.user.company  # Multi-Tenant assignment
+            product.save()
             messages.success(request, f'Producto "{product.name}" creado exitosamente.')
             notify(request.user, f'Nuevo producto creado: {product.name}', 'success', f'/logistica/product/{product.pk}/edit/')
             return redirect('logistica:inventory_list')
@@ -88,7 +90,7 @@ def product_create(request):
 @login_required
 def product_edit(request, pk):
     """Edit an existing product"""
-    product = get_object_or_404(Product, pk=pk)
+    product = get_object_or_404(Product, pk=pk, company=request.user.company)  # Tenant-safe
 
     if request.method == 'POST':
         form = ProductForm(request.POST, instance=product)
@@ -106,7 +108,7 @@ def product_edit(request, pk):
 @login_required
 def product_delete(request, pk):
     """Delete a product (soft delete by setting active=False)"""
-    product = get_object_or_404(Product, pk=pk)
+    product = get_object_or_404(Product, pk=pk, company=request.user.company)  # Tenant-safe
 
     if request.method == 'POST':
         product.active = False
@@ -156,6 +158,7 @@ def stock_adjustment(request, pk):
             stock, created = Stock.objects.select_for_update().get_or_create(
                 product=product,
                 warehouse=warehouse,
+                company=request.user.company,  # Multi-Tenant
                 defaults={'quantity': Decimal('0.000')}
             )
 
@@ -177,6 +180,7 @@ def stock_adjustment(request, pk):
             stock.save()
 
             StockMovement.objects.create(
+                company=request.user.company,  # Multi-Tenant
                 product=product,
                 warehouse=warehouse,
                 quantity_change=quantity_change,
@@ -278,7 +282,9 @@ def warehouse_create(request):
     if request.method == 'POST':
         form = WarehouseForm(request.POST)
         if form.is_valid():
-            warehouse = form.save()
+            warehouse = form.save(commit=False)
+            warehouse.company = request.user.company  # Multi-Tenant assignment
+            warehouse.save()
             messages.success(request, f'Almacén "{warehouse.name}" creado exitosamente.')
             notify(request.user, f'Nuevo almacén: {warehouse.name}', 'success')
             return redirect('logistica:warehouse_list')
@@ -289,7 +295,7 @@ def warehouse_create(request):
 
 @login_required
 def warehouse_edit(request, pk):
-    warehouse = get_object_or_404(Warehouse, pk=pk)
+    warehouse = get_object_or_404(Warehouse, pk=pk, company=request.user.company)  # Tenant-safe
     if request.method == 'POST':
         form = WarehouseForm(request.POST, instance=warehouse)
         if form.is_valid():
@@ -304,7 +310,7 @@ def warehouse_edit(request, pk):
 
 @login_required
 def warehouse_delete(request, pk):
-    warehouse = get_object_or_404(Warehouse, pk=pk)
+    warehouse = get_object_or_404(Warehouse, pk=pk, company=request.user.company)  # Tenant-safe
     if request.method == 'POST':
         warehouse.active = False
         warehouse.save()
@@ -351,7 +357,9 @@ def supplier_create(request):
     if request.method == 'POST':
         form = SupplierForm(request.POST)
         if form.is_valid():
-            supplier = form.save()
+            supplier = form.save(commit=False)
+            supplier.company = request.user.company  # Multi-Tenant assignment
+            supplier.save()
             messages.success(request, f'Proveedor "{supplier.name}" creado.')
             notify(request.user, f'Nuevo proveedor: {supplier.name}', 'success')
             return redirect('logistica:supplier_list')
@@ -362,7 +370,7 @@ def supplier_create(request):
 
 @login_required
 def supplier_edit(request, pk):
-    supplier = get_object_or_404(Supplier, pk=pk)
+    supplier = get_object_or_404(Supplier, pk=pk, company=request.user.company)  # Tenant-safe
     if request.method == 'POST':
         form = SupplierForm(request.POST, instance=supplier)
         if form.is_valid():
@@ -377,7 +385,7 @@ def supplier_edit(request, pk):
 
 @login_required
 def supplier_delete(request, pk):
-    supplier = get_object_or_404(Supplier, pk=pk)
+    supplier = get_object_or_404(Supplier, pk=pk, company=request.user.company)  # Tenant-safe
     if request.method == 'POST':
         supplier.active = False
         supplier.save()

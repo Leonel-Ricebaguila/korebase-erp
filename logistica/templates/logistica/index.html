@@ -8,9 +8,8 @@
 {% block header_icon %}<i class="fas fa-truck-ramp-box" style="color: var(--kore-teal-500);"></i>{% endblock %}
 
 {% block content %}
-<!-- DEBUG INFO: Dashboard Template Loaded Freshly -->
 
-<!-- KPI CARDS (Resumen rápido) -->
+<!-- KPI CARDS -->
 <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
 
     <!-- Total Productos -->
@@ -63,8 +62,50 @@
 
 </div>
 
-<!-- ACCIONES PRINCIPALES Y TABLA -->
-<div class="kore-card" style="background: white; border-radius: 12px; padding: 0;">
+<!-- QUICK ACTIONS -->
+<div class="kore-card" style="padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="font-size: 1rem; font-weight: 600; color: var(--kore-navy-900); margin: 0 0 1rem;">Acciones Rápidas</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;">
+        <a href="{% url 'logistica:inventory_list' %}"
+            style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: var(--kore-gray-50); border-radius: 8px; text-decoration: none; color: var(--kore-navy-900); border: 1px solid var(--kore-gray-200); transition: all 0.2s;"
+            onmouseover="this.style.borderColor='var(--kore-teal-500)'"
+            onmouseout="this.style.borderColor='var(--kore-gray-200)'">
+            <i class="fas fa-boxes" style="color: var(--kore-teal-500); font-size: 1.1rem;"></i>
+            <span style="font-weight: 500; font-size: 0.9rem;">Ver Inventario</span>
+        </a>
+        <a href="{% url 'logistica:product_create' %}"
+            style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: var(--kore-gray-50); border-radius: 8px; text-decoration: none; color: var(--kore-navy-900); border: 1px solid var(--kore-gray-200); transition: all 0.2s;"
+            onmouseover="this.style.borderColor='var(--kore-teal-500)'"
+            onmouseout="this.style.borderColor='var(--kore-gray-200)'">
+            <i class="fas fa-plus-circle" style="color: var(--kore-teal-500); font-size: 1.1rem;"></i>
+            <span style="font-weight: 500; font-size: 0.9rem;">Nuevo Producto</span>
+        </a>
+        <a href="{% url 'logistica:warehouse_list' %}"
+            style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: var(--kore-gray-50); border-radius: 8px; text-decoration: none; color: var(--kore-navy-900); border: 1px solid var(--kore-gray-200); transition: all 0.2s;"
+            onmouseover="this.style.borderColor='var(--kore-teal-500)'"
+            onmouseout="this.style.borderColor='var(--kore-gray-200)'">
+            <i class="fas fa-warehouse" style="color: var(--kore-teal-500); font-size: 1.1rem;"></i>
+            <span style="font-weight: 500; font-size: 0.9rem;">Almacenes</span>
+        </a>
+        <a href="{% url 'logistica:supplier_list' %}"
+            style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: var(--kore-gray-50); border-radius: 8px; text-decoration: none; color: var(--kore-navy-900); border: 1px solid var(--kore-gray-200); transition: all 0.2s;"
+            onmouseover="this.style.borderColor='var(--kore-teal-500)'"
+            onmouseout="this.style.borderColor='var(--kore-gray-200)'">
+            <i class="fas fa-users" style="color: var(--kore-teal-500); font-size: 1.1rem;"></i>
+            <span style="font-weight: 500; font-size: 0.9rem;">Proveedores</span>
+        </a>
+        <a href="{% url 'logistica:export_inventory_csv' %}"
+            style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: var(--kore-gray-50); border-radius: 8px; text-decoration: none; color: var(--kore-navy-900); border: 1px solid var(--kore-gray-200); transition: all 0.2s;"
+            onmouseover="this.style.borderColor='var(--kore-teal-500)'"
+            onmouseout="this.style.borderColor='var(--kore-gray-200)'">
+            <i class="fas fa-file-csv" style="color: var(--kore-teal-500); font-size: 1.1rem;"></i>
+            <span style="font-weight: 500; font-size: 0.9rem;">Exportar CSV</span>
+        </a>
+    </div>
+</div>
+
+<!-- RECENT INVENTORY TABLE -->
+<div class="kore-card" style="background: white; border-radius: 12px; padding: 0; margin-bottom: 2rem;">
     <div class="kore-card-header"
         style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900); margin: 0;">Inventario Reciente
@@ -82,7 +123,6 @@
         </div>
     </div>
 
-    <!-- Tabla Estilo Industrial -->
     <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead
@@ -102,7 +142,7 @@
                         Costo</th>
                     <th
                         style="padding: 1rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: center;">
-                        Estado</th>
+                        Acciones</th>
                 </tr>
             </thead>
             <tbody style="font-size: 0.9rem; color: var(--kore-gray-800);">
@@ -129,11 +169,18 @@
                     </td>
                     <td style="padding: 1rem 1.5rem; text-align: right;">${{ product.unit_cost|floatformat:2 }}</td>
                     <td style="padding: 1rem 1.5rem; text-align: center;">
-                        {% if product.active %}
-                        <i class="fas fa-check-circle" style="color: var(--status-success);"></i>
-                        {% else %}
-                        <i class="fas fa-times-circle" style="color: var(--kore-gray-400);"></i>
-                        {% endif %}
+                        <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                            <a href="{% url 'logistica:stock_adjustment' product.pk %}"
+                                style="background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; text-decoration: none;"
+                                title="Ajustar Stock">
+                                <i class="fas fa-dolly"></i>
+                            </a>
+                            <a href="{% url 'logistica:product_history' product.pk %}"
+                                style="background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; text-decoration: none;"
+                                title="Historial">
+                                <i class="fas fa-history"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
@@ -150,6 +197,73 @@
                             style="background: var(--kore-navy-800); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;">
                             <i class="fas fa-plus"></i> Crear Primer Producto
                         </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- RECENT MOVEMENTS -->
+<div class="kore-card" style="background: white; border-radius: 12px; padding: 0;">
+    <div class="kore-card-header" style="padding: 1.5rem; border-bottom: 1px solid var(--kore-gray-200);">
+        <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--kore-navy-900); margin: 0;">Movimientos Recientes
+        </h3>
+    </div>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead
+                style="background: var(--kore-gray-50); color: var(--kore-gray-500); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                <tr>
+                    <th
+                        style="padding: 0.75rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Fecha</th>
+                    <th
+                        style="padding: 0.75rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Tipo</th>
+                    <th
+                        style="padding: 0.75rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Producto</th>
+                    <th
+                        style="padding: 0.75rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Almacén</th>
+                    <th
+                        style="padding: 0.75rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200); text-align: right;">
+                        Cantidad</th>
+                    <th
+                        style="padding: 0.75rem 1.5rem; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Usuario</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.85rem;">
+                {% for mov in recent_movements %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100);">
+                    <td style="padding: 0.75rem 1.5rem; color: var(--kore-gray-500);">{{ mov.timestamp|date:"d/m/Y H:i" }}</td>
+                    <td style="padding: 0.75rem 1.5rem;">
+                        {% if mov.movement_type == 'in' %}
+                        <span
+                            style="background: #ecfdf5; color: #059669; padding: 0.15rem 0.5rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Entrada</span>
+                        {% elif mov.movement_type == 'out' %}
+                        <span
+                            style="background: #fef2f2; color: #dc2626; padding: 0.15rem 0.5rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Salida</span>
+                        {% else %}
+                        <span
+                            style="background: #eff6ff; color: #2563eb; padding: 0.15rem 0.5rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Ajuste</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 1.5rem; font-weight: 500;">{{ mov.product.sku }}</td>
+                    <td style="padding: 0.75rem 1.5rem;">{{ mov.warehouse.name }}</td>
+                    <td
+                        style="padding: 0.75rem 1.5rem; text-align: right; font-weight: 600; font-family: monospace; color: {% if mov.quantity_change >= 0 %}#059669{% else %}#dc2626{% endif %};">
+                        {% if mov.quantity_change >= 0 %}+{% endif %}{{ mov.quantity_change|floatformat:3 }}
+                    </td>
+                    <td style="padding: 0.75rem 1.5rem; color: var(--kore-gray-500);">{{ mov.user.get_short_name|default:mov.user.username }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 2rem; text-align: center; color: var(--kore-gray-400);">
+                        No hay movimientos recientes
                     </td>
                 </tr>
                 {% endfor %}

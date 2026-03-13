@@ -6,7 +6,7 @@ app_name = 'logistica'
 urlpatterns = [
     # Dashboard
     path('', views.index, name='index'),
-    
+
     # Inventory
     path('inventory/', views.inventory_list, name='inventory_list'),
     path('product/create/', views.product_create, name='product_create'),
@@ -15,13 +15,15 @@ urlpatterns = [
     path('product/<int:pk>/delete/', views.product_delete, name='product_delete'),
     path('product/<int:pk>/history/', views.product_history, name='product_history'),
     path('inventory/export/csv/', views.export_inventory_csv, name='export_inventory_csv'),
-    
+
     # Warehouses
+    path('warehouses/', views.warehouse_list, name='warehouse_list'),
     path('warehouse/create/', views.warehouse_create, name='warehouse_create'),
     path('warehouse/<int:pk>/edit/', views.warehouse_edit, name='warehouse_edit'),
     path('warehouse/<int:pk>/delete/', views.warehouse_delete, name='warehouse_delete'),
-    
+
     # Suppliers
+    path('suppliers/', views.supplier_list, name='supplier_list'),
     path('supplier/create/', views.supplier_create, name='supplier_create'),
     path('supplier/<int:pk>/edit/', views.supplier_edit, name='supplier_edit'),
     path('supplier/<int:pk>/delete/', views.supplier_delete, name='supplier_delete'),

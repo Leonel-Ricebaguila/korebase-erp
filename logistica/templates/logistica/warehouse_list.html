@@ -1,0 +1,108 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Almacenes | KoreBase ERP{% endblock %}
+{% block page_title %}Almacenes{% endblock %}
+
+{% block content %}
+<!-- Header Actions -->
+<div
+    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <form method="get" style="display: flex; gap: 0.5rem;">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Buscar almacén..."
+                class="erp-form-input" style="width: 250px;">
+            <label
+                style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.85rem; color: var(--kore-gray-600); cursor: pointer;">
+                <input type="checkbox" name="inactive" value="1" {% if show_inactive %}checked{% endif %}
+                    onchange="this.form.submit()"> Inactivos
+            </label>
+            <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+    <a href="{% url 'logistica:warehouse_create' %}" class="btn btn-primary"
+        style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; border-radius: 6px;">
+        <i class="fas fa-plus"></i> Nuevo Almacén
+    </a>
+</div>
+
+<!-- Warehouses Table -->
+<div class="kore-card" style="overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead
+                style="background: var(--kore-gray-50); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--kore-gray-500);">
+                <tr>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Código</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Nombre</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Dirección</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Estado</th>
+                    <th
+                        style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">
+                        Acciones</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem;">
+                {% for warehouse in warehouses %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100);"
+                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ warehouse.code }}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 500;">{{ warehouse.name }}</td>
+                    <td style="padding: 1rem 1.5rem; color: var(--kore-gray-600);"                <td>{{ warehouse.address|default:"—"|truncatechars:50 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        {% if warehouse.active %}
+                        <span
+                            style="background: #ecfdf5; color: #059669; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Activo</span>
+                        {% else %}
+                        <span
+                            style="background: #fef2f2; color: #dc2626; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                            <a href="{% url 'logistica:warehouse_edit' warehouse.pk %}" class="btn btn-outline"
+                                style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% if warehouse.active %}
+                            <a href="{% url 'logistica:warehouse_delete' warehouse.pk %}" class="btn btn-outline"
+                                style="padding: 0.25rem 0.5rem; font-size: 0.8rem; color: var(--status-danger);"
+                                title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 4rem; text-align: center;">
+                        <div style="color: var(--kore-gray-300); font-size: 3rem; margin-bottom: 1rem;"><i
+                                class="fas fa-warehouse"></i></div>
+                        <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">No hay
+                            almacenes registrados</h4>
+                        <p style="color: var(--kore-gray-500); margin-bottom: 1rem;">Comience creando un almacén.</p>
+                        <a href="{% url 'logistica:warehouse_create' %}" class="btn btn-primary"
+                            style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem;">
+                            <i class="fas fa-plus"></i> Crear Primer Almacén
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

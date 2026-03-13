@@ -98,11 +98,9 @@
                     onmouseover="this.style.background='var(--kore-gray-50)'"
                     onmouseout="this.style.background='transparent'"
                     onclick="window.location='{% url 'produccion:workorder_detail' order.pk %}'">
-                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{
-                        order.work_order_number }}</td>
+                    <td style="padding: 1rem 1.5rem; font-weight: 600; font-family: monospace;">{{ order.work_order_number }}</td>
                     <td style="padding: 1rem 1.5rem;">{{ order.product.name }}</td>
-                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">{{
-                        order.quantity_planned|floatformat:0 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">{{ order.quantity_planned|floatformat:0 }}</td>
                     <td style="padding: 1rem 1.5rem; text-align: center;">
                         {% if order.status == 'pending' %}
                         <span

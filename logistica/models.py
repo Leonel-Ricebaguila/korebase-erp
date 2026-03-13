@@ -39,6 +39,22 @@ class Product(models.Model):
         verbose_name="Costo Unitario"
     )
     
+    # Cumplimiento Fiscal MX (CFDI 4.0 - SAT)
+    clave_producto_sat = models.CharField(
+        max_length=8, 
+        blank=True, 
+        null=True, 
+        verbose_name="Clave Producto/Servicio SAT",
+        help_text="Clave de 8 dígitos del catálogo del SAT (ej. 43211500)"
+    )
+    clave_unidad_sat = models.CharField(
+        max_length=3, 
+        blank=True, 
+        null=True, 
+        verbose_name="Clave Unidad SAT",
+        help_text="Clave de unidad del SAT (ej. H87 para piezas)"
+    )
+    
     active = models.BooleanField(default=True, verbose_name="Activo")
     created_at = models.DateTimeField(auto_now_add=True)
     

@@ -74,11 +74,13 @@ def bom_list(request):
 @transaction.atomic
 def bom_create(request):
     """Create a new BOM with component lines"""
+    company = request.user.company
     if request.method == 'POST':
-        form = BillOfMaterialForm(request.POST)
+        form = BillOfMaterialForm(request.POST, company=company)
         if form.is_valid():
             bom = form.save(commit=False)
             bom.created_by = request.user
+            bom.company = company  # Multi-Tenant
             bom.save()
 
             formset = BOMLineFormSet(request.POST, instance=bom)
@@ -92,7 +94,7 @@ def bom_create(request):
         else:
             formset = BOMLineFormSet(request.POST)
     else:
-        form = BillOfMaterialForm()
+        form = BillOfMaterialForm(company=company)
         formset = BOMLineFormSet()
 
     return render(request, 'produccion/bom_form.html', {
@@ -104,10 +106,11 @@ def bom_create(request):
 @transaction.atomic
 def bom_edit(request, pk):
     """Edit an existing BOM"""
-    bom = get_object_or_404(BillOfMaterial, pk=pk)
+    company = request.user.company
+    bom = get_object_or_404(BillOfMaterial, pk=pk, company=company)  # Tenant-safe
 
     if request.method == 'POST':
-        form = BillOfMaterialForm(request.POST, instance=bom)
+        form = BillOfMaterialForm(request.POST, instance=bom, company=company)
         formset = BOMLineFormSet(request.POST, instance=bom)
 
         if form.is_valid() and formset.is_valid():
@@ -118,7 +121,7 @@ def bom_edit(request, pk):
         else:
             messages.error(request, 'Corrige los errores.')
     else:
-        form = BillOfMaterialForm(instance=bom)
+        form = BillOfMaterialForm(instance=bom, company=company)
         formset = BOMLineFormSet(instance=bom)
 
     return render(request, 'produccion/bom_form.html', {
@@ -170,16 +173,18 @@ def workorder_list(request):
 @login_required
 def workorder_create(request):
     """Create a new work order"""
+    company = request.user.company
     if request.method == 'POST':
-        form = WorkOrderForm(request.POST)
+        form = WorkOrderForm(request.POST, company=company)
         if form.is_valid():
             order = form.save(commit=False)
             order.created_by = request.user
+            order.company = company  # Multi-Tenant
             order.save()
             messages.success(request, f'Orden "{order.work_order_number}" creada exitosamente.')
             return redirect('produccion:workorder_detail', pk=order.pk)
     else:
-        form = WorkOrderForm()
+        form = WorkOrderForm(company=company)
 
     return render(request, 'produccion/workorder_form.html', {
         'form': form, 'title': 'Nueva Orden de Trabajo'
@@ -189,20 +194,21 @@ def workorder_create(request):
 @login_required
 def workorder_edit(request, pk):
     """Edit a work order (only if pending)"""
-    order = get_object_or_404(WorkOrder, pk=pk)
+    company = request.user.company
+    order = get_object_or_404(WorkOrder, pk=pk, company=company)  # Tenant-safe
 
     if order.status not in ['pending']:
         messages.error(request, 'Solo se pueden editar órdenes en estado Pendiente.')
         return redirect('produccion:workorder_detail', pk=pk)
 
     if request.method == 'POST':
-        form = WorkOrderForm(request.POST, instance=order)
+        form = WorkOrderForm(request.POST, instance=order, company=company)
         if form.is_valid():
             form.save()
             messages.success(request, f'Orden "{order.work_order_number}" actualizada.')
             return redirect('produccion:workorder_detail', pk=order.pk)
     else:
-        form = WorkOrderForm(instance=order)
+        form = WorkOrderForm(instance=order, company=company)
 
     return render(request, 'produccion/workorder_form.html', {
         'form': form, 'title': 'Editar Orden de Trabajo', 'order': order

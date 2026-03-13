@@ -4,11 +4,12 @@ KoreBase ERP System
 """
 from django import forms
 from django.forms import inlineformset_factory
+from logistica.models import Product, Warehouse
 from .models import BillOfMaterial, BOMLine, WorkOrder
 
 
 class BillOfMaterialForm(forms.ModelForm):
-    """Form for creating/editing BOMs"""
+    """Form for creating/editing BOMs — Tenant-aware"""
 
     class Meta:
         model = BillOfMaterial
@@ -25,15 +26,18 @@ class BillOfMaterialForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)
         super().__init__(*args, **kwargs)
         self.fields['product'].label = 'Producto Final'
         self.fields['version'].label = 'Versión'
         self.fields['active'].label = 'Activa'
         self.fields['notes'].label = 'Notas'
+        if company:
+            self.fields['product'].queryset = Product.objects.filter(active=True, company=company)
 
 
 class BOMLineForm(forms.ModelForm):
-    """Form for a single BOM line (component)"""
+    """Form for a single BOM line (component) — Tenant-aware"""
 
     class Meta:
         model = BOMLine
@@ -53,6 +57,12 @@ class BOMLineForm(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)
+        super().__init__(*args, **kwargs)
+        if company:
+            self.fields['component'].queryset = Product.objects.filter(active=True, company=company)
+
 
 BOMLineFormSet = inlineformset_factory(
     BillOfMaterial,
@@ -66,7 +76,7 @@ BOMLineFormSet = inlineformset_factory(
 
 
 class WorkOrderForm(forms.ModelForm):
-    """Form for creating/editing work orders"""
+    """Form for creating/editing work orders — Tenant-aware"""
 
     class Meta:
         model = WorkOrder
@@ -100,6 +110,7 @@ class WorkOrderForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)
         super().__init__(*args, **kwargs)
         self.fields['work_order_number'].label = 'Nº Orden de Trabajo'
         self.fields['product'].label = 'Producto'
@@ -109,3 +120,7 @@ class WorkOrderForm(forms.ModelForm):
         self.fields['warehouse'].label = 'Almacén'
         self.fields['start_date'].label = 'Fecha de Inicio'
         self.fields['notes'].label = 'Notas'
+        if company:
+            self.fields['product'].queryset = Product.objects.filter(active=True, company=company)
+            self.fields['warehouse'].queryset = Warehouse.objects.filter(active=True, company=company)
+            self.fields['bom'].queryset = BillOfMaterial.objects.filter(active=True, company=company)

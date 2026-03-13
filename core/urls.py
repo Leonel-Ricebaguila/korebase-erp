@@ -15,6 +15,13 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('auth/google/', views.google_login_view, name='google_login'),
     path('auth/google/callback/', views.google_callback_view, name='google_callback'),
+    path('search/', views.global_search_view, name='global_search'),
+    
+    # Notifications
+    path('notifications/', views.notifications_list_view, name='notifications_list'),
+    path('notifications/<int:pk>/read/', views.mark_notification_read_view, name='mark_notification_read'),
+    path('notifications/<int:pk>/redirect/', views.notification_redirect_view, name='notification_redirect'),
+    path('notifications/read-all/', views.mark_all_notifications_read_view, name='mark_all_notifications_read'),
 
     # Password reset flow — templates explícitos para evitar conflicto con admin
     path('password-reset/',

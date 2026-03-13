@@ -311,3 +311,93 @@ def google_callback_view(request):
     except Exception as e:
         messages.error(request, f'Error en autenticación con Google: {str(e)}')
         return redirect('core:login')
+
+from django.db.models import Q
+from logistica.models import Product, Warehouse, Supplier
+from produccion.models import WorkOrder, BillOfMaterial
+from financiero.models import Invoice
+
+@login_required
+def global_search_view(request):
+    """HTMX endpoint for global autocomplete search"""
+    query = request.GET.get('q', '').strip()
+    if not query or len(query) < 2:
+        return render(request, 'core/search_results.html', {'results': []})
+    
+    results = []
+    
+    # Busca Productos
+    for p in Product.objects.filter(Q(sku__icontains=query) | Q(name__icontains=query))[:3]:
+        results.append({'url': f"/logistica/inventory/", 'title': f"{p.sku} - {p.name}", 'type': 'Producto', 'icon': 'fa-box'})
+        
+    # Busca Almacenes
+    for w in Warehouse.objects.filter(Q(code__icontains=query) | Q(name__icontains=query))[:3]:
+        results.append({'url': f"/logistica/warehouses/", 'title': f"{w.code} - {w.name}", 'type': 'Almacén', 'icon': 'fa-warehouse'})
+        
+    # Busca Proveedores
+    for s in Supplier.objects.filter(Q(code__icontains=query) | Q(name__icontains=query))[:3]:
+        results.append({'url': f"/logistica/suppliers/", 'title': f"{s.code} - {s.name}", 'type': 'Proveedor', 'icon': 'fa-truck'})
+        
+    # Busca Ordenes de Trabajo
+    for o in WorkOrder.objects.filter(work_order_number__icontains=query)[:3]:
+        results.append({'url': f"/produccion/workorder/{o.pk}/", 'title': f"OT: {o.work_order_number}", 'type': 'Orden de Trabajo', 'icon': 'fa-clipboard-list'})
+        
+    # Busca Facturas
+    for i in Invoice.objects.filter(invoice_number__icontains=query)[:3]:
+        results.append({'url': f"/financiero/invoice/{i.pk}/", 'title': f"Factura: {i.invoice_number}", 'type': 'Factura', 'icon': 'fa-file-invoice-dollar'})
+        
+    return render(request, 'core/search_results.html', {'results': results})
+
+@login_required
+def notifications_list_view(request):
+    """HTMX endpoint to render the notifications dropdown menu"""
+    notifications = request.user.notifications.all()[:10]
+    unread_count = request.user.notifications.filter(is_read=False).count()
+    return render(request, 'core/notifications_dropdown.html', {
+        'notifications': notifications,
+        'unread_count': unread_count
+    })
+
+@login_required
+def mark_notification_read_view(request, pk):
+    """HTMX endpoint to mark a single notification as read"""
+    from .models import Notification
+    try:
+        notification = Notification.objects.get(pk=pk, user=request.user)
+        notification.is_read = True
+        notification.save()
+    except Notification.DoesNotExist:
+        pass
+        
+    notifications = request.user.notifications.all()[:10]
+    unread_count = request.user.notifications.filter(is_read=False).count()
+    return render(request, 'core/notifications_dropdown.html', {
+        'notifications': notifications,
+        'unread_count': unread_count
+    })
+
+@login_required
+def notification_redirect_view(request, pk):
+    """Marks a notification as read and redirects to its link"""
+    from .models import Notification
+    from django.shortcuts import get_object_or_404, redirect
+    notification = get_object_or_404(Notification, pk=pk, user=request.user)
+    
+    if not notification.is_read:
+        notification.is_read = True
+        notification.save()
+        
+    if notification.link:
+        return redirect(notification.link)
+    return redirect('core:dashboard')
+
+@login_required
+def mark_all_notifications_read_view(request):
+    """HTMX endpoint to mark all notifications as read"""
+    request.user.notifications.filter(is_read=False).update(is_read=True)
+    
+    notifications = request.user.notifications.all()[:10]
+    return render(request, 'core/notifications_dropdown.html', {
+        'notifications': notifications,
+        'unread_count': 0
+    })

@@ -1,124 +1,122 @@
-{% extends 'base.html' %}
+{% extends 'layouts/base.html' %}
+{% load static %}
 
-{% block title %}{{ title }} - KoreBase{% endblock %}
+{% block title %}{{ title }} | KoreBase ERP{% endblock %}
 {% block page_title %}{{ title }}{% endblock %}
 
 {% block content %}
-<!-- Breadcrumb -->
-<nav class="erp-breadcrumb">
-    <div class="erp-breadcrumb-item">
-        <a href="{% url 'core:dashboard' %}" class="erp-breadcrumb-link">Inicio</a>
-    </div>
-    <div class="erp-breadcrumb-item">
-        <a href="{% url 'logistica:index' %}" class="erp-breadcrumb-link">Logística</a>
-    </div>
-    <div class="erp-breadcrumb-item">
-        <span class="erp-breadcrumb-link">{{ title }}</span>
-    </div>
-</nav>
+<style>
+    .form-control {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        border: 1px solid var(--kore-gray-200);
+        border-radius: var(--border-radius-md);
+        background-color: white;
+        font-size: 0.9rem;
+        color: var(--kore-gray-800);
+        margin-bottom: 0.5rem;
+        display: block;
+        box-sizing: border-box;
+    }
+    .form-control:focus {
+        border-color: var(--kore-teal-500);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+    }
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--kore-navy-900);
+        font-size: 0.85rem;
+    }
+    .field-wrapper { margin-bottom: 1.5rem; }
+    .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; }
+</style>
 
-<!-- Form Card -->
-<div class="erp-card">
-    <div class="erp-card-header">
-        <h2 class="erp-card-title">{{ title }}</h2>
-        <a href="{% url 'logistica:index' %}" class="erp-btn erp-btn-secondary erp-btn-sm">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
+<div class="kore-card" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h3 style="margin: 0; color: var(--kore-navy-900); font-size: 1.25rem;">Información del Proveedor</h3>
+        <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Complete los detalles del perfil del proveedor.</div>
     </div>
-    <div class="erp-card-body">
-        <form method="post" style="max-width: 600px;">
-            {% csrf_token %}
-            
-            <div class="erp-form-group">
-                <label for="{{ form.code.id_for_label }}" class="erp-form-label">{{ form.code.label }}</label>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+            <div class="field-wrapper">
+                <label for="{{ form.code.id_for_label }}">Código *</label>
                 {{ form.code }}
-                {% if form.code.errors %}
-                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
-                    {{ form.code.errors }}
-                </div>
-                {% endif %}
+                {% if form.code.errors %}<div class="error-msg">{{ form.code.errors.0 }}</div>{% endif %}
             </div>
 
-            <div class="erp-form-group">
-                <label for="{{ form.name.id_for_label }}" class="erp-form-label">{{ form.name.label }}</label>
+            <div class="field-wrapper">
+                <label for="{{ form.name.id_for_label }}">Razón Social / Nombre *</label>
                 {{ form.name }}
-                {% if form.name.errors %}
-                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
-                    {{ form.name.errors }}
-                </div>
-                {% endif %}
+                {% if form.name.errors %}<div class="error-msg">{{ form.name.errors.0 }}</div>{% endif %}
             </div>
+        </div>
 
-            <div class="erp-form-group">
-                <label for="{{ form.contact_name.id_for_label }}" class="erp-form-label">{{ form.contact_name.label }}</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="field-wrapper">
+                <label for="{{ form.contact_name.id_for_label }}">Nombre de Contacto</label>
                 {{ form.contact_name }}
-                {% if form.contact_name.errors %}
-                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
-                    {{ form.contact_name.errors }}
-                </div>
-                {% endif %}
+                {% if form.contact_name.errors %}<div class="error-msg">{{ form.contact_name.errors.0 }}</div>{% endif %}
             </div>
 
-            <div class="erp-form-group">
-                <label for="{{ form.email.id_for_label }}" class="erp-form-label">{{ form.email.label }}</label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
-                    {{ form.email.errors }}
-                </div>
-                {% endif %}
-            </div>
-
-            <div class="erp-form-group">
-                <label for="{{ form.phone.id_for_label }}" class="erp-form-label">{{ form.phone.label }}</label>
+            <div class="field-wrapper">
+                <label for="{{ form.phone.id_for_label }}">Teléfono</label>
                 {{ form.phone }}
-                {% if form.phone.errors %}
-                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
-                    {{ form.phone.errors }}
-                </div>
-                {% endif %}
+                {% if form.phone.errors %}<div class="error-msg">{{ form.phone.errors.0 }}</div>{% endif %}
             </div>
+        </div>
 
-            <div class="erp-form-group">
-                <label for="{{ form.address.id_for_label }}" class="erp-form-label">{{ form.address.label }}</label>
-                {{ form.address }}
-                {% if form.address.errors %}
-                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
-                    {{ form.address.errors }}
-                </div>
-                {% endif %}
-            </div>
+        <div class="field-wrapper">
+            <label for="{{ form.email.id_for_label }}">Correo Electrónico</label>
+            {{ form.email }}
+            {% if form.email.errors %}<div class="error-msg">{{ form.email.errors.0 }}</div>{% endif %}
+        </div>
 
-            <div class="erp-form-group">
-                <label for="{{ form.active.id_for_label }}" class="erp-form-label" style="display: flex; align-items: center; gap: 8px;">
-                    {{ form.active }}
-                    {{ form.active.label }}
-                </label>
-                {% if form.active.errors %}
-                <div class="erp-alert erp-alert-danger" style="margin-top: 8px; padding: 8px 12px;">
-                    {{ form.active.errors }}
-                </div>
-                {% endif %}
-            </div>
+        <div class="field-wrapper">
+            <label for="{{ form.address.id_for_label }}">Dirección Comercial</label>
+            {{ form.address }}
+            {% if form.address.errors %}<div class="error-msg">{{ form.address.errors.0 }}</div>{% endif %}
+        </div>
 
-            <div style="margin-top: 24px; display: flex; gap: 12px;">
-                <button type="submit" class="erp-btn erp-btn-primary">
-                    <i class="fas fa-save"></i> Guardar
-                </button>
-                <a href="{% url 'logistica:index' %}" class="erp-btn erp-btn-secondary">
-                    <i class="fas fa-times"></i> Cancelar
-                </a>
-            </div>
-        </form>
-    </div>
+        <div class="field-wrapper"
+            style="display: flex; align-items: center; gap: 0.75rem; background: var(--kore-gray-50); padding: 1rem; border-radius: var(--border-radius-md);">
+            {{ form.active }}
+            <label for="{{ form.active.id_for_label }}" style="margin-bottom: 0; cursor: pointer;">Proveedor Activo Confirmado</label>
+            {% if form.active.errors %}<div class="error-msg">{{ form.active.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--kore-gray-100);">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Guardar Proveedor
+            </button>
+            <a href="{% url 'logistica:supplier_list' %}" class="btn btn-outline">
+                Cancelar
+            </a>
+        </div>
+    </form>
 </div>
 
-{% if form.non_field_errors %}
-<div class="erp-alert erp-alert-danger">
-    <span class="erp-alert-icon"><i class="fas fa-exclamation-circle"></i></span>
-    <div>
-        {{ form.non_field_errors }}
-    </div>
-</div>
-{% endif %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formCard = document.querySelector('.kore-card form');
+        if (!formCard) return;
+        const inputs = formCard.querySelectorAll('input[type="text"], input[type="number"], input[type="email"], select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(chk => {
+            chk.style.width = '1.25rem';
+            chk.style.height = '1.25rem';
+            chk.style.cursor = 'pointer';
+            chk.style.accentColor = 'var(--kore-teal-500)';
+        });
+    });
+</script>
 {% endblock %}

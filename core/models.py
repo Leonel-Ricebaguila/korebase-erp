@@ -106,3 +106,26 @@ class OTPToken(models.Model):
 
     def __str__(self):
         return f"OTP for {self.user.username}"
+
+class Notification(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    notification_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('success', 'Éxito'),
+            ('error', 'Error'),
+            ('info', 'Info'),
+            ('warning', 'Advertencia')
+        ],
+        default='info'
+    )
+    is_read = models.BooleanField(default=False)
+    link = models.CharField(max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"[{self.notification_type.upper()}] {self.user.username}: {self.message}"

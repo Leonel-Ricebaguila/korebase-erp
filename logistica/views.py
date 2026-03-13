@@ -5,6 +5,7 @@ from django.db import transaction
 from django.db.models import Sum, Q, DecimalField, Value, F
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse
+from core.notifications import notify
 import csv
 from datetime import datetime
 from decimal import Decimal
@@ -76,6 +77,7 @@ def product_create(request):
         if form.is_valid():
             product = form.save()
             messages.success(request, f'Producto "{product.name}" creado exitosamente.')
+            notify(request.user, f'Nuevo producto creado: {product.name}', 'success', f'/logistica/product/{product.pk}/edit/')
             return redirect('logistica:inventory_list')
     else:
         form = ProductForm()
@@ -93,6 +95,7 @@ def product_edit(request, pk):
         if form.is_valid():
             product = form.save()
             messages.success(request, f'Producto "{product.name}" actualizado exitosamente.')
+            notify(request.user, f'Producto modificado: {product.name}', 'info', f'/logistica/product/{product.pk}/edit/')
             return redirect('logistica:inventory_list')
     else:
         form = ProductForm(instance=product)
@@ -109,6 +112,7 @@ def product_delete(request, pk):
         product.active = False
         product.save()
         messages.success(request, f'Producto "{product.name}" eliminado exitosamente.')
+        notify(request.user, f'Producto eliminado: {product.name}', 'warning')
         return redirect('logistica:inventory_list')
 
     return render(request, 'logistica/product_confirm_delete.html', {
@@ -276,6 +280,7 @@ def warehouse_create(request):
         if form.is_valid():
             warehouse = form.save()
             messages.success(request, f'Almacén "{warehouse.name}" creado exitosamente.')
+            notify(request.user, f'Nuevo almacén: {warehouse.name}', 'success')
             return redirect('logistica:warehouse_list')
     else:
         form = WarehouseForm()
@@ -290,6 +295,7 @@ def warehouse_edit(request, pk):
         if form.is_valid():
             warehouse = form.save()
             messages.success(request, f'Almacén "{warehouse.name}" actualizado.')
+            notify(request.user, f'Almacén modificado: {warehouse.name}', 'info', f'/logistica/warehouse/{warehouse.pk}/edit/')
             return redirect('logistica:warehouse_list')
     else:
         form = WarehouseForm(instance=warehouse)
@@ -303,6 +309,7 @@ def warehouse_delete(request, pk):
         warehouse.active = False
         warehouse.save()
         messages.success(request, f'Almacén "{warehouse.name}" eliminado.')
+        notify(request.user, f'Almacén eliminado: {warehouse.name}', 'warning')
         return redirect('logistica:warehouse_list')
 
     return render(request, 'logistica/warehouse_confirm_delete.html', {
@@ -346,6 +353,7 @@ def supplier_create(request):
         if form.is_valid():
             supplier = form.save()
             messages.success(request, f'Proveedor "{supplier.name}" creado.')
+            notify(request.user, f'Nuevo proveedor: {supplier.name}', 'success')
             return redirect('logistica:supplier_list')
     else:
         form = SupplierForm()
@@ -360,6 +368,7 @@ def supplier_edit(request, pk):
         if form.is_valid():
             supplier = form.save()
             messages.success(request, f'Proveedor "{supplier.name}" actualizado.')
+            notify(request.user, f'Proveedor modificado: {supplier.name}', 'info', f'/logistica/supplier/{supplier.pk}/edit/')
             return redirect('logistica:supplier_list')
     else:
         form = SupplierForm(instance=supplier)
@@ -373,6 +382,7 @@ def supplier_delete(request, pk):
         supplier.active = False
         supplier.save()
         messages.success(request, f'Proveedor "{supplier.name}" eliminado.')
+        notify(request.user, f'Proveedor eliminado: {supplier.name}', 'warning')
         return redirect('logistica:supplier_list')
 
     return render(request, 'logistica/supplier_confirm_delete.html', {

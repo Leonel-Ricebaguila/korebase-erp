@@ -176,6 +176,7 @@ def journal_create(request):
                     line.save()
 
                 messages.success(request, f'Asiento "{entry.entry_number}" creado exitosamente.')
+                notify(request.user, f'Nuevo Asiento Contable: {entry.entry_number}', 'info', f'/financiero/journal/{entry.pk}/')
                 return redirect('financiero:journal_detail', pk=entry.pk)
             else:
                 # Formset invalid — rollback
@@ -280,6 +281,7 @@ def invoice_create(request):
             invoice.created_by = request.user
             invoice.save()
             messages.success(request, f'Factura "{invoice.invoice_number}" creada exitosamente.')
+            notify(request.user, f'Nueva Factura: {invoice.invoice_number}', 'info', f'/financiero/invoice/{invoice.pk}/')
             return redirect('financiero:invoice_list')
     else:
         form = InvoiceForm()

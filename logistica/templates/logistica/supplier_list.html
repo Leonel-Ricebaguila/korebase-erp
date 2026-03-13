@@ -11,7 +11,7 @@
     <div style="display: flex; gap: 0.75rem; align-items: center;">
         <form method="get" style="display: flex; gap: 0.5rem;">
             <input type="text" name="q" value="{{ search_query }}" placeholder="Buscar proveedor..."
-                class="erp-form-input" style="width: 250px;">
+                style="padding: 0.5rem 1rem; border: 1px solid var(--kore-gray-200); border-radius: 6px; width: 250px; font-size: 0.9rem;">
             <label
                 style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.85rem; color: var(--kore-gray-600); cursor: pointer;">
                 <input type="checkbox" name="inactive" value="1" {% if show_inactive %}checked{% endif %}

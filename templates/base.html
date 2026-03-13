@@ -195,10 +195,21 @@
         });
     </script>
     {% else %}
-    <!-- Login Page -->
-    <div class="min-h-screen" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 20px;">
-        {% block login_content %}{% endblock %}
-    </div>
+    {% else %}
+    <!-- Auth Pages Wrap -->
+    <style>
+        body {
+            background-color: #0f172a;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    </style>
+    {% block login_content %}{% endblock %}
     {% endif %}
 
     {% block extra_js %}{% endblock %}

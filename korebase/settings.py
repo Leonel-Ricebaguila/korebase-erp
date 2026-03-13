@@ -18,7 +18,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-pr$h9o4p2b09nten&@h(x_qw0fdwvi))riy@&ob1ylhno)_u76')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Determine if running on Render
+ON_RENDER = os.getenv('RENDER') == 'true' or 'onrender.com' in os.getenv('ALLOWED_HOSTS', '')
+
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
+if ON_RENDER:
+    DEBUG = False  # Always force False on Render
+
 
 ALLOWED_HOSTS = [
     'korebase-erp.onrender.com',
@@ -53,15 +59,15 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise para static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'core.middleware.ThreadLocalTenantMiddleware',  # Multi-Tenancy SaaS Middleware
+    'core.middleware.ThreadLocalTenantMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_htmx.middleware.HtmxMiddleware',  # HTMX middleware
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'korebase.urls'
@@ -187,7 +193,7 @@ LOGIN_REDIRECT_URL = 'core:dashboard'
 LOGOUT_REDIRECT_URL = 'core:login'
 
 # Email Service Configuration
-if DEBUG:
+if not ON_RENDER and DEBUG:
     # Development: Gmail SMTP (local only)
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'
@@ -196,10 +202,10 @@ if DEBUG:
     EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
     EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 else:
-    # Production: SendGrid HTTP API (bypasses Render's SMTP port blocking)
+    # Production or Force Production locally: SendGrid HTTP API
     EMAIL_BACKEND = 'core.sendgrid_backend.SendGridBackend'
-    # API Key can be in either variable (for backwards compatibility)
     SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY') or os.getenv('EMAIL_HOST_PASSWORD')
+
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@korebase.com')
 

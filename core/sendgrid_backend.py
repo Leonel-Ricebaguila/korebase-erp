@@ -23,8 +23,12 @@ class SendGridBackend(BaseEmailBackend):
         self.from_email = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@korebase.com')
 
         if not self.api_key:
+            logger.error("[SendGrid] CRITICAL: No API KEY found in environment variables!")
             if not self.fail_silently:
                 raise ValueError("SENDGRID_API_KEY must be set in environment variables")
+        else:
+            logger.info(f"[SendGrid] Backend initialized with API Key (prefix: {self.api_key[:4]}...{self.api_key[-4:]})")
+
 
     def send_messages(self, email_messages):
         """

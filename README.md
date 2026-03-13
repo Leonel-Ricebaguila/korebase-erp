@@ -221,7 +221,7 @@ DATABASE_URL=postgresql://user:password@host:5432/korebase
    - Build Command: `./build.sh`
    - Start Command: `gunicorn korebase.wsgi:application`
 
-**Guía completa**: Ver [`DEPLOYMENT_GUIDE.md`](DEPLOYMENT_GUIDE.md)
+**Guía completa**: Ver la carpeta `/docs/` para detalles de infraestructura.
 
 ---
 
@@ -259,7 +259,7 @@ Los siguientes archivos están en `.gitignore` y **NO se suben al repositorio**:
 - `venv/` - Entorno virtual
 - `staticfiles/` - Archivos estáticos compilados
 
-**Auditoría de seguridad**: Ver [`SECURITY_AUDIT.md`](SECURITY_AUDIT.md)
+
 
 ---
 
@@ -267,12 +267,8 @@ Los siguientes archivos están en `.gitignore` y **NO se suben al repositorio**:
 
 ### **Guías Disponibles**
 
-- 📖 **[FRONTEND_ARCHITECTURE.md](FRONTEND_ARCHITECTURE.md)** - Arquitectura frontend modular
-- 🚀 **[QUICK_START_FRONTEND.md](QUICK_START_FRONTEND.md)** - Guía rápida de frontend
-- 📋 **[GUIA_MODULAR_COMPLETA.md](GUIA_MODULAR_COMPLETA.md)** - Guía completa de desarrollo modular
-- 🌐 **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Guía de despliegue
-- 🪟 **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** - Configuración en Windows 11
-- 🔒 **[SECURITY_AUDIT.md](SECURITY_AUDIT.md)** - Auditoría de seguridad
+- Todos los detalles técnicos profundos y la documentación están centralizados en la carpeta `docs/`.
+- 🔐 **[docs/GOOGLE_OAUTH_SETUP.md](docs/GOOGLE_OAUTH_SETUP.md)** - Guía de OAuth y configuraciones en Render
 
 ### **Estructura de Módulos**
 

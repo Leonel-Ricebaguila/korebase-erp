@@ -10,7 +10,7 @@ import csv
 from datetime import datetime
 from decimal import Decimal
 
-from .models import Product, Stock, Warehouse, Supplier, StockMovement
+from .models import Product, Stock, Warehouse, Supplier, StockMovement, SatProductCode, SatUnitCode
 from .forms import ProductForm, WarehouseForm, SupplierForm, StockMovementForm
 
 
@@ -398,3 +398,45 @@ def supplier_delete(request, pk):
         'title': 'Eliminar Proveedor',
         'cancel_url': 'logistica:supplier_list',
     })
+
+
+# ------ SAT CFDI 4.0 Catalog HTMX Endpoints ------
+
+@login_required
+def sat_product_search(request):
+    """HTMX endpoint to search SAT Product Codes globally"""
+    query = request.GET.get('q', '').strip()
+    
+    if len(query) < 3:
+        # Too short to search, return nothing or a minimal prompt
+        return HttpResponse('')
+    
+    results = SatProductCode.objects.filter(
+        Q(code__icontains=query) | Q(description__icontains=query),
+        active=True
+    ).order_by('code')[:15]
+    
+    return render(request, 'logistica/partials/sat_search_results.html', {
+        'results': results,
+        'type': 'product'
+    })
+
+
+@login_required
+def sat_unit_search(request):
+    """HTMX endpoint to search SAT Unit Codes globally"""
+    query = request.GET.get('q', '').strip()
+    
+    if len(query) < 1:
+        return HttpResponse('')
+    
+    results = SatUnitCode.objects.filter(
+        Q(code__icontains=query) | Q(name__icontains=query),
+        active=True
+    ).order_by('code')[:15]
+    
+    return render(request, 'logistica/partials/sat_search_results.html', {
+        'results': results,
+        'type': 'unit'
+    })
+

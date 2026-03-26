@@ -160,6 +160,13 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
+### **Paso 6.5: Cargar Catálogos SAT (CFDI 4.0)**
+
+Para habilitar el buscador de claves SAT en el módulo de logística, inyecta los datos iniciales:
+```bash
+python scripts/seed_sat_catalog.py
+```
+
 ### **Paso 7: Ejecutar Servidor de Desarrollo**
 
 ```bash

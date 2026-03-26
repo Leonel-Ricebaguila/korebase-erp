@@ -43,6 +43,54 @@
         font-size: 0.8rem;
         margin-top: 0.25rem;
     }
+
+    /* Estilos del Dropdown SAT HTMX */
+    .erp-sat-results {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border: 1px solid var(--kore-gray-200);
+        border-top: none;
+        border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+        background: white;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        max-height: 250px;
+        overflow-y: auto;
+        position: absolute;
+        width: 100%;
+        z-index: 50;
+    }
+
+    .erp-sat-result-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--kore-gray-100);
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .erp-sat-result-item:hover {
+        background-color: var(--kore-gray-50);
+    }
+
+    .erp-sat-result-item .sat-code {
+        font-weight: 600;
+        color: var(--kore-navy-800);
+        font-size: 0.9rem;
+    }
+
+    .erp-sat-result-item .sat-desc {
+        font-size: 0.8rem;
+        color: var(--kore-gray-500);
+    }
+
+    .erp-sat-no-results {
+        padding: 1rem;
+        text-align: center;
+        color: var(--kore-gray-500);
+        font-size: 0.85rem;
+        background: white;
+        border: 1px solid var(--kore-gray-200);
+    }
 </style>
 
 <div class="kore-card" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
@@ -98,15 +146,43 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                 <div class="field-wrapper" style="margin-bottom: 0;">
                     <label for="{{ form.clave_producto_sat.id_for_label }}">{{ form.clave_producto_sat.label }}</label>
-                    {{ form.clave_producto_sat }}
-                    <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 0.25rem;">{{ form.clave_producto_sat.help_text }}</div>
+                    <div style="position: relative; margin-bottom: 0.5rem;">
+                        <input type="text" class="form-control" name="q" style="background-color: #ffffff;" 
+                               placeholder="🔍 Buscar categoría (ej. Carne, Software...)"
+                               hx-get="{% url 'logistica:sat_product_search' %}" 
+                               hx-trigger="keyup changed delay:400ms" 
+                               hx-target="#sat-product-results"
+                               autocomplete="off"
+                               onfocus="document.getElementById('sat-product-results').style.display = 'block'"
+                               onblur="setTimeout(() => document.getElementById('sat-product-results').style.display = 'none', 200)">
+                        <div id="sat-product-results" style="position: absolute; width: 100%; z-index: 50;"></div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <div style="flex-grow: 1;">{{ form.clave_producto_sat }}</div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 0.25rem;"><i class="fas fa-info-circle"></i> Usa el buscador arriba o teclea los 8 dígitos oficiales directamente.</div>
                     {% if form.clave_producto_sat.errors %}<div class="error-msg">{{ form.clave_producto_sat.errors.0 }}</div>{% endif %}
                 </div>
 
                 <div class="field-wrapper" style="margin-bottom: 0;">
                     <label for="{{ form.clave_unidad_sat.id_for_label }}">{{ form.clave_unidad_sat.label }}</label>
-                    {{ form.clave_unidad_sat }}
-                    <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 0.25rem;">{{ form.clave_unidad_sat.help_text }}</div>
+                    <div style="position: relative; margin-bottom: 0.5rem;">
+                        <input type="text" class="form-control" name="q" style="background-color: #ffffff;" 
+                               placeholder="🔍 Buscar unidad (ej. Pieza, Litro...)"
+                               hx-get="{% url 'logistica:sat_unit_search' %}" 
+                               hx-trigger="keyup changed delay:400ms" 
+                               hx-target="#sat-unit-results"
+                               autocomplete="off"
+                               onfocus="document.getElementById('sat-unit-results').style.display = 'block'"
+                               onblur="setTimeout(() => document.getElementById('sat-unit-results').style.display = 'none', 200)">
+                        <div id="sat-unit-results" style="position: absolute; width: 100%; z-index: 50;"></div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <div style="flex-grow: 1;">{{ form.clave_unidad_sat }}</div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 0.25rem;"><i class="fas fa-info-circle"></i> Usa el buscador o anota la clave de 3 letras (ej. H87).</div>
                     {% if form.clave_unidad_sat.errors %}<div class="error-msg">{{ form.clave_unidad_sat.errors.0 }}</div>{% endif %}
                 </div>
             </div>
@@ -150,5 +226,16 @@
             chk.style.accentColor = 'var(--kore-teal-500)';
         });
     });
+
+    // Función para manejar la selección desde los dropdowns HTMX
+    function selectSatCode(code, desc, type) {
+        if (type === 'product') {
+            document.getElementById('{{ form.clave_producto_sat.id_for_label }}').value = code;
+            document.getElementById('sat-product-results').style.display = 'none';
+        } else if (type === 'unit') {
+            document.getElementById('{{ form.clave_unidad_sat.id_for_label }}').value = code;
+            document.getElementById('sat-unit-results').style.display = 'none';
+        }
+    }
 </script>
 {% endblock %}

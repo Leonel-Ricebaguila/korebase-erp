@@ -141,3 +141,32 @@ class Supplier(TenantAwareModel):
     def __str__(self):
         return f"{self.code} - {self.name}"
 
+
+class SatProductCode(models.Model):
+    """SAT Product/Service Code Catalog (Global for all tenants)"""
+    code = models.CharField(max_length=8, unique=True, verbose_name="Clave Producto/Servicio")
+    description = models.CharField(max_length=255, verbose_name="Descripción")
+    active = models.BooleanField(default=True, verbose_name="Activo")
+
+    class Meta:
+        verbose_name = "Clave Producto SAT"
+        verbose_name_plural = "Claves Productos SAT"
+        ordering = ['code']
+
+    def __str__(self):
+        return f"{self.code} - {self.description}"
+
+
+class SatUnitCode(models.Model):
+    """SAT Unit of Measure Catalog (Global for all tenants)"""
+    code = models.CharField(max_length=3, unique=True, verbose_name="Clave Unidad")
+    name = models.CharField(max_length=150, verbose_name="Nombre Unidad")
+    active = models.BooleanField(default=True, verbose_name="Activo")
+
+    class Meta:
+        verbose_name = "Clave Unidad SAT"
+        verbose_name_plural = "Claves Unidades SAT"
+        ordering = ['code']
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"

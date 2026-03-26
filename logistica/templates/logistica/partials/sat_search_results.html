@@ -1,0 +1,15 @@
+{% if results %}
+    <ul class="erp-sat-results">
+        {% for result in results %}
+            <li class="erp-sat-result-item" 
+                onclick="selectSatCode('{{ result.code }}', '{% if type == 'product' %}{{ result.description|escapejs }}{% else %}{{ result.name|escapejs }}{% endif %}', '{{ type }}')">
+                <div class="sat-code">{{ result.code }}</div>
+                <div class="sat-desc">{% if type == 'product' %}{{ result.description }}{% else %}{{ result.name }}{% endif %}</div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <div class="erp-sat-no-results">
+        Sin resultados. Escribe el número exacto si lo conoces.
+    </div>
+{% endif %}

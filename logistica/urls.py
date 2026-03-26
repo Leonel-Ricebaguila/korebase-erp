@@ -27,4 +27,8 @@ urlpatterns = [
     path('supplier/create/', views.supplier_create, name='supplier_create'),
     path('supplier/<int:pk>/edit/', views.supplier_edit, name='supplier_edit'),
     path('supplier/<int:pk>/delete/', views.supplier_delete, name='supplier_delete'),
+
+    # SAT APIs (HTMX)
+    path('api/sat/products/', views.sat_product_search, name='sat_product_search'),
+    path('api/sat/units/', views.sat_unit_search, name='sat_unit_search'),
 ]

@@ -85,7 +85,7 @@ def bom_create(request):
             bom.company = company  # Multi-Tenant
             bom.save()
 
-            formset = BOMLineFormSet(request.POST, instance=bom)
+            formset = BOMLineFormSet(request.POST, instance=bom, form_kwargs={'component_qs': product_qs})
             if formset.is_valid():
                 formset.save()
                 messages.success(request, f'BOM "{bom}" creada exitosamente.')
@@ -94,10 +94,10 @@ def bom_create(request):
                 bom.delete()
                 messages.error(request, 'Corrige los errores en los componentes.')
         else:
-            formset = BOMLineFormSet(request.POST)
+            formset = BOMLineFormSet(request.POST, form_kwargs={'component_qs': product_qs})
     else:
         form = BillOfMaterialForm(product_qs=product_qs)
-        formset = BOMLineFormSet()
+        formset = BOMLineFormSet(form_kwargs={'component_qs': product_qs})
 
     return render(request, 'produccion/bom_form.html', {
         'form': form, 'formset': formset, 'title': 'Nueva Lista de Materiales'
@@ -114,7 +114,7 @@ def bom_edit(request, pk):
 
     if request.method == 'POST':
         form = BillOfMaterialForm(request.POST, instance=bom, product_qs=product_qs)
-        formset = BOMLineFormSet(request.POST, instance=bom)
+        formset = BOMLineFormSet(request.POST, instance=bom, form_kwargs={'component_qs': product_qs})
 
         if form.is_valid() and formset.is_valid():
             form.save()
@@ -125,7 +125,7 @@ def bom_edit(request, pk):
             messages.error(request, 'Corrige los errores.')
     else:
         form = BillOfMaterialForm(instance=bom, product_qs=product_qs)
-        formset = BOMLineFormSet(instance=bom)
+        formset = BOMLineFormSet(instance=bom, form_kwargs={'component_qs': product_qs})
 
     return render(request, 'produccion/bom_form.html', {
         'form': form, 'formset': formset, 'title': 'Editar BOM', 'bom': bom

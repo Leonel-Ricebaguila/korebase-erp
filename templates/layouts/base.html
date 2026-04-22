@@ -106,9 +106,15 @@
                         <i class="fas fa-bars"></i>
                     </button>
 
+                    <!-- Early Access Badge -->
+                    <span style="background: var(--kore-teal-500); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;">
+                        Early Access
+                    </span>
+
                     {% block header_icon %}<div style="font-size: 1.5rem; color: var(--kore-teal-500);"><i
                             class="fas fa-cube"></i></div>{% endblock %}
-
+                            
+                    <!-- rest of the header -->
                     <div class="header-title-container">
                         <h1 class="module-name">
                             {% block page_title %}Vista General{% endblock %}
@@ -119,6 +125,7 @@
                 <div class="header-actions">
                     <!-- Buscador Global Dinámico HTMX -->
                     <div class="search-container" style="position: relative;">
+                        <!-- omited search form -->
                         <form method="get" action="" style="display: flex; align-items: center; width: 100%; margin: 0;">
                             <i class="fas fa-search search-icon" style="margin-right: 8px; color: var(--kore-gray-400);"></i>
                             <input type="text" name="q" class="search-input" value="{{ request.GET.q|default:'' }}" 
@@ -132,20 +139,16 @@
                     </div>
 
                     <div class="notifications-container" style="position: relative;">
-                        <!-- Botón de la Campana -->
                         <button class="icon-btn notifications" title="Notificaciones" onclick="document.getElementById('notif-dropdown-menu').classList.toggle('hidden');" style="position: relative; cursor: pointer; border: none; background: transparent; padding: 0.5rem; color: var(--kore-gray-600); font-size: 1.1rem; transition: color 0.2s;">
                             <i class="fas fa-bell"></i>
                             {% if unread_notifications_count > 0 %}
-                            <!-- Badge Contador -->
                             <span style="position: absolute; top: 4px; right: 4px; display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #ef4444; color: white; border-radius: 50%; border: 2px solid white; font-size: 0.6rem; font-weight: bold; line-height: 1;">
                                 {{ unread_notifications_count }}
                             </span>
                             {% endif %}
                         </button>
 
-                        <!-- Menú Desplegable (Cargado por HTMX) -->
                         <div id="notif-dropdown-menu" class="hidden" style="position: absolute; top: calc(100% + 0.5rem); right: 0; width: 320px; background: white; border: 1px solid var(--kore-gray-200); border-radius: var(--border-radius-md); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 100; padding: 1rem;">
-                            <!-- El div interno que htmx reemplaza -->
                             <div id="notifications-dropdown" hx-get="{% url 'core:notifications_list' %}" hx-trigger="load">
                                 <div style="text-align: center; padding: 1rem; color: var(--kore-gray-400);">
                                     <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
@@ -159,7 +162,6 @@
                         .hidden { display: none !important; }
                     </style>
                     <script>
-                        // Cierra el dropdown si se hace click fuera
                         document.addEventListener('click', function(event) {
                             var container = document.querySelector('.notifications-container');
                             var menu = document.getElementById('notif-dropdown-menu');
@@ -168,9 +170,10 @@
                             }
                         });
                     </script>
-                    <button class="icon-btn settings" title="Configuración">
+                    
+                    <a href="{% url 'core:settings' %}" class="icon-btn settings" title="Configuración" style="text-decoration: none;">
                         <i class="fas fa-cog"></i>
-                    </button>
+                    </a>
                 </div>
             </header>
 

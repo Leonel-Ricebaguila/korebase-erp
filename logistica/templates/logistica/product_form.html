@@ -185,22 +185,36 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                 <div class="field-wrapper" style="margin-bottom: 0;">
                     <label for="{{ form.clave_producto_sat.id_for_label }}">{{ form.clave_producto_sat.label }}</label>
-                    <div style="position: relative; margin-bottom: 0.5rem;">
-                        <input type="text" class="form-control" name="q" style="background-color: #ffffff;" 
-                               placeholder="🔍 Buscar categoría (ej. Carne, Software...)"
-                               hx-get="{% url 'logistica:sat_product_search' %}" 
-                               hx-trigger="keyup changed delay:400ms" 
-                               hx-target="#sat-product-results"
-                               autocomplete="off"
-                               onfocus="document.getElementById('sat-product-results').style.display = 'block'"
-                               onblur="setTimeout(() => document.getElementById('sat-product-results').style.display = 'none', 200)">
-                        <div id="sat-product-results" style="position: absolute; width: 100%; z-index: 50;"></div>
+                    
+                    <div id="sat-toolbar" style="display: none; justify-content: flex-end; padding: 0.25rem 0; gap: 0.5rem; margin-bottom: 2px;">
+                        <span style="font-size: 0.75rem; color: #64748b;">Orden A-Z:</span>
+                        <button type="button" onmousedown="event.preventDefault();" onclick="setSatSort('asc')" style="background: white; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.7rem; padding: 0.1rem 0.4rem; cursor:pointer;"><i class="fas fa-sort-alpha-down"></i></button>
+                        <button type="button" onmousedown="event.preventDefault();" onclick="setSatSort('desc')" style="background: white; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.7rem; padding: 0.1rem 0.4rem; cursor:pointer;"><i class="fas fa-sort-alpha-up"></i></button>
                     </div>
 
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <div style="flex-grow: 1;">{{ form.clave_producto_sat }}</div>
+                    <div style="position: relative; margin-bottom: 0.5rem;" id="sat-search-container">
+                        <input type="text" class="form-control" id="sat-visible-input" name="q" style="background-color: #ffffff;" 
+                               placeholder="🔍 Escribe 8 dígitos o palabras clave..."
+                               hx-get="{% url 'logistica:sat_product_search' %}" 
+                               hx-include="[name='sort']"
+                               hx-trigger="keyup changed delay:400ms, search-catalog" 
+                               hx-target="#sat-product-results"
+                               autocomplete="off"
+                               onfocus="openSatDropdown()"
+                               onblur="closeSatDropdown()">
+                        
+                        <input type="hidden" name="sort" id="sat-sort-input" value="asc">
+                        <div id="sat-product-results" style="position: absolute; width: 100%; z-index: 50; display: none;"></div>
                     </div>
-                    <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 0.25rem;"><i class="fas fa-info-circle"></i> Usa el buscador arriba o teclea los 8 dígitos oficiales directamente.</div>
+
+                    <!-- Hidden original field -->
+                    <div style="display: none;">
+                        {{ form.clave_producto_sat }}
+                    </div>
+                    
+                    <div id="sat-status-msg" style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 0.25rem;">
+                        <i class="fas fa-info-circle"></i> Usa el buscador desplegable o anota la clave de 8 dígitos.
+                    </div>
                     {% if form.clave_producto_sat.errors %}<div class="error-msg">{{ form.clave_producto_sat.errors.0 }}</div>{% endif %}
                 </div>
 
@@ -266,11 +280,52 @@
         });
     });
 
+    function openSatDropdown() {
+        document.getElementById('sat-toolbar').style.display = 'flex';
+        document.getElementById('sat-product-results').style.display = 'block';
+        if(document.getElementById('sat-visible-input').value === '') {
+            if (typeof htmx !== 'undefined') {
+                htmx.trigger('#sat-visible-input', 'search-catalog');
+            }
+        }
+    }
+
+    function closeSatDropdown() {
+        setTimeout(() => {
+            document.getElementById('sat-product-results').style.display = 'none';
+            document.getElementById('sat-toolbar').style.display = 'none';
+            
+            const hiddenVal = document.getElementById('{{ form.clave_producto_sat.id_for_label }}').value;
+            const visibleVal = document.getElementById('sat-visible-input').value;
+            const statusMsg = document.getElementById('sat-status-msg');
+            
+            if (visibleVal.trim() === '') {
+                 document.getElementById('{{ form.clave_producto_sat.id_for_label }}').value = '';
+                 statusMsg.innerHTML = '<i class="fas fa-info-circle"></i> Usa el buscador desplegable o anota la clave de 8 dígitos.';
+                 statusMsg.style.color = 'var(--kore-gray-500)';
+            } else if (!hiddenVal) {
+                 statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Selecciona un elemento del panel desplegable válido.';
+                 statusMsg.style.color = '#ca8a04';
+            }
+        }, 300);
+    }
+
+    function setSatSort(dir) {
+        document.getElementById('sat-sort-input').value = dir;
+        htmx.trigger('#sat-visible-input', 'search-catalog');
+        document.getElementById('sat-visible-input').focus();
+    }
+
     // Función para manejar la selección desde los dropdowns HTMX
     function selectSatCode(code, desc, type) {
         if (type === 'product') {
             document.getElementById('{{ form.clave_producto_sat.id_for_label }}').value = code;
-            document.getElementById('sat-product-results').style.display = 'none';
+            document.getElementById('sat-visible-input').value = code + ' - ' + desc;
+            
+            const statusMsg = document.getElementById('sat-status-msg');
+            statusMsg.innerHTML = '<i class="fas fa-check-circle"></i> Clave SAT asignada correctamente.';
+            statusMsg.style.color = '#16a34a';
+            
         } else if (type === 'unit') {
             document.getElementById('{{ form.clave_unidad_sat.id_for_label }}').value = code;
             document.getElementById('sat-unit-results').style.display = 'none';

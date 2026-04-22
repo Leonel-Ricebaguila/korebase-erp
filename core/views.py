@@ -476,3 +476,34 @@ def mark_all_notifications_read_view(request):
         'notifications': notifications,
         'unread_count': 0
     })
+
+@login_required
+def settings_view(request):
+    """View and update company settings (Early Access mode). Uses current user's Company."""
+    company = request.user.company
+    from .forms import CompanyProfileForm
+    from logistica.models import Warehouse
+
+    if request.method == 'POST':
+        # Simple processing for Company profile
+        if 'update_profile' in request.POST:
+            form = CompanyProfileForm(request.POST, request.FILES, instance=company)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Perfil de la empresa actualizado correctamente.")
+                return redirect('core:settings')
+            else:
+                messages.error(request, "Hubo un error actualizando el perfil.")
+    else:
+        form = CompanyProfileForm(instance=company)
+
+    # Active warehouses for the Company
+    warehouses = Warehouse.objects.filter(company=company)
+
+    context = {
+        'company': company,
+        'form': form,
+        'warehouses': warehouses,
+        'title': 'Configuración'
+    }
+    return render(request, 'core/settings.html', context)

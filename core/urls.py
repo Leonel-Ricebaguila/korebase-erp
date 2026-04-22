@@ -17,6 +17,7 @@ urlpatterns = [
     path('auth/google/', views.google_login_view, name='google_login'),
     path('auth/google/callback/', views.google_callback_view, name='google_callback'),
     path('search/', views.global_search_view, name='global_search'),
+    path('settings/', views.settings_view, name='settings'),
 
     # Notifications
     path('notifications/', views.notifications_list_view, name='notifications_list'),

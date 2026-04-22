@@ -402,27 +402,83 @@ def supplier_delete(request, pk):
     })
 
 
-# ------ SAT CFDI 4.0 Catalog HTMX Endpoints ------
-
 @login_required
 def sat_product_search(request):
-    """HTMX endpoint to search SAT Product Codes globally"""
+    """HTMX endpoint to search SAT Product Codes globally with Infinite Scroll"""
     query = request.GET.get('q', '').strip()
+    sort_dir = request.GET.get('sort', 'asc')
+    page_num = request.GET.get('page', 1)
     
-    if len(query) < 3:
-        # Too short to search, return nothing or a minimal prompt
-        return HttpResponse('')
+    search_term = query.lower()
+    queryset = SatProductCode.objects.filter(active=True)
     
-    results = SatProductCode.objects.filter(
-        Q(code__icontains=query) | Q(description__icontains=query),
-        active=True
-    ).order_by('code')[:15]
+    order_by_field = 'description' if sort_dir == 'asc' else '-description'
+
+    if not search_term:
+        # Case: Empty search -> load entire catalog ordered
+        results_qs = queryset.order_by(order_by_field)
+    elif search_term.isdigit():
+        if len(search_term) == 8:
+            # Case 1: Exact ID (8 digits) -> filter directly
+            results_qs = queryset.filter(code=search_term)
+        else:
+            # Case 1.5: Partial ID -> match prefix (e.g. typing "6010" finds "60102401")
+            results_qs = queryset.filter(code__startswith=search_term).order_by('code')
+    else:
+        # Case 2: Text search with hybrid logic
+        aliases = {
+            "abarrotes": ["alimentos", "comestibles"],
+            "software": ["programa", "app"],
+            "computadora": ["computador", "pc", "laptop"],
+            "flete": ["transporte", "envio", "logistica"],
+            "refresco": ["bebida", "soda"]
+        }
+        
+        expanded_terms = search_term.split()
+        for k, v in aliases.items():
+            if k in search_term:
+                expanded_terms.extend(v)
+                
+        search_str = " ".join(expanded_terms)
+        
+        from django.db import connection
+        
+        if connection.vendor == 'postgresql':
+            from django.contrib.postgres.search import TrigramWordSimilarity
+            from django.db.models import CharField, Q
+            from django.contrib.postgres.lookups import Unaccent
+            CharField.register_lookup(Unaccent)
+            
+            q_exact = Q()
+            for token in expanded_terms:
+                q_exact &= Q(description__unaccent__icontains=token)
+                
+            res_exact = queryset.filter(q_exact).order_by(order_by_field)
+            
+            if res_exact.exists():
+                results_qs = res_exact
+            else:
+                results_qs = queryset.annotate(
+                    similarity=TrigramWordSimilarity(search_str, 'description')
+                ).filter(similarity__gt=0.15).order_by('-similarity', order_by_field)
+        else:
+            from django.db.models import Q
+            q_exact = Q()
+            for token in expanded_terms:
+                q_exact &= Q(description__icontains=token)
+            results_qs = queryset.filter(q_exact).order_by(order_by_field)
+            
+    from django.core.paginator import Paginator
+    paginator = Paginator(results_qs, 30)
+    page_obj = paginator.get_page(page_num)
     
     return render(request, 'logistica/partials/sat_search_results.html', {
-        'results': results,
-        'type': 'product'
+        'page_obj': page_obj,
+        'results': page_obj.object_list,
+        'type': 'product',
+        'q': query,
+        'sort': sort_dir
     })
-
 
 @login_required
 def sat_unit_search(request):

@@ -1,15 +1,32 @@
-{% if results %}
+{% if not page_obj or page_obj.number == 1 %}
     <ul class="erp-sat-results">
-        {% for result in results %}
-            <li class="erp-sat-result-item" 
-                onclick="selectSatCode('{{ result.code }}', '{% if type == 'product' %}{{ result.description|escapejs }}{% else %}{{ result.name|escapejs }}{% endif %}', '{{ type }}')">
-                <div class="sat-code">{{ result.code }}</div>
-                <div class="sat-desc">{% if type == 'product' %}{{ result.description }}{% else %}{{ result.name }}{% endif %}</div>
-            </li>
-        {% endfor %}
+{% endif %}
+
+{% for result in results %}
+    {% if forloop.last and page_obj and page_obj.has_next %}
+        <li class="erp-sat-result-item" 
+            onclick="selectSatCode('{{ result.code }}', '{% if type == 'product' %}{{ result.description|escapejs }}{% else %}{{ result.name|escapejs }}{% endif %}', '{{ type }}')"
+            hx-get="{% url 'logistica:sat_product_search' %}?q={{ q|urlencode }}&sort={{ sort }}&page={{ page_obj.next_page_number }}"
+            hx-trigger="revealed"
+            hx-swap="afterend">
+            <div class="sat-code">{{ result.code }}</div>
+            <div class="sat-desc">{% if type == 'product' %}{{ result.description }}{% else %}{{ result.name }}{% endif %}</div>
+        </li>
+    {% else %}
+        <li class="erp-sat-result-item" 
+            onclick="selectSatCode('{{ result.code }}', '{% if type == 'product' %}{{ result.description|escapejs }}{% else %}{{ result.name|escapejs }}{% endif %}', '{{ type }}')">
+            <div class="sat-code">{{ result.code }}</div>
+            <div class="sat-desc">{% if type == 'product' %}{{ result.description }}{% else %}{{ result.name }}{% endif %}</div>
+        </li>
+    {% endif %}
+{% empty %}
+    {% if not page_obj or page_obj.number == 1 %}
+        <div class="erp-sat-no-results" style="color: #ca8a04; background-color: #fefce8; border: 1px solid #fef08a; padding: 0.75rem; text-align: left; font-size: 0.85rem; border-radius: 4px;">
+            <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem; color: #eab308;"></i> Esa clave no se encontró. Intenta describir el producto con palabras clave.
+        </div>
+    {% endif %}
+{% endfor %}
+
+{% if not page_obj or page_obj.number == 1 %}
     </ul>
-{% else %}
-    <div class="erp-sat-no-results">
-        Sin resultados. Escribe el número exacto si lo conoces.
-    </div>
 {% endif %}

@@ -6,6 +6,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, RegexValidator
 from decimal import Decimal
 from core.models import TenantAwareModel
+from django.contrib.postgres.indexes import GinIndex
 
 
 class Warehouse(TenantAwareModel):
@@ -216,6 +217,9 @@ class SatProductCode(models.Model):
         verbose_name = "Clave Producto SAT"
         verbose_name_plural = "Claves Productos SAT"
         ordering = ['code']
+        indexes = [
+            GinIndex(fields=['description'], name='sat_desc_gin_idx', opclasses=['gin_trgm_ops']),
+        ]
 
     def __str__(self):
         return f"{self.code} - {self.description}"

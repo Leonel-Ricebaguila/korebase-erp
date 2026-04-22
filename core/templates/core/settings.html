@@ -1,0 +1,134 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Configuración | KoreBase ERP{% endblock %}
+{% block page_title %}Configuración{% endblock %}
+
+{% block content %}
+<div class="kore-card" style="padding: 2rem; margin-bottom: 2rem;">
+    <!-- Simple Tabs -->
+    <div style="border-bottom: 1px solid var(--kore-gray-200); margin-bottom: 2rem; display: flex; gap: 2rem;">
+        <button onclick="showTab('tab-empresa')" id="btn-empresa" class="kore-tab-btn active" style="padding-bottom: 1rem; border: none; background: transparent; font-weight: 600; color: var(--kore-teal-500); border-bottom: 3px solid var(--kore-teal-500); cursor: pointer; font-size: 1rem;">
+            🏢 Perfil de la Empresa
+        </button>
+        <button onclick="showTab('tab-almacenes')" id="btn-almacenes" class="kore-tab-btn" style="padding-bottom: 1rem; border: none; background: transparent; font-weight: 600; color: var(--kore-gray-500); cursor: pointer; font-size: 1rem;">
+            📦 Catálogo de Almacenes
+        </button>
+        <button onclick="showTab('tab-preferencias')" id="btn-preferencias" class="kore-tab-btn" style="padding-bottom: 1rem; border: none; background: transparent; font-weight: 600; color: var(--kore-gray-500); cursor: pointer; font-size: 1rem;">
+            ⚙️ Preferencias
+        </button>
+    </div>
+
+    <!-- TAB: Empresa -->
+    <div id="tab-empresa" class="kore-tab-content">
+        <div style="max-width: 600px;">
+            <p style="color: var(--kore-gray-600); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Actualiza los datos fiscales y comerciales de la cuenta. Estos datos podrían aparecer en tus tickets y reportes futuros.
+            </p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="update_profile" value="1">
+                
+                {% for field in form %}
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">
+                        {{ field.label }} {% if field.field.required %}<span style="color: var(--status-danger);">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div style="color: var(--status-danger); font-size: 0.8rem; margin-top: 0.25rem;">{{ field.errors.0 }}</div>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <div style="color: var(--kore-gray-400); font-size: 0.75rem; margin-top: 0.25rem;">{{ field.help_text }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="background: var(--kore-teal-500); color: white; padding: 0.6rem 1.5rem;">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TAB: Almacenes -->
+    <div id="tab-almacenes" class="kore-tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <p style="color: var(--kore-gray-600); font-size: 0.9rem; margin: 0;">
+                Gestiona las sucursales físicas donde resguardas tu inventario.
+            </p>
+            <a href="{% url 'logistica:warehouse_list' %}" class="btn btn-primary" style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; font-size: 0.85rem; text-decoration:none;">
+                <i class="fas fa-external-link-alt"></i> Ir al Módulo Completp
+            </a>
+        </div>
+
+        <div style="overflow-x: auto; border: 1px solid var(--kore-gray-200); border-radius: 8px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="background: var(--kore-gray-50); border-bottom: 1px solid var(--kore-gray-200);">
+                        <th style="padding: 1rem; font-size: 0.8rem; color: var(--kore-gray-500); font-weight: 600; text-transform: uppercase;">Código</th>
+                        <th style="padding: 1rem; font-size: 0.8rem; color: var(--kore-gray-500); font-weight: 600; text-transform: uppercase;">Nombre de Sucursal</th>
+                        <th style="padding: 1rem; font-size: 0.8rem; color: var(--kore-gray-500); font-weight: 600; text-transform: uppercase;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for wh in warehouses %}
+                    <tr style="border-bottom: 1px solid var(--kore-gray-100);">
+                        <td style="padding: 1rem; font-weight: 600; color: var(--kore-navy-900);">{{ wh.code }}</td>
+                        <td style="padding: 1rem; color: var(--kore-gray-700);">{{ wh.name }}</td>
+                        <td style="padding: 1rem;">
+                            {% if wh.active %}
+                            <span style="background: #dcfce7; color: #166534; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Activo</span>
+                            {% else %}
+                            <span style="background: #f1f5f9; color: #475569; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Inactivo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="padding: 2rem; text-align: center; color: var(--kore-gray-500);">No hay almacenes registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB: Preferencias -->
+    <div id="tab-preferencias" class="kore-tab-content" style="display: none;">
+        <div style="max-width: 600px; padding: 1.5rem; background: var(--kore-gray-50); border-radius: 8px; border: 1px dashed var(--kore-gray-300);">
+            <div style="display: flex; align-items:flex-start; gap: 1rem;">
+                <i class="fas fa-info-circle" style="color: var(--kore-teal-500); margin-top: 0.2rem; font-size: 1.2rem;"></i>
+                <div>
+                    <h4 style="margin: 0 0 0.5rem; color: var(--kore-navy-900);">Sin notificaciones por correo</h4>
+                    <p style="margin: 0; color: var(--kore-gray-600); font-size: 0.9rem; line-height: 1.5;">
+                        Para proteger sus cuotas de SendGrid durante esta versión de Early Access, las notificaciones operativas han sido momentáneamente desactivadas. Solo recibirá alertas visuales en la cabecera.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showTab(tabId) {
+        // Hide all tabs
+        document.querySelectorAll('.kore-tab-content').forEach(el => el.style.display = 'none');
+        // Remove active style from buttons
+        document.querySelectorAll('.kore-tab-btn').forEach(btn => {
+            btn.style.color = 'var(--kore-gray-500)';
+            btn.style.borderBottom = 'none';
+        });
+
+        // Show selected tab
+        document.getElementById(tabId).style.display = 'block';
+        
+        // Add active style to selected button
+        const activeBtn = document.getElementById('btn-' + tabId.replace('tab-', ''));
+        activeBtn.style.color = 'var(--kore-teal-500)';
+        activeBtn.style.borderBottom = '3px solid var(--kore-teal-500)';
+    }
+</script>
+{% endblock %}

@@ -74,8 +74,10 @@
                 <div>
                     {% if line_form.DELETE %}
                     <label
-                        style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: var(--status-danger); cursor: pointer;">
-                        {{ line_form.DELETE }} <i class="fas fa-trash"></i>
+                        title="Marcar para eliminar este componente"
+                        style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; color: var(--status-danger); cursor: pointer; padding-bottom: 0.8rem;">
+                        {{ line_form.DELETE }} 
+                        <span><i class="fas fa-trash"></i> Eliminar</span>
                     </label>
                     {% endif %}
                 </div>

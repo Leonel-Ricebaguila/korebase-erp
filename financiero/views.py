@@ -14,6 +14,7 @@ from .models import ChartOfAccounts, JournalEntry, JournalEntryLine, Invoice
 from .forms import (
     ChartOfAccountsForm, JournalEntryForm, JournalEntryLineFormSet, InvoiceForm
 )
+from core.notifications import notify
 
 
 # ==================== DASHBOARD ====================
@@ -82,7 +83,9 @@ def account_create(request):
     if request.method == 'POST':
         form = ChartOfAccountsForm(request.POST)
         if form.is_valid():
-            account = form.save()
+            account = form.save(commit=False)
+            account.company = request.user.company
+            account.save()
             messages.success(request, f'Cuenta "{account.account_name}" creada exitosamente.')
             return redirect('financiero:accounts_list')
     else:
@@ -146,6 +149,7 @@ def journal_create(request):
         form = JournalEntryForm(request.POST)
         if form.is_valid():
             entry = form.save(commit=False)
+            entry.company = request.user.company
             entry.created_by = request.user
             # Temporarily save to get PK for formset
             entry.save()
@@ -278,6 +282,7 @@ def invoice_create(request):
         form = InvoiceForm(request.POST)
         if form.is_valid():
             invoice = form.save(commit=False)
+            invoice.company = request.user.company
             invoice.created_by = request.user
             invoice.save()
             messages.success(request, f'Factura "{invoice.invoice_number}" creada exitosamente.')

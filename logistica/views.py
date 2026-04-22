@@ -465,10 +465,13 @@ def sat_product_search(request):
                 ).filter(similarity__gt=0.15).order_by('-similarity', order_by_field)
         else:
             from django.db.models import Q
+            from django.db.models.functions import Length
             q_exact = Q()
             for token in expanded_terms:
                 q_exact &= Q(description__icontains=token)
-            results_qs = queryset.filter(q_exact).order_by(order_by_field)
+            results_qs = queryset.filter(q_exact).annotate(
+                name_len=Length('description')
+            ).order_by('name_len', order_by_field)
             
     from django.core.paginator import Paginator
     paginator = Paginator(results_qs, 30)
@@ -510,10 +513,14 @@ def sat_unit_search(request):
     for token in expanded_terms:
         q_exact |= Q(code__icontains=token) | Q(name__icontains=token)
         
+    from django.db.models.functions import Length
+    
     results = SatUnitCode.objects.filter(
         q_exact,
         active=True
-    ).order_by('code')[:15]
+    ).annotate(
+        name_len=Length('name')
+    ).order_by('name_len', 'code')[:15]
     
     return render(request, 'logistica/partials/sat_search_results.html', {
         'results': results,

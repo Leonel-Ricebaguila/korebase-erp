@@ -50,7 +50,7 @@
 
         <div class="module-stats">
             <div class="stat-item">
-                <span class="stat-value">--</span>
+                <span class="stat-value">{{ active_orders }}</span>
                 Órdenes Activas
             </div>
         </div>
@@ -214,7 +214,7 @@
             data: {
                 labels: ['Materia Prima', 'Producto Terminado', 'Refacciones'],
                 datasets: [{
-                    data: [30, 50, 20], // Datos Dummy
+                    data: [{{ raw_material_val }}, {{ finished_goods_val }}, {{ other_stock_val }}], // Datos reales desde la BD
                     backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
                     borderWidth: 0
                 }]

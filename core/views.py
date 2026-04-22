@@ -113,10 +113,31 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
-    """Main dashboard view"""
+    """Main dashboard view with REAL data"""
+    company = request.user.company
+    from logistica.models import Stock
+    from produccion.models import WorkOrder
+    from django.db.models import Sum, F
+    from decimal import Decimal
+    
+    # Logistica KPIs
+    raw_val = Stock.objects.filter(company=company, product__category='Materia Prima').annotate(
+        value=F('quantity') * F('product__unit_cost')
+    ).aggregate(t=Sum('value'))['t'] or Decimal('0.00')
+    
+    fin_val = Stock.objects.filter(company=company, product__category='Producto Terminado').annotate(
+        value=F('quantity') * F('product__unit_cost')
+    ).aggregate(t=Sum('value'))['t'] or Decimal('0.00')
+    
+    # Produccion KPIs
+    active_orders = WorkOrder.objects.filter(company=company, status__in=['pending', 'in_progress']).count()
+    
     context = {
         'user': request.user,
-        'total_users': 0,  # TODO: Get actual stats
+        'active_orders': active_orders,
+        'raw_material_val': float(raw_val),
+        'finished_goods_val': float(fin_val),
+        'other_stock_val': 0.0,
     }
     return render(request, 'core/dashboard.html', context)
 

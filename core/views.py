@@ -661,29 +661,36 @@ def invite_member_view(request):
             join_url = request.build_absolute_uri(f'/core/join/{invitation.token}/')
 
             # Enviar correo con el enlace
+            # NOTA: Usamos EMAIL_HOST_USER como remitente verificado en SendGrid.
+            # 'noreply@korebase.com' NO está verificado en SendGrid y causa rechazo silencioso.
+            import os as _os
+            verified_sender = (
+                _os.getenv('EMAIL_HOST_USER')  # e.g. sistema.autenticacion.ica@gmail.com
+                or settings.DEFAULT_FROM_EMAIL
+            )
             try:
                 send_mail(
                     subject=f'Invitación a {request.user.company.name} en KoreBase',
                     message=(
                         f"Hola,\n\n"
                         f"{request.user.get_full_name()} te ha invitado a unirte a "
-                        f"{request.user.company.name} en KoreBase ERP como {role}.\n\n"
+                        f"{request.user.company.name} en KoreBase ERP como {invitation.get_role_display()}.\n\n"
                         f"Acepta la invitación aquí (válida por 48 horas):\n{join_url}\n\n"
                         f"Si no esperabas este correo, puedes ignorarlo.\n\n"
                         f"— El equipo de KoreBase"
                     ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    from_email=verified_sender,
                     recipient_list=[email],
                     fail_silently=False,
                 )
                 messages.success(request, f"Invitación enviada exitosamente a {email}.")
             except Exception as e:
-                # No fallar si el correo falla — la invitación ya existe
-                print(f"[!] Email de invitación falló: {e}")
+                # No fallar si el correo falla — la invitación ya existe y el enlace es visible en la lista
+                print(f"[!] Email de invitación falló para {email}: {e}")
                 messages.warning(
                     request,
-                    f"Invitación creada pero el correo no pudo enviarse. "
-                    f"Comparte este enlace manualmente: {join_url}"
+                    f"Invitación creada, pero el correo no pudo enviarse a {email}. "
+                    f"Ve a 'Historial de Invitaciones' para copiar y compartir el enlace manualmente."
                 )
 
             return redirect('core:invitations_list')

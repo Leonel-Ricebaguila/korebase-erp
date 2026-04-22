@@ -35,7 +35,33 @@
                 <tr style="border-bottom: 1px solid var(--kore-gray-100);"
                     onmouseover="this.style.background='var(--kore-gray-50)'"
                     onmouseout="this.style.background='transparent'">
-                    <td style="padding: 1rem 1.5rem; font-weight: 600;">{{ inv.email }}</td>
+                    <td style="padding: 1rem 1.5rem;">
+                        <div style="font-weight: 600;">{{ inv.email }}</div>
+                        {# ── ENLACE COPIABLE para invitaciones pendientes válidas ── #}
+                        {% if inv.status == 'pending' and inv.is_valid %}
+                        <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                            <input
+                                id="link-{{ inv.pk }}"
+                                type="text"
+                                value="{{ request.scheme }}://{{ request.get_host }}/core/join/{{ inv.token }}/"
+                                readonly
+                                style="font-size: 0.72rem; color: var(--kore-gray-500); background: var(--kore-gray-50); border: 1px solid var(--kore-gray-200); border-radius: 4px; padding: 0.2rem 0.5rem; width: 260px; font-family: monospace; cursor: pointer;"
+                                onclick="this.select()"
+                                title="Haz clic para seleccionar"
+                            >
+                            <button
+                                type="button"
+                                onclick="copyInviteLink('link-{{ inv.pk }}', this)"
+                                style="font-size: 0.72rem; padding: 0.2rem 0.5rem; background: var(--kore-teal-500); color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;"
+                                title="Copiar enlace">
+                                <i class="fas fa-copy"></i> Copiar
+                            </button>
+                        </div>
+                        <p style="font-size: 0.7rem; color: var(--kore-gray-400); margin: 0.25rem 0 0;">
+                            Comparte este enlace si el correo no llegó.
+                        </p>
+                        {% endif %}
+                    </td>
                     <td style="padding: 1rem 1.5rem;">{{ inv.get_role_display }}</td>
                     <td style="padding: 1rem 1.5rem;">{{ inv.invited_by.get_full_name|default:inv.invited_by.username }}</td>
                     <td style="padding: 1rem 1.5rem; font-size: 0.8rem; color: var(--kore-gray-500);">{{ inv.expires_at|date:"d M Y, H:i" }}</td>
@@ -87,5 +113,33 @@
         </table>
     </div>
 </div>
+
+<script>
+function copyInviteLink(inputId, btn) {
+    const input = document.getElementById(inputId);
+    input.select();
+    input.setSelectionRange(0, 99999); // Para móviles
+    try {
+        navigator.clipboard.writeText(input.value).then(() => {
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
+            btn.style.background = '#166534';
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.style.background = 'var(--kore-teal-500)';
+            }, 2000);
+        });
+    } catch (e) {
+        // Fallback para navegadores más antiguos
+        document.execCommand('copy');
+        btn.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
+        btn.style.background = '#166534';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+            btn.style.background = 'var(--kore-teal-500)';
+        }, 2000);
+    }
+}
+</script>
 
 {% endblock %}

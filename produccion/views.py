@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q, Count
+from core.views import require_can_write
 
 from .models import BillOfMaterial, BOMLine, WorkOrder
 from .forms import BillOfMaterialForm, BOMLineFormSet, WorkOrderForm
@@ -72,6 +73,7 @@ def bom_list(request):
 
 
 @login_required
+@require_can_write
 @transaction.atomic
 def bom_create(request):
     """Create a new BOM with component lines"""
@@ -105,6 +107,7 @@ def bom_create(request):
 
 
 @login_required
+@require_can_write
 @transaction.atomic
 def bom_edit(request, pk):
     """Edit an existing BOM"""
@@ -174,6 +177,7 @@ def workorder_list(request):
 
 
 @login_required
+@require_can_write
 def workorder_create(request):
     """Create a new work order"""
     company = request.user.company
@@ -198,6 +202,7 @@ def workorder_create(request):
 
 
 @login_required
+@require_can_write
 def workorder_edit(request, pk):
     """Edit a work order (only if pending)"""
     company = request.user.company
@@ -241,6 +246,7 @@ def workorder_detail(request, pk):
 
 
 @login_required
+@require_can_write
 @transaction.atomic
 def workorder_status(request, pk):
     """Change work order status with valid transitions"""

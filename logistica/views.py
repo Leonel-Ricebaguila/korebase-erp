@@ -6,6 +6,7 @@ from django.db.models import Sum, Q, DecimalField, Value, F
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse
 from core.notifications import notify
+from core.views import require_can_write
 import csv
 from datetime import datetime
 from decimal import Decimal
@@ -70,6 +71,7 @@ def inventory_list(request):
 
 
 @login_required
+@require_can_write
 def product_create(request):
     """Create a new product"""
     if request.method == 'POST':
@@ -88,6 +90,7 @@ def product_create(request):
 
 
 @login_required
+@require_can_write
 def product_edit(request, pk):
     """Edit an existing product"""
     product = get_object_or_404(Product, pk=pk, company=request.user.company)  # Tenant-safe
@@ -106,6 +109,7 @@ def product_edit(request, pk):
 
 
 @login_required
+@require_can_write
 def product_delete(request, pk):
     """Delete a product (soft delete by setting active=False)"""
     product = get_object_or_404(Product, pk=pk, company=request.user.company)  # Tenant-safe
@@ -141,6 +145,7 @@ def product_history(request, pk):
 
 
 @login_required
+@require_can_write
 @transaction.atomic
 def stock_adjustment(request, pk):
     """Register stock movements (in/out/adjust) with audit trail"""
@@ -279,6 +284,7 @@ def warehouse_list(request):
 
 
 @login_required
+@require_can_write
 def warehouse_create(request):
     """Create a new warehouse"""
     if request.method == 'POST':
@@ -296,6 +302,7 @@ def warehouse_create(request):
 
 
 @login_required
+@require_can_write
 def warehouse_edit(request, pk):
     warehouse = get_object_or_404(Warehouse, pk=pk, company=request.user.company)  # Tenant-safe
     if request.method == 'POST':
@@ -311,6 +318,7 @@ def warehouse_edit(request, pk):
 
 
 @login_required
+@require_can_write
 def warehouse_delete(request, pk):
     warehouse = get_object_or_404(Warehouse, pk=pk, company=request.user.company)  # Tenant-safe
     if request.method == 'POST':
@@ -355,6 +363,7 @@ def supplier_list(request):
 
 
 @login_required
+@require_can_write
 def supplier_create(request):
     if request.method == 'POST':
         form = SupplierForm(request.POST)
@@ -371,6 +380,7 @@ def supplier_create(request):
 
 
 @login_required
+@require_can_write
 def supplier_edit(request, pk):
     supplier = get_object_or_404(Supplier, pk=pk, company=request.user.company)  # Tenant-safe
     if request.method == 'POST':
@@ -386,6 +396,7 @@ def supplier_edit(request, pk):
 
 
 @login_required
+@require_can_write
 def supplier_delete(request, pk):
     supplier = get_object_or_404(Supplier, pk=pk, company=request.user.company)  # Tenant-safe
     if request.method == 'POST':

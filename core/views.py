@@ -98,6 +98,28 @@ def get_user_membership(user):
     return CompanyMembership.objects.filter(user=user, company=user.company).first()
 
 
+def require_can_write(view_func):
+    """
+    Decorador de acceso: bloquea a usuarios con rol 'viewer' (Espectador).
+    Solo owner, admin y operator pueden acceder a vistas de escritura.
+    Uso: @require_can_write  (después de @login_required)
+    """
+    from functools import wraps
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        membership = get_user_membership(request.user)
+        if membership and not membership.can_write:
+            messages.error(
+                request,
+                "⛔ Acceso denegado: tu rol de Espectador es de solo lectura. "
+                "Contacta al administrador de la empresa si necesitas más permisos."
+            )
+            # Redirige al referer o al dashboard
+            return redirect(request.META.get('HTTP_REFERER', 'core:dashboard'))
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
 class KoreBasePasswordResetForm(PasswordResetForm):
     """
     Custom reset form that also allows accounts created via Google OAuth

@@ -154,8 +154,16 @@ def register_view(request):
                 request.session['otp_user_id'] = user.id
                 return redirect('core:verify_otp')
             except Exception as e:
-                messages.error(request, f'Error enviando correo: {e}')
-                user.delete()  # Cleanup failed registration
+                # OVERRIDE FOR DEMO: If SendGrid API fails, don't delete user. Just log the OTP to Render Logs!
+                print(f"==================================================")
+                print(f"[!] SMTP API (SendGrid) FALLÓ con error: {e}")
+                print(f"[*] BYPASS DE EMERGENCIA PARA DEMO.")
+                print(f"[*] EL CÓDIGO OTP PARA {user.email} ES: >>> {otp_str} <<<")
+                print(f"==================================================")
+                
+                messages.warning(request, f'El servidor de correos está saturado. Revisa la consola de Render para ver tu código OTP (Modo Desarrollador).')
+                request.session['otp_user_id'] = user.id
+                return redirect('core:verify_otp')
         else:
             messages.error(request, "Por favor corrige los errores señalados en el formulario.")
     else:

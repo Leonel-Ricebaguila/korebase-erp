@@ -17,6 +17,9 @@
         <button onclick="showTab('tab-preferencias')" id="btn-preferencias" class="kore-tab-btn" style="padding-bottom: 1rem; border: none; background: transparent; font-weight: 600; color: var(--kore-gray-500); cursor: pointer; font-size: 1rem;">
             ⚙️ Preferencias
         </button>
+        <button onclick="showTab('tab-equipo')" id="btn-equipo" class="kore-tab-btn" style="padding-bottom: 1rem; border: none; background: transparent; font-weight: 600; color: var(--kore-gray-500); cursor: pointer; font-size: 1rem;">
+            👥 Equipo &amp; Accesos
+        </button>
     </div>
 
     <!-- TAB: Empresa -->
@@ -110,6 +113,67 @@
             </div>
         </div>
     </div>
+
+    <!-- TAB: Equipo & Accesos -->
+    <div id="tab-equipo" class="kore-tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <p style="color: var(--kore-gray-600); font-size: 0.9rem; margin: 0;">
+                Miembros activos de <strong>{{ company.name }}</strong>.
+            </p>
+            {% if user_membership and user_membership.can_invite %}
+            <a href="{% url 'core:invite_member' %}" class="btn btn-primary"
+               style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; font-size: 0.85rem; text-decoration:none;">
+                <i class="fas fa-user-plus"></i> Invitar Colaborador
+            </a>
+            {% endif %}
+        </div>
+
+        <div style="overflow-x: auto; border: 1px solid var(--kore-gray-200); border-radius: 8px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="background: var(--kore-gray-50); border-bottom: 1px solid var(--kore-gray-200);">
+                        <th style="padding: 1rem; font-size: 0.8rem; color: var(--kore-gray-500); font-weight: 600; text-transform: uppercase;">Miembro</th>
+                        <th style="padding: 1rem; font-size: 0.8rem; color: var(--kore-gray-500); font-weight: 600; text-transform: uppercase;">Correo</th>
+                        <th style="padding: 1rem; font-size: 0.8rem; color: var(--kore-gray-500); font-weight: 600; text-transform: uppercase;">Rol</th>
+                        <th style="padding: 1rem; font-size: 0.8rem; color: var(--kore-gray-500); font-weight: 600; text-transform: uppercase;">Desde</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in memberships %}
+                    <tr style="border-bottom: 1px solid var(--kore-gray-100);">
+                        <td style="padding: 1rem; font-weight: 600; color: var(--kore-navy-900);">{{ m.user.get_full_name|default:m.user.username }}</td>
+                        <td style="padding: 1rem; color: var(--kore-gray-600); font-size: 0.85rem;">{{ m.user.email }}</td>
+                        <td style="padding: 1rem;">
+                            {% if m.role == 'owner' %}
+                            <span style="background: #fef9c3; color: #854d0e; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Propietario</span>
+                            {% elif m.role == 'admin' %}
+                            <span style="background: #e0f2fe; color: #075985; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Administrador</span>
+                            {% elif m.role == 'operator' %}
+                            <span style="background: #dcfce7; color: #166534; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Operador</span>
+                            {% else %}
+                            <span style="background: var(--kore-gray-100); color: var(--kore-gray-600); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">Espectador</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 1rem; color: var(--kore-gray-500); font-size: 0.8rem;">{{ m.joined_at|date:"d M Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="padding: 2rem; text-align: center; color: var(--kore-gray-500);">Sin miembros registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if user_membership and user_membership.can_invite %}
+        <div style="margin-top: 1.5rem; text-align: right;">
+            <a href="{% url 'core:invitations_list' %}" style="font-size: 0.85rem; color: var(--kore-teal-500); text-decoration: none;">
+                <i class="fas fa-envelope-open-text"></i> Ver historial de invitaciones
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
 </div>
 
 <script>

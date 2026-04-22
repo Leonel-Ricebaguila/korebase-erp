@@ -26,12 +26,51 @@ from django.utils import timezone
 from .models import Company
 
 
-def _ensure_company(user):
+def _ensure_company(user, invitation_token=None):
     """
-    Multi-Tenant: Garantiza que el usuario tenga una Empresa (Tenant) asignada.
-    Si no tiene, crea una nueva empresa con el nombre del usuario y la asigna.
-    Siempre se llama justo antes del primer login exitoso.
+    Multi-Tenant: Asigna una Empresa al usuario y crea su CompanyMembership.
+
+    Flujo con invitación:
+      Si se provee un invitation_token válido (CompanyInvitation), el usuario
+      se une a la empresa de la invitación con el rol especificado en ella.
+      NO se crea empresa nueva. La invitación se marca como 'accepted'.
+
+    Flujo sin invitación (registro normal):
+      Se crea una nueva Empresa de prueba (15 días) y el usuario recibe
+      automáticamente el rol 'owner' de esa empresa.
     """
+    from .models import CompanyMembership, CompanyInvitation
+
+    if invitation_token:
+        # --- FLUJO INVITADO ---
+        try:
+            invitation = CompanyInvitation.objects.get(token=invitation_token)
+            if not invitation.is_valid:
+                # Token expirado o ya usado — fallback a crear empresa propia
+                pass
+            else:
+                company = invitation.company
+                user.company = company
+                user.save(update_fields=['company'])
+
+                # Crear membresía con el rol de la invitación
+                CompanyMembership.objects.get_or_create(
+                    user=user,
+                    company=company,
+                    defaults={'role': invitation.role}
+                )
+
+                # Sellar la invitación — no reutilizable
+                invitation.status = 'accepted'
+                invitation.accepted_by = user
+                invitation.accepted_at = timezone.now()
+                invitation.save(update_fields=['status', 'accepted_by', 'accepted_at'])
+
+                return company
+        except CompanyInvitation.DoesNotExist:
+            pass  # Si el token no existe, caemos al flujo normal abajo
+
+    # --- FLUJO NORMAL: crear empresa propia como owner ---
     if user.company is None:
         company = Company.objects.create(
             name=f"Empresa de {user.get_full_name() or user.username}",
@@ -40,7 +79,23 @@ def _ensure_company(user):
         )
         user.company = company
         user.save(update_fields=['company'])
+
+        # El creador siempre es 'owner'
+        CompanyMembership.objects.get_or_create(
+            user=user,
+            company=company,
+            defaults={'role': 'owner'}
+        )
+
     return user.company
+
+
+def get_user_membership(user):
+    """Retorna el CompanyMembership activo del usuario en su empresa actual."""
+    from .models import CompanyMembership
+    if user.company is None:
+        return None
+    return CompanyMembership.objects.filter(user=user, company=user.company).first()
 
 
 class KoreBasePasswordResetForm(PasswordResetForm):
@@ -216,12 +271,13 @@ def verify_otp_view(request):
                 # Clear tokens
                 user.otp_tokens.all().delete()
 
-                # Multi-Tenant: Create or assign a Company for this new user
-                _ensure_company(user)
+                # Multi-Tenant: Asignar empresa (propia o vía invitación)
+                invitation_token = request.session.pop('pending_invitation_token', None)
+                _ensure_company(user, invitation_token=invitation_token)
 
                 login(request, user)
                 del request.session['otp_user_id']
-                messages.success(request, 'Cuenta verificada exitosamente. ¡Bienvenido a KoreBase!')
+                messages.success(request, '¡Cuenta verificada exitosamente. Bienvenido a KoreBase!')
                 return redirect('core:dashboard')
             else:
                 messages.error(request, 'Código inválido o expirado.')
@@ -388,8 +444,9 @@ def google_callback_view(request):
                 is_active=True,
                 email_verified=True
             )
-            # Multi-Tenant: Create a Company for this brand new OAuth user
-            _ensure_company(user)
+            # Multi-Tenant: Asignar empresa (propia o vía invitación en sesión)
+            invitation_token = request.session.pop('pending_invitation_token', None)
+            _ensure_company(user, invitation_token=invitation_token)
             created = True
         
         # Update user info if they already exist
@@ -529,10 +586,216 @@ def settings_view(request):
     # Active warehouses for the Company
     warehouses = Warehouse.objects.filter(company=company)
 
+    # Team members and their memberships
+    from .models import CompanyMembership
+    memberships = CompanyMembership.objects.filter(company=company).select_related('user')
+
     context = {
         'company': company,
         'form': form,
         'warehouses': warehouses,
+        'memberships': memberships,
+        'user_membership': get_user_membership(request.user),
         'title': 'Configuración'
     }
     return render(request, 'core/settings.html', context)
+
+
+# ==================== INVITACIONES ====================
+
+@login_required
+def invite_member_view(request):
+    """
+    Genera una invitación de empresa y envía el link al correo del invitado.
+    Solo accesible para usuarios con rol owner o admin.
+    """
+    from .forms import InviteMemberForm
+    from .models import CompanyInvitation, CompanyMembership
+    from datetime import timedelta
+
+    membership = get_user_membership(request.user)
+    if not membership or not membership.can_invite:
+        messages.error(request, "No tienes permisos para invitar usuarios.")
+        return redirect('core:settings')
+
+    if request.method == 'POST':
+        form = InviteMemberForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email'].lower()
+            role  = form.cleaned_data['role']
+
+            # OPCIÓN A — Aislamiento Estricto: el email no puede tener cuenta existente
+            existing_user = CustomUser.objects.filter(email__iexact=email).first()
+            if existing_user:
+                if existing_user.company == request.user.company:
+                    messages.warning(request, f"{email} ya es miembro de esta empresa.")
+                else:
+                    messages.error(
+                        request,
+                        f"El correo {email} ya tiene una cuenta en KoreBase asociada a otra empresa. "
+                        "Por política de seguridad (Aislamiento Estricto), no puede unirse a esta empresa. "
+                        "Pide al usuario que use un correo corporativo diferente."
+                    )
+                return redirect('core:invite_member')
+
+            # Verificar que no haya ya una invitación pendiente para este email
+            existing_invite = CompanyInvitation.objects.filter(
+                company=request.user.company,
+                email__iexact=email,
+                status='pending'
+            ).first()
+            if existing_invite and existing_invite.is_valid:
+                messages.warning(request, f"Ya existe una invitación pendiente para {email}.")
+                return redirect('core:invitations_list')
+
+            # Crear la invitación con 48h de vigencia
+            invitation = CompanyInvitation.objects.create(
+                company=request.user.company,
+                invited_by=request.user,
+                email=email,
+                role=role,
+                expires_at=timezone.now() + timedelta(hours=48),
+            )
+
+            # Construir el enlace de unión
+            join_url = request.build_absolute_uri(f'/core/join/{invitation.token}/')
+
+            # Enviar correo con el enlace
+            try:
+                send_mail(
+                    subject=f'Invitación a {request.user.company.name} en KoreBase',
+                    message=(
+                        f"Hola,\n\n"
+                        f"{request.user.get_full_name()} te ha invitado a unirte a "
+                        f"{request.user.company.name} en KoreBase ERP como {role}.\n\n"
+                        f"Acepta la invitación aquí (válida por 48 horas):\n{join_url}\n\n"
+                        f"Si no esperabas este correo, puedes ignorarlo.\n\n"
+                        f"— El equipo de KoreBase"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+                messages.success(request, f"Invitación enviada exitosamente a {email}.")
+            except Exception as e:
+                # No fallar si el correo falla — la invitación ya existe
+                print(f"[!] Email de invitación falló: {e}")
+                messages.warning(
+                    request,
+                    f"Invitación creada pero el correo no pudo enviarse. "
+                    f"Comparte este enlace manualmente: {join_url}"
+                )
+
+            return redirect('core:invitations_list')
+    else:
+        form = InviteMemberForm()
+
+    return render(request, 'core/invite_member.html', {
+        'form': form,
+        'company': request.user.company,
+        'title': 'Invitar Colaborador'
+    })
+
+
+def join_company_view(request, token):
+    """
+    Procesa el enlace de invitación (/core/join/<uuid>/).
+    - Si el usuario ya está logueado y su email coincide: acepta directamente.
+    - Si no está logueado: guarda el token en sesión y redirige al registro.
+    - Si el token es inválido o expirado: muestra página de error amigable.
+    """
+    from .models import CompanyInvitation, CompanyMembership
+
+    try:
+        invitation = CompanyInvitation.objects.select_related('company').get(token=token)
+    except CompanyInvitation.DoesNotExist:
+        return render(request, 'core/join_error.html', {
+            'reason': 'not_found',
+            'title': 'Invitación no encontrada'
+        })
+
+    if not invitation.is_valid:
+        return render(request, 'core/join_error.html', {
+            'reason': 'expired' if invitation.status == 'pending' else invitation.status,
+            'title': 'Invitación inválida'
+        })
+
+    # Si el usuario YA está autenticado
+    if request.user.is_authenticated:
+        if request.user.email.lower() != invitation.email.lower():
+            return render(request, 'core/join_error.html', {
+                'reason': 'wrong_email',
+                'invitation': invitation,
+                'title': 'Correo no coincide'
+            })
+
+        # Email coincide → aceptar directamente
+        request.user.company = invitation.company
+        request.user.save(update_fields=['company'])
+
+        CompanyMembership.objects.get_or_create(
+            user=request.user,
+            company=invitation.company,
+            defaults={'role': invitation.role}
+        )
+
+        invitation.status = 'accepted'
+        invitation.accepted_by = request.user
+        invitation.accepted_at = timezone.now()
+        invitation.save(update_fields=['status', 'accepted_by', 'accepted_at'])
+
+        messages.success(
+            request,
+            f'¡Te has unido a {invitation.company.name} como {invitation.get_role_display()}!'
+        )
+        return redirect('core:dashboard')
+
+    # No está autenticado → guardar token en sesión y redirigir al registro
+    request.session['pending_invitation_token'] = str(token)
+    request.session['invitation_company_name'] = invitation.company.name
+    request.session['invitation_email'] = invitation.email
+    messages.info(
+        request,
+        f'Estás siendo invitado a unirte a {invitation.company.name}. '
+        'Crea tu cuenta o inicia sesión para aceptar.'
+    )
+    return redirect('core:register')
+
+
+@login_required
+def invitations_list_view(request):
+    """Lista las invitaciones enviadas por la empresa del usuario y permite revocarlas."""
+    from .models import CompanyInvitation
+
+    membership = get_user_membership(request.user)
+    if not membership or not membership.can_invite:
+        messages.error(request, "No tienes permisos para ver las invitaciones.")
+        return redirect('core:settings')
+
+    if request.method == 'POST':
+        # Revocar una invitación
+        invite_id = request.POST.get('revoke_id')
+        if invite_id:
+            try:
+                inv = CompanyInvitation.objects.get(
+                    pk=invite_id,
+                    company=request.user.company,
+                    status='pending'
+                )
+                inv.status = 'revoked'
+                inv.save(update_fields=['status'])
+                messages.success(request, "Invitación revocada.")
+            except CompanyInvitation.DoesNotExist:
+                messages.error(request, "Invitación no encontrada o ya procesada.")
+        return redirect('core:invitations_list')
+
+    invitations = CompanyInvitation.objects.filter(
+        company=request.user.company
+    ).select_related('invited_by', 'accepted_by').order_by('-created_at')
+
+    return render(request, 'core/invitations_list.html', {
+        'invitations': invitations,
+        'company': request.user.company,
+        'title': 'Invitaciones Enviadas'
+    })
+

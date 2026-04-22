@@ -1,0 +1,91 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Invitaciones Enviadas | KoreBase ERP{% endblock %}
+{% block page_title %}Invitaciones Enviadas{% endblock %}
+{% block breadcrumb_parent %}Configuración{% endblock %}
+
+{% block content %}
+
+<!-- Header Actions -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <p style="color: var(--kore-gray-500); margin: 0;">Invitaciones generadas para <strong>{{ company.name }}</strong></p>
+    <a href="{% url 'core:invite_member' %}" class="btn btn-primary"
+       style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem;">
+        <i class="fas fa-plus"></i> Nueva Invitación
+    </a>
+</div>
+
+<!-- Invitations Table -->
+<div class="kore-card" style="overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead style="background: var(--kore-gray-50); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--kore-gray-500);">
+                <tr>
+                    <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">Correo Invitado</th>
+                    <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">Rol</th>
+                    <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">Invitado por</th>
+                    <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">Expira</th>
+                    <th style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">Estado</th>
+                    <th style="padding: 1rem 1.5rem; text-align: center; font-weight: 600; border-bottom: 2px solid var(--kore-gray-200);">Acciones</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 0.9rem;">
+                {% for inv in invitations %}
+                <tr style="border-bottom: 1px solid var(--kore-gray-100);"
+                    onmouseover="this.style.background='var(--kore-gray-50)'"
+                    onmouseout="this.style.background='transparent'">
+                    <td style="padding: 1rem 1.5rem; font-weight: 600;">{{ inv.email }}</td>
+                    <td style="padding: 1rem 1.5rem;">{{ inv.get_role_display }}</td>
+                    <td style="padding: 1rem 1.5rem;">{{ inv.invited_by.get_full_name|default:inv.invited_by.username }}</td>
+                    <td style="padding: 1rem 1.5rem; font-size: 0.8rem; color: var(--kore-gray-500);">{{ inv.expires_at|date:"d M Y, H:i" }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        {% if inv.status == 'pending' %}
+                            {% if inv.is_valid %}
+                            <span style="background: #fef9c3; color: #854d0e; padding: 0.2rem 0.7rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Pendiente</span>
+                            {% else %}
+                            <span style="background: #fee2e2; color: #991b1b; padding: 0.2rem 0.7rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Expirada</span>
+                            {% endif %}
+                        {% elif inv.status == 'accepted' %}
+                        <span style="background: #dcfce7; color: #166534; padding: 0.2rem 0.7rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Aceptada</span>
+                        {% elif inv.status == 'revoked' %}
+                        <span style="background: var(--kore-gray-100); color: var(--kore-gray-500); padding: 0.2rem 0.7rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Revocada</span>
+                        {% elif inv.status == 'expired' %}
+                        <span style="background: #fee2e2; color: #991b1b; padding: 0.2rem 0.7rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600;">Expirada</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                        {% if inv.status == 'pending' and inv.is_valid %}
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="revoke_id" value="{{ inv.pk }}">
+                            <button type="submit" class="btn"
+                                style="padding: 0.25rem 0.6rem; font-size: 0.78rem; background: #fee2e2; color: #991b1b; border: none; border-radius: 6px; cursor: pointer;"
+                                onclick="return confirm('¿Revocar esta invitación?')">
+                                <i class="fas fa-ban"></i> Revocar
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% if inv.status == 'accepted' %}
+                        <span style="font-size: 0.8rem; color: var(--kore-gray-400);">{{ inv.accepted_by.get_full_name|default:"-" }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 4rem; text-align: center;">
+                        <div style="color: var(--kore-gray-300); font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-envelope-open-text"></i></div>
+                        <h4 style="font-weight: 600; color: var(--kore-navy-900); margin-bottom: 0.5rem;">Sin invitaciones enviadas</h4>
+                        <a href="{% url 'core:invite_member' %}" class="btn btn-primary"
+                            style="background: var(--kore-teal-500); color: white; padding: 0.5rem 1rem; margin-top: 0.5rem; display: inline-block;">
+                            <i class="fas fa-plus"></i> Invitar primer colaborador
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

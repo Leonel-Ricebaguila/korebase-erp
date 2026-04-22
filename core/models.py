@@ -132,48 +132,106 @@ class CustomUser(AbstractUser):
         return f"{self.employee_id} - {self.get_full_name()}"
 
 
-class Permission(models.Model):
+class CompanyMembership(models.Model):
     """
-    Custom RBAC Permission System
-    For granular access control across modules
+    Tabla pivote: relaciona un Usuario con una Empresa y define su Rol.
+    Es la única fuente de verdad para el control de acceso (RBAC) del tenant.
+
+    REGLAS:
+      - owner:    Creador original. No puede ser removido. Acceso total + puede invitar.
+      - admin:    Acceso operativo total. Puede invitar a otros.
+      - operator: Puede crear/editar registros en todos los módulos. No puede eliminar ni invitar.
+      - viewer:   Solo lectura en todos los módulos.
+
+    INVARIANTE: Un usuario sólo puede tener UNA membresía por empresa (unique_together).
+    Si un email ya tiene cuenta, no puede unirse a otra empresa (Opción A - Aislamiento Estricto).
     """
-    name = models.CharField(max_length=100, unique=True)
-    codename = models.CharField(max_length=100, unique=True)
-    module = models.CharField(
-        max_length=50,
-        choices=[
-            ('core', 'Core'),
-            ('logistica', 'Logística'),
-            ('produccion', 'Producción'),
-            ('financiero', 'Financiero'),
-        ]
-    )
-    description = models.TextField(blank=True)
-    
+    ROLE_CHOICES = [
+        ('owner',    'Propietario'),
+        ('admin',    'Administrador'),
+        ('operator', 'Operador'),
+        ('viewer',   'Espectador'),
+    ]
+
+    user      = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='memberships')
+    company   = models.ForeignKey(Company,    on_delete=models.CASCADE, related_name='memberships')
+    role      = models.CharField(max_length=20, choices=ROLE_CHOICES, default='viewer')
+    joined_at = models.DateTimeField(auto_now_add=True)
+
     class Meta:
-        verbose_name = "Permiso"
-        verbose_name_plural = "Permisos"
-        ordering = ['module', 'codename']
-    
+        verbose_name = "Membresía de Empresa"
+        verbose_name_plural = "Membresías"
+        unique_together = [['user', 'company']]
+        ordering = ['joined_at']
+
     def __str__(self):
-        return f"{self.module}.{self.codename}"
+        return f"{self.user.username} @ {self.company.name} [{self.role.upper()}]"
+
+    @property
+    def is_owner(self):
+        return self.role == 'owner'
+
+    @property
+    def can_invite(self):
+        """Solo owner y admin pueden generar invitaciones."""
+        return self.role in ('owner', 'admin')
+
+    @property
+    def can_write(self):
+        """owner, admin y operator pueden crear/editar. viewer es solo lectura."""
+        return self.role in ('owner', 'admin', 'operator')
 
 
-class Role(models.Model):
+class CompanyInvitation(models.Model):
     """
-    Role model for RBAC
-    Groups permissions together
+    Token criptográfico de un solo uso para invitar a un colaborador a una empresa.
+
+    Flujo completo:
+      1. Dueño/Admin genera invitación → se crea este registro con token UUID único.
+      2. Se envía un correo con el link /core/join/<token>/ al email del invitado.
+      3. El invitado abre el link:
+         a) Sin cuenta → redirige a /registro/, token se guarda en sesión.
+            Al verificar OTP, se asigna a la empresa de la invitación (NO crea empresa propia).
+         b) Con cuenta del mismo email → acepta directamente.
+         c) Con cuenta de OTRO email → error 403 (Opción A: aislamiento estricto).
+      4. Al aceptar: se crea CompanyMembership con el rol especificado.
+         El token pasa a estado 'accepted' (no reutilizable).
+
+    SEGURIDAD:
+      - El token es un UUID4 (122 bits de entropía — no predecible).
+      - La invitación expira automáticamente a las 48 horas.
+      - Un token usado o expirado nunca puede activarse de nuevo.
     """
-    name = models.CharField(max_length=100, unique=True)
-    permissions = models.ManyToManyField(Permission, related_name='roles')
-    users = models.ManyToManyField(CustomUser, related_name='custom_roles')
-    
+    STATUS_CHOICES = [
+        ('pending',  'Pendiente'),
+        ('accepted', 'Aceptada'),
+        ('expired',  'Expirada'),
+        ('revoked',  'Revocada'),
+    ]
+
+    company     = models.ForeignKey(Company,     on_delete=models.CASCADE,  related_name='invitations')
+    invited_by  = models.ForeignKey(CustomUser,  on_delete=models.SET_NULL, null=True, related_name='sent_invitations')
+    email       = models.EmailField(verbose_name="Correo del Invitado")
+    role        = models.CharField(max_length=20, choices=CompanyMembership.ROLE_CHOICES, default='operator')
+    token       = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True)
+    status      = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    expires_at  = models.DateTimeField()
+    accepted_by = models.ForeignKey(CustomUser,  on_delete=models.SET_NULL, null=True, blank=True, related_name='accepted_invitations')
+    accepted_at = models.DateTimeField(null=True, blank=True)
+    created_at  = models.DateTimeField(auto_now_add=True)
+
     class Meta:
-        verbose_name = "Rol"
-        verbose_name_plural = "Roles"
-    
+        verbose_name = "Invitación"
+        verbose_name_plural = "Invitaciones"
+        ordering = ['-created_at']
+
     def __str__(self):
-        return self.name
+        return f"Invitación → {self.email} a {self.company.name} [{self.status.upper()}]"
+
+    @property
+    def is_valid(self):
+        """Un token es válido solo si está pendiente Y no ha expirado."""
+        return self.status == 'pending' and self.expires_at > timezone.now()
 
 
 class OTPToken(models.Model):

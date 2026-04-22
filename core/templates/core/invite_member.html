@@ -1,0 +1,68 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Invitar Colaborador | KoreBase ERP{% endblock %}
+{% block page_title %}Invitar Colaborador{% endblock %}
+{% block breadcrumb_parent %}Configuración{% endblock %}
+
+{% block content %}
+<div style="max-width: 640px; margin: 0 auto;">
+    <div class="kore-card" style="padding: 2rem;">
+
+        <!-- Header -->
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--kore-gray-200);">
+            <div style="width: 48px; height: 48px; background: var(--kore-teal-50, #e6fffa); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--kore-teal-500); font-size: 1.4rem;">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div>
+                <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--kore-navy-900); margin: 0;">Invitar a {{ company.name }}</h2>
+                <p style="font-size: 0.85rem; color: var(--kore-gray-500); margin: 0;">El invitado recibirá un enlace válido por 48 horas.</p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="font-size: 0.85rem; font-weight: 600; color: var(--kore-navy-900); display: block; margin-bottom: 0.5rem;">
+                    {{ form.email.label }}
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <p style="color: #dc2626; font-size: 0.8rem; margin-top: 0.25rem;">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="font-size: 0.85rem; font-weight: 600; color: var(--kore-navy-900); display: block; margin-bottom: 0.5rem;">
+                    {{ form.role.label }}
+                </label>
+                {{ form.role }}
+                {% if form.role.errors %}
+                <p style="color: #dc2626; font-size: 0.8rem; margin-top: 0.25rem;">{{ form.role.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Role description cards -->
+            <div style="background: var(--kore-gray-50); border-radius: 8px; padding: 1rem; margin-bottom: 2rem; font-size: 0.82rem; color: var(--kore-gray-600);">
+                <p style="font-weight: 600; margin-bottom: 0.5rem; color: var(--kore-navy-900);">Descripción de Roles:</p>
+                <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8;">
+                    <li><strong>Administrador:</strong> Acceso completo. Puede invitar a otros colaboradores.</li>
+                    <li><strong>Operador:</strong> Puede crear y editar registros. No puede invitar ni eliminar.</li>
+                    <li><strong>Espectador:</strong> Solo puede ver registros (modo solo lectura).</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="background: var(--kore-teal-500); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">
+                    <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i> Enviar Invitación
+                </button>
+                <a href="{% url 'core:settings' %}" class="btn btn-outline" style="padding: 0.75rem 1.5rem; border-radius: 8px; text-align: center;">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

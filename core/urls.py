@@ -18,6 +18,9 @@ urlpatterns = [
     path('auth/google/callback/', views.google_callback_view, name='google_callback'),
     path('search/', views.global_search_view, name='global_search'),
     path('settings/', views.settings_view, name='settings'),
+    path('invite/', views.invite_member_view, name='invite_member'),
+    path('join/<uuid:token>/', views.join_company_view, name='join_company'),
+    path('invitations/', views.invitations_list_view, name='invitations_list'),
 
     # Notifications
     path('notifications/', views.notifications_list_view, name='notifications_list'),

@@ -39,3 +39,23 @@ class CompanyProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['rfc'].required = False
         self.fields['logo'].required = False
+
+
+class InviteMemberForm(forms.Form):
+    """Formulario para enviar una invitación a un colaborador."""
+    email = forms.EmailField(
+        label="Correo electrónico del invitado",
+        widget=forms.EmailInput(attrs={
+            'class': 'erp-form-input',
+            'placeholder': 'colaborador@empresa.com'
+        })
+    )
+    role = forms.ChoiceField(
+        label="Rol a asignar",
+        choices=[
+            ('admin',    'Administrador — acceso total, puede invitar'),
+            ('operator', 'Operador — puede crear y editar'),
+            ('viewer',   'Espectador — solo lectura'),
+        ],
+        widget=forms.Select(attrs={'class': 'erp-form-input'})
+    )

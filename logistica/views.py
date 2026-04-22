@@ -456,7 +456,9 @@ def sat_product_search(request):
             res_exact = queryset.filter(q_exact).order_by(order_by_field)
             
             if res_exact.exists():
-                results_qs = res_exact
+                results_qs = res_exact.annotate(
+                    similarity=TrigramWordSimilarity(search_str, 'description')
+                ).order_by('-similarity', order_by_field)
             else:
                 results_qs = queryset.annotate(
                     similarity=TrigramWordSimilarity(search_str, 'description')
@@ -488,8 +490,28 @@ def sat_unit_search(request):
     if len(query) < 1:
         return HttpResponse('')
     
+    aliases = {
+        "kilo": ["kilogramo", "kgm"],
+        "kilogramo": ["kilo", "kgm"],
+        "litro": ["ltr", "litros"],
+        "litros": ["ltr", "litro"],
+        "pieza": ["h87", "piezas", "pza", "pz"],
+        "piezas": ["h87", "pieza", "pza", "pz"],
+        "caja": ["xbx", "cajas"],
+        "cajas": ["xbx", "caja"],
+    }
+    
+    expanded_terms = [query.lower()]
+    for k, v in aliases.items():
+        if k in query.lower():
+            expanded_terms.extend(v)
+            
+    q_exact = Q()
+    for token in expanded_terms:
+        q_exact |= Q(code__icontains=token) | Q(name__icontains=token)
+        
     results = SatUnitCode.objects.filter(
-        Q(code__icontains=query) | Q(name__icontains=query),
+        q_exact,
         active=True
     ).order_by('code')[:15]
     

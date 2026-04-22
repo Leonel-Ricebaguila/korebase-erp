@@ -24,7 +24,10 @@ class CompanyProfileForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'erp-form-input', 'placeholder': 'Nombre Comercial / Razón Social'}),
             'rfc': forms.TextInput(attrs={'class': 'erp-form-input', 'placeholder': 'Ej. XAXX010101000'}),
-            'logo': forms.FileInput(attrs={'class': 'erp-form-input', 'accept': 'image/*'}),
+            'logo': forms.ClearableFileInput(attrs={'class': 'erp-form-input', 'accept': 'image/*'}),
+        }
+        help_texts = {
+            'logo': 'Tamaño óptimo: 512x512 px. Formatos: PNG, JPG.',
         }
         labels = {
             'name': 'Nombre de la Empresa',

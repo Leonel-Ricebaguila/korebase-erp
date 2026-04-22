@@ -57,6 +57,13 @@
             </div>
         </div>
 
+        <div class="field-wrapper">
+            <label for="{{ form.rfc.id_for_label }}">RFC (Registro Federal de Contribuyentes)</label>
+            {{ form.rfc }}
+            <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 0.25rem;">{{ form.rfc.help_text }}</div>
+            {% if form.rfc.errors %}<div class="error-msg">{{ form.rfc.errors.0 }}</div>{% endif %}
+        </div>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div class="field-wrapper">
                 <label for="{{ form.contact_name.id_for_label }}">Nombre de Contacto</label>

@@ -187,7 +187,9 @@ def stock_adjustment(request, pk):
                 movement_type=movement_type,
                 reference=reference,
                 notes=notes,
-                user=request.user
+                user=request.user,
+                unit_cost_at_movement=product.unit_cost,
+                running_balance=stock.quantity
             )
 
             messages.success(request, 'Movimiento registrado exitosamente.')

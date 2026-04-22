@@ -11,7 +11,7 @@ class ProductForm(forms.ModelForm):
     
     class Meta:
         model = Product
-        fields = ['sku', 'name', 'description', 'category', 'unit_cost', 'clave_producto_sat', 'clave_unidad_sat', 'active']
+        fields = ['sku', 'name', 'description', 'category', 'product_type', 'unit_of_measure', 'brand', 'model_number', 'unit_cost', 'costing_method', 'clave_producto_sat', 'clave_unidad_sat', 'active']
         widgets = {
             'sku': forms.TextInput(attrs={
                 'class': 'erp-form-input',
@@ -48,6 +48,23 @@ class ProductForm(forms.ModelForm):
                 'class': 'erp-form-input',
                 'placeholder': 'Ej. H87',
                 'maxlength': '3'
+            }),
+            'product_type': forms.Select(attrs={
+                'class': 'erp-form-input'
+            }),
+            'unit_of_measure': forms.Select(attrs={
+                'class': 'erp-form-input'
+            }),
+            'brand': forms.TextInput(attrs={
+                'class': 'erp-form-input',
+                'placeholder': 'Ej: Weller, Steren'
+            }),
+            'model_number': forms.TextInput(attrs={
+                'class': 'erp-form-input',
+                'placeholder': 'Ej: WE1010NA'
+            }),
+            'costing_method': forms.Select(attrs={
+                'class': 'erp-form-input'
             })
         }
     
@@ -61,6 +78,11 @@ class ProductForm(forms.ModelForm):
         self.fields['active'].label = 'Activo'
         self.fields['clave_producto_sat'].label = 'Clave Producto SAT (CFDI)'
         self.fields['clave_unidad_sat'].label = 'Clave Unidad SAT (CFDI)'
+        self.fields['product_type'].label = 'Tipo de Producto'
+        self.fields['unit_of_measure'].label = 'Unidad de Medida'
+        self.fields['brand'].label = 'Marca'
+        self.fields['model_number'].label = 'Modelo'
+        self.fields['costing_method'].label = 'Método de Costeo'
 
 
 class WarehouseForm(forms.ModelForm):
@@ -101,7 +123,7 @@ class SupplierForm(forms.ModelForm):
     
     class Meta:
         model = Supplier
-        fields = ['code', 'name', 'contact_name', 'email', 'phone', 'address', 'active']
+        fields = ['code', 'name', 'rfc', 'contact_name', 'email', 'phone', 'address', 'active']
         widgets = {
             'code': forms.TextInput(attrs={
                 'class': 'erp-form-input',
@@ -110,6 +132,12 @@ class SupplierForm(forms.ModelForm):
             'name': forms.TextInput(attrs={
                 'class': 'erp-form-input',
                 'placeholder': 'Nombre de la empresa'
+            }),
+            'rfc': forms.TextInput(attrs={
+                'class': 'erp-form-input',
+                'placeholder': 'Ej: XAXX010101000',
+                'maxlength': '13',
+                'style': 'text-transform: uppercase;'
             }),
             'contact_name': forms.TextInput(attrs={
                 'class': 'erp-form-input',
@@ -137,6 +165,7 @@ class SupplierForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['code'].label = 'Código'
         self.fields['name'].label = 'Nombre del Proveedor'
+        self.fields['rfc'].label = 'RFC'
         self.fields['contact_name'].label = 'Nombre de Contacto'
         self.fields['email'].label = 'Email'
         self.fields['phone'].label = 'Teléfono'

@@ -138,6 +138,45 @@
             </div>
         </div>
 
+        <!-- Product Classification -->
+        <div style="margin-top: 1.5rem; margin-bottom: 1.5rem; padding: 1.5rem; border: 1px solid var(--kore-gray-200); border-radius: var(--border-radius-md); background-color: #f0fdf4;">
+            <h4 style="margin: 0 0 1rem 0; color: var(--kore-navy-900); font-size: 1rem; border-bottom: 2px solid var(--kore-teal-500); padding-bottom: 0.5rem; display: inline-block;">
+                <i class="fas fa-tags" style="color: var(--kore-teal-500); margin-right: 0.5rem;"></i>Clasificación del Producto
+            </h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="field-wrapper" style="margin-bottom: 0;">
+                    <label for="{{ form.product_type.id_for_label }}">{{ form.product_type.label }}</label>
+                    {{ form.product_type }}
+                    {% if form.product_type.errors %}<div class="error-msg">{{ form.product_type.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="field-wrapper" style="margin-bottom: 0;">
+                    <label for="{{ form.unit_of_measure.id_for_label }}">{{ form.unit_of_measure.label }}</label>
+                    {{ form.unit_of_measure }}
+                    {% if form.unit_of_measure.errors %}<div class="error-msg">{{ form.unit_of_measure.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                <div class="field-wrapper" style="margin-bottom: 0;">
+                    <label for="{{ form.brand.id_for_label }}">{{ form.brand.label }}</label>
+                    {{ form.brand }}
+                    {% if form.brand.errors %}<div class="error-msg">{{ form.brand.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="field-wrapper" style="margin-bottom: 0;">
+                    <label for="{{ form.model_number.id_for_label }}">{{ form.model_number.label }}</label>
+                    {{ form.model_number }}
+                    {% if form.model_number.errors %}<div class="error-msg">{{ form.model_number.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+            <div style="margin-top: 1rem;">
+                <div class="field-wrapper" style="margin-bottom: 0;">
+                    <label for="{{ form.costing_method.id_for_label }}">{{ form.costing_method.label }}</label>
+                    {{ form.costing_method }}
+                    <div style="font-size: 0.75rem; color: var(--kore-gray-500); margin-top: 0.25rem;">Método para calcular el costo del inventario</div>
+                    {% if form.costing_method.errors %}<div class="error-msg">{{ form.costing_method.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+
         <!-- SAT Compliance -->
         <div style="margin-top: 1.5rem; margin-bottom: 1.5rem; padding: 1.5rem; border: 1px solid var(--kore-gray-200); border-radius: var(--border-radius-md); background-color: #f8fafc;">
             <h4 style="margin: 0 0 1rem 0; color: var(--kore-navy-900); font-size: 1rem; border-bottom: 2px solid var(--kore-teal-500); padding-bottom: 0.5rem; display: inline-block;">

@@ -14,7 +14,7 @@
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
             <div>
                 <div style="font-size: 0.9rem; opacity: 0.8; font-weight: 500;">Ingresos (Facturas Cliente)</div>
-                <div style="font-size: 2rem; font-weight: 700; margin-top: 0.25rem;">${{ income_total|floatformat:2 }}
+                <div style="font-size: 2rem; font-weight: 700; margin-top: 0.25rem;">${{ income_total|floatformat:'2g' }}
                 </div>
             </div>
             <div
@@ -35,7 +35,7 @@
                 <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Gastos (Facturas
                     Proveedor)</div>
                 <div style="font-size: 1.75rem; font-weight: 700; color: var(--kore-navy-900); margin-top: 0.25rem;">
-                    ${{ expense_total|floatformat:2 }}</div>
+                    ${{ expense_total|floatformat:'2g' }}</div>
             </div>
             <div
                 style="width: 40px; height: 40px; background: rgba(239, 68, 68, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-danger);">
@@ -54,7 +54,7 @@
                 <div style="font-size: 0.85rem; color: var(--kore-gray-500); font-weight: 500;">Resultado Neto</div>
                 <div
                     style="font-size: 1.75rem; font-weight: 700; color: {% if net_margin >= 0 %}var(--status-success){% else %}var(--status-danger){% endif %}; margin-top: 0.25rem;">
-                    ${{ net_margin|floatformat:2 }}</div>
+                    ${{ net_margin|floatformat:'2g' }}</div>
             </div>
             <div
                 style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--status-success);">

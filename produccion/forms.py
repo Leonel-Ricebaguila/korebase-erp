@@ -48,11 +48,13 @@ class BOMLineForm(forms.ModelForm):
                 'placeholder': '0.000',
                 'step': '0.001',
                 'min': '0.001',
+                'onfocus': 'this.select()'
             }),
             'sequence': forms.NumberInput(attrs={
                 'class': 'erp-form-input',
                 'placeholder': '0',
                 'min': '0',
+                'onfocus': 'this.select()'
             }),
         }
 
@@ -95,6 +97,7 @@ class WorkOrderForm(forms.ModelForm):
                 'placeholder': '0.000',
                 'step': '0.001',
                 'min': '0.001',
+                'onfocus': 'this.select()'
             }),
             'warehouse': forms.Select(attrs={'class': 'erp-form-input'}),
             'start_date': forms.DateTimeInput(attrs={

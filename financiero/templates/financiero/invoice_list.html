@@ -80,7 +80,7 @@
                     </td>
                     <td style="padding: 1rem 1.5rem;">{{ invoice.customer_supplier }}</td>
                     <td style="padding: 1rem 1.5rem;">{{ invoice.invoice_date }}</td>
-                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 700;">${{ invoice.total|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 700;">${{ invoice.total|floatformat:'2g' }}</td>
                     <td style="padding: 1rem 1.5rem; text-align: center;">
                         {% if invoice.status == 'draft' %}
                         <span

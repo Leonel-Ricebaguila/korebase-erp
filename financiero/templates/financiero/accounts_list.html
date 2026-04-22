@@ -72,7 +72,7 @@
                             {{ account.get_account_type_display }}
                         </span>
                     </td>
-                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">${{ account.balance|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">${{ account.balance|floatformat:'2g' }}</td>
                     <td style="padding: 1rem 1.5rem; text-align: center;">
                         <a href="{% url 'financiero:account_edit' account.pk %}" class="btn btn-outline"
                             style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">

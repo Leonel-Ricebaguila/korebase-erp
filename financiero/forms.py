@@ -86,13 +86,15 @@ class JournalEntryLineForm(forms.ModelForm):
                 'class': 'erp-form-input',
                 'placeholder': '0.00',
                 'step': '0.01',
-                'min': '0'
+                'min': '0',
+                'onfocus': 'this.select()'
             }),
             'credit': forms.NumberInput(attrs={
                 'class': 'erp-form-input',
                 'placeholder': '0.00',
                 'step': '0.01',
-                'min': '0'
+                'min': '0',
+                'onfocus': 'this.select()'
             }),
             'description': forms.TextInput(attrs={
                 'class': 'erp-form-input',
@@ -145,19 +147,22 @@ class InvoiceForm(forms.ModelForm):
                 'class': 'erp-form-input',
                 'placeholder': '0.00',
                 'step': '0.01',
-                'min': '0'
+                'min': '0',
+                'onfocus': 'this.select()'
             }),
             'tax_amount': forms.NumberInput(attrs={
                 'class': 'erp-form-input',
                 'placeholder': '0.00',
                 'step': '0.01',
-                'min': '0'
+                'min': '0',
+                'onfocus': 'this.select()'
             }),
             'total': forms.NumberInput(attrs={
                 'class': 'erp-form-input',
                 'placeholder': '0.00',
                 'step': '0.01',
-                'min': '0'
+                'min': '0',
+                'onfocus': 'this.select()'
             }),
         }
 

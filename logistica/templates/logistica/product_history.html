@@ -20,7 +20,7 @@
         </div>
         <div style="text-align: right;">
             <div style="font-size: 0.9rem; color: var(--kore-gray-500);">Costo Unitario Actual</div>
-            <div style="font-weight: 700; color: var(--kore-teal-700); font-size: 1.2rem;">${{ product.unit_cost|floatformat:2 }}</div>
+            <div style="font-weight: 700; color: var(--kore-teal-700); font-size: 1.2rem;">${{ product.unit_cost|floatformat:'2g' }}</div>
         </div>
         <a href="{% url 'logistica:inventory_list' %}" class="btn btn-outline"
             style="border: 1px solid var(--kore-gray-300);">
@@ -72,14 +72,14 @@
                     </td>
                     <td style="padding: 1rem; text-align: right; font-weight: 700; font-family: monospace; font-size: 1rem;">
                         <span style="color: {% if mov.quantity_change > 0 %}#166534{% elif mov.quantity_change < 0 %}#991b1b{% else %}#374151{% endif %};">
-                            {{ mov.quantity_change|floatformat:2 }}
+                            {{ mov.quantity_change|floatformat:'2g' }}
                         </span>
                     </td>
                     <td style="padding: 1rem; text-align: right; font-family: monospace; color: var(--kore-navy-800);">
-                        ${{ mov.unit_cost_at_movement|floatformat:2 }}
+                        ${{ mov.unit_cost_at_movement|floatformat:'2g' }}
                     </td>
                     <td style="padding: 1rem; text-align: right; font-weight: 600; font-family: monospace; color: var(--kore-teal-700);">
-                        {{ mov.running_balance|floatformat:2 }}
+                        {{ mov.running_balance|floatformat:'2g' }}
                     </td>
                     <td style="padding: 1rem; color: var(--kore-gray-700);">{{ mov.warehouse.name }}</td>
                     <td style="padding: 1rem;">

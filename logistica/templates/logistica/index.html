@@ -56,7 +56,7 @@
         </div>
         <div>
             <div style="font-size: 0.85rem; color: var(--kore-gray-500);">Valor Inventario</div>
-            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">${{ total_value|floatformat:2 }}</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--kore-navy-900);">${{ total_value|floatformat:'2g' }}</div>
         </div>
     </div>
 
@@ -167,7 +167,7 @@
                             {{ product.total_stock|floatformat:0 }}
                         </span>
                     </td>
-                    <td style="padding: 1rem 1.5rem; text-align: right;">${{ product.unit_cost|floatformat:2 }}</td>
+                    <td style="padding: 1rem 1.5rem; text-align: right;">${{ product.unit_cost|floatformat:'2g' }}</td>
                     <td style="padding: 1rem 1.5rem; text-align: center;">
                         <div style="display: flex; gap: 0.5rem; justify-content: center;">
                             <a href="{% url 'logistica:stock_adjustment' product.pk %}"

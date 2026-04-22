@@ -241,6 +241,7 @@ def workorder_detail(request, pk):
 
 
 @login_required
+@transaction.atomic
 def workorder_status(request, pk):
     """Change work order status with valid transitions"""
     order = get_object_or_404(WorkOrder, pk=pk)
@@ -263,11 +264,66 @@ def workorder_status(request, pk):
             )
             return redirect('produccion:workorder_detail', pk=pk)
 
-        # If completing, update quantity_produced
+        # If completing, update quantity_produced and manage inventory
         if new_status == 'completed':
             from django.utils import timezone
+            from logistica.models import Stock, StockMovement
+            from decimal import Decimal
+            
+            # Lock the order to prevent double-completion
+            order = WorkOrder.objects.select_for_update().get(pk=order.pk)
+            
             order.quantity_produced = order.quantity_planned
             order.completion_date = timezone.now()
+            
+            # 1. Deduct components from stock
+            if order.bom:
+                for line in order.bom.lines.all():
+                    qty_to_deduct = line.quantity * order.quantity_produced
+                    stock_comp, _ = Stock.objects.select_for_update().get_or_create(
+                        company=order.company,
+                        product=line.component,
+                        warehouse=order.warehouse,
+                        defaults={'quantity': Decimal('0.000')}
+                    )
+                    stock_comp.quantity -= qty_to_deduct
+                    stock_comp.save()
+                    
+                    StockMovement.objects.create(
+                        company=order.company,
+                        product=line.component,
+                        warehouse=order.warehouse,
+                        quantity_change=-qty_to_deduct,
+                        movement_type='out',
+                        reference=f'Consumo {order.work_order_number}',
+                        notes=f'Producción de {order.product.name}',
+                        user=request.user,
+                        unit_cost_at_movement=line.component.unit_cost,
+                        running_balance=stock_comp.quantity
+                    )
+            
+            # 2. Add finished product to stock
+            stock_final, _ = Stock.objects.select_for_update().get_or_create(
+                company=order.company,
+                product=order.product,
+                warehouse=order.warehouse,
+                defaults={'quantity': Decimal('0.000')}
+            )
+            stock_final.quantity += order.quantity_produced
+            stock_final.save()
+            
+            StockMovement.objects.create(
+                company=order.company,
+                product=order.product,
+                warehouse=order.warehouse,
+                quantity_change=order.quantity_produced,
+                movement_type='in',
+                reference=f'Entrada {order.work_order_number}',
+                notes=f'Finalización de Orden de Trabajo',
+                user=request.user,
+                unit_cost_at_movement=order.product.unit_cost,
+                running_balance=stock_final.quantity
+            )
 
         order.status = new_status
         order.save()

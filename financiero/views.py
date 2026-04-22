@@ -286,7 +286,7 @@ def invoice_create(request):
             invoice.created_by = request.user
             invoice.save()
             messages.success(request, f'Factura "{invoice.invoice_number}" creada exitosamente.')
-            notify(request.user, f'Nueva Factura: {invoice.invoice_number}', 'info', f'/financiero/invoice/{invoice.pk}/')
+            notify(request.user, f'Nueva Factura: {invoice.invoice_number}', 'info', f'/financiero/invoices/')
             return redirect('financiero:invoice_list')
     else:
         form = InvoiceForm()
